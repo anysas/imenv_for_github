@@ -1,0 +1,132 @@
+ALGORITHMIC GALLERY - UNITY SCRIPTS MANIFEST
+=============================================
+
+Created: 2026-04-11
+Updated: 2026-04-25 (v2 corruption refactor)
+
+This manifest is split into two pillars:
+  V2 (Corruption)  — Algorithmic Gallery v2 (Assignment 3/4) — active development
+  V1 (Attention)   — Original gaze-driven gallery — legacy, kept for reference
+
+
+==============================================================
+V2 — CORRUPTION (active)   namespace AlgorithmicGallery.Corruption
+==============================================================
+
+DATA / MANIFEST
+- CuratedPropManifest.cs   Loads curated-props.json (833 daily-life GLBs).
+                           Random / weighted-by-tags / drifted-from-tags queries.
+- StyleProfile.cs          Tracks player placement behavior — group/tag counts,
+                           density grid, cadence. Read by AssistantSystem.
+
+UI / INPUT
+- HotbarController.cs      5-slot hotbar. 1-5 keys to select. Reroll on consume.
+                           Assistant override probability (driven by AssistantSystem).
+- HotbarUI.cs              Runtime UGUI canvas — 5 slot panels with icons + labels.
+                           Auto-built; no prefab needed.
+- SimplePlayerRig.cs       Self-contained CharacterController + WASD + mouse look.
+                           Builds Camera child if absent.
+
+PLACEMENT / SPAWNING
+- PropPlacer.cs            Player click-to-place + assistant programmatic placement.
+                           Cube ghost preview, anti-overlap nudge.
+- PropPool.cs              Pre-warm N GLBs into hidden cache (heat texture/mesh load).
+- RuntimeThumbnailCapture.cs  Renders GLBs to RenderTexture for hotbar icons.
+                              Singleton, cached by prop ID.
+
+SESSION / FLOW
+- SandboxManager.cs        Top-level orchestrator. Auto-wires missing dependencies.
+                           Owns timer (90s + 30s grace), calls AssistantSystem.
+- SandboxBootstrap.cs      One-component entry point — drop on empty GameObject.
+- HallwayTrigger.cs        Threshold collider — calls SandboxManager.BeginSandbox().
+- EndCard.cs               Session-complete reflection card (auto-built canvas).
+- AssistantDebugUI.cs      F1 IMGUI overlay — phase, influence, profile, slots.
+
+ASSISTANT
+- AssistantSystem.cs       90-second corruption arc.
+                           Helping (0–30s) / Suggesting (30–60s) / Overriding (60–90s).
+                           Reactive + autonomous placement. Drives PSX glitch.
+
+POST-PROCESSING
+- PSXRendererFeature.cs    URP renderer feature — Bayer dither, color quantization.
+- PSXPass.cs               ScriptableRenderPass implementation.
+                           Glitch intensity driven by AssistantSystem.Influence.
+- (Shaders/PSXPost.shader) HLSL shader for the pass.
+
+
+==============================================================
+V1 — ATTENTION (legacy reference)   namespace AlgorithmicGallery / .Recommendation
+==============================================================
+
+These scripts are NOT used in v2 sessions. They drive the original gaze-based
+gallery and remain in the repo as reference and as a fallback baseline.
+
+If you build a clean v2 scene, do NOT add components from this list:
+
+  GAZE TRACKING
+  - IGazeProvider.cs / DesktopGazeProvider.cs / VRGazeProvider.cs
+  - GazeManager.cs
+
+  RECOMMENDATION ENGINE
+  - RecommendationEngine.cs
+  - UserProfile.cs
+  - IRecommendationStrategy.cs
+  - ExplorationStrategy.cs / ExploitationStrategy.cs / DesperationStrategy.cs
+  - RecommendationDebugUI.cs (replaced by AssistantDebugUI)
+
+  GROWTH / SCULPTURE (gaze-driven bloom)
+  - SculptureController.cs   (still referenced by SculptureSpawner — not used in v2)
+  - GrowthPart.cs
+
+  GALLERY ORCHESTRATION
+  - GalleryManager.cs  (1593 LOC — replaced by SandboxManager for v2)
+  - MetadataIndex.cs / ModelEntry.cs
+  - LinearGalleryController.cs / RoomRuntime.cs
+  - LinearRoomTrigger.cs / RoomDoor.cs / RoomDoorTrigger.cs
+  - RoomGalleryBridge.cs / LegacyRoomTransitionTrigger.cs
+  - RoomLoopManager.cs    (UNSTABLE — see docs/development-update-2026-04-12.md)
+
+  SHARED UTILITIES (used by BOTH v1 and v2)
+  - SculptureSpawner.cs  (kept; v2 uses LoadModel for raw GLB instantiation)
+  - GlitchRendererFeature.cs / GlitchPass.cs   (v2 superseded by PSXRendererFeature)
+  - LightFlickerController.cs / EnvironmentFXManager.cs / PhaseVolumeController.cs
+  - AudioSpectrumAnalyzer.cs / AudioReactiveEmission.cs
+
+
+==============================================================
+SCENE SETUP — V2 quickstart
+==============================================================
+
+Minimum (zero-wire):
+  1. New empty scene.
+  2. Create empty GameObject "Bootstrap" → add SandboxBootstrap component.
+  3. Press play.
+
+That's it. SandboxBootstrap creates a SandboxManager which auto-creates:
+  - SandboxFloor (20x20 plane)
+  - PropPlacer (with SculptureSpawner)
+  - HotbarController + HotbarUI
+  - AssistantSystem
+  - SimplePlayerRig (if no MainCamera)
+  - RuntimeThumbnailCapture
+  - EndCard
+  - AssistantDebugUI
+  - Directional Sun light
+
+For PSX visuals: open your URP Forward Renderer asset and add the
+PSXRendererFeature in the Renderer Features list.
+
+For the hallway → sandbox transition:
+  1. Disable _startSandboxImmediately on SandboxManager.
+  2. Build hallway geometry leading to a doorway.
+  3. Place a trigger collider at the doorway with HallwayTrigger component.
+  4. Reference SandboxManager from HallwayTrigger.
+
+Controls:
+  WASD            Move
+  Shift           Run
+  Mouse           Look
+  1-5             Select hotbar slot
+  Left click      Place active prop on floor
+  Tab             Toggle cursor lock (debug)
+  F1              Toggle assistant debug overlay

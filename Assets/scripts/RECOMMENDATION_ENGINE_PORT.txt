@@ -1,0 +1,119 @@
+RECOMMENDATION ENGINE PORT - UNITY COMPATIBILITY
+=================================================
+
+SUMMARY OF CHANGES
+------------------
+
+Namespace:
+- Changed from: RecEngineTest.Recommendation
+- Changed to: AlgorithmicGallery.Recommendation
+
+JSON Serialization:
+- Replaced System.Text.Json with Newtonsoft.Json (JSON.NET)
+- Changed [JsonPropertyName("field")] to [JsonProperty("field")]
+- Added LoadFromJsonString(string json) method to MetadataIndex
+  (replaces File.ReadAllText dependency for unity-friendly loading)
+
+Record Types:
+- Converted GazeRecord from record to regular class with constructor
+  Maintains same public API and functionality
+
+.NET 9 Features Removed/Replaced:
+- rng.NextSingle() -> (float)rng.NextDouble()
+- Math.Clamp() -> Mathf.Clamp() (requires UnityEngine import in UserProfile.cs)
+- pool[^1] (index-from-end) -> pool[pool.Count - 1]
+- GetValueOrDefault() -> Custom GetValueOrDefault() helper methods in classes that need them
+
+Performance Improvements:
+- Added Dictionary<string, ModelEntry> _modelLookup to MetadataIndex
+  GetModelById(string modelId) is now O(1) instead of O(n)
+  Eliminates linear iteration in ReportGaze() on every gaze event
+
+Extended Tag Adjacency:
+- Added entries for: metallic, organic, glass, concrete
+- These map to appropriate neighboring tags for recommendation flow
+
+FILES CREATED
+-------------
+
+IRecommendationStrategy.cs      - Strategy interface (no changes to structure)
+ModelEntry.cs                   - Model data classes with JsonProperty attributes
+UserProfile.cs                  - User state tracking, phase management
+MetadataIndex.cs                - Model catalog + tagging/filtering + O(1) lookup
+ExplorationStrategy.cs          - Fascination phase (70% explore)
+ExploitationStrategy.cs         - Recognition phase (30% explore)
+DesperationStrategy.cs          - Unease phase (15% explore)
+RecommendationEngine.cs         - Main orchestrator
+
+INTEGRATION WITH UNITY
+---------------------
+
+Required Dependencies:
+- Newtonsoft.Json (com.unity.nuget.newtonsoft-json) - built into modern Unity
+- UnityEngine (imported in UserProfile.cs only, for Mathf utilities)
+
+Setup Steps:
+1. Place all .cs files in your Assets/Scripts/AlgorithmicGallery/Recommendation folder
+2. Ensure Newtonsoft.Json is available (Package Manager > Add by name)
+3. Create a MonoBehaviour to initialize and manage the engine:
+
+   public class RecommendationController : MonoBehaviour
+   {
+       private MetadataIndex _index;
+       private RecommendationEngine _engine;
+       
+       void Start()
+       {
+           _index = new MetadataIndex();
+           
+           // Load metadata JSON (use TextAsset from Resources or StreamingAssets)
+           TextAsset metadataAsset = Resources.Load<TextAsset>("metadata");
+           _index.LoadFromJsonString(metadataAsset.text);
+           
+           _engine = new RecommendationEngine(_index);
+       }
+       
+       public void OnGaze(string modelId, float dwellMs, float elapsedSecs)
+       {
+           _engine.ReportGaze(modelId, dwellMs, elapsedSecs);
+       }
+       
+       public ModelEntry GetNextRecommendation()
+       {
+           return _engine.GetNext();
+       }
+   }
+
+Usage Pattern:
+- Call _engine.GetNext() when you need the next model to display
+- Call _engine.ReportGaze(modelId, dwellMs, sessionTime) when user looks away
+- Monitor _engine.CurrentPhase and _engine.PhaseProgress for UI state
+- All user preference learning happens automatically in RecordGaze()
+
+TESTING
+-------
+
+The engine is now drop-in compatible with Unity C# (9/10 level).
+No compilation errors expected if:
+- Newtonsoft.Json is installed
+- Files are in proper namespace folder structure
+- References between classes resolve (same namespace)
+
+Key public APIs:
+- RecommendationEngine.GetNext() -> ModelEntry?
+- RecommendationEngine.ReportGaze(string, float, float) -> void
+- RecommendationEngine.Profile -> UserProfile (read-only access to state)
+- RecommendationEngine.CurrentPhase -> ArcPhase
+- RecommendationEngine.PhaseProgress -> float [0..1]
+
+PERFORMANCE NOTES
+-----------------
+
+- Random seeding: Pass seed >= 0 to constructor for deterministic output
+- MetadataIndex.BuildIndex() is O(m*t) where m=models, t=avg tags per model
+  Call once at startup, not every frame
+- GetNext() is O(n log n) due to sorting, where n=candidate pool (20-50 models)
+- ReportGaze() is now O(1) model lookup + O(t) tag processing
+- Memory: ~4KB per model in index + 100B per gaze record
+
+END

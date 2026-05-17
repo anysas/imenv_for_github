@@ -1,0 +1,608 @@
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using Newtonsoft.Json;
+using UnityEngine;
+
+namespace AlgorithmicGallery.Corruption
+{
+    [Serializable]
+    public class PropEntry
+    {
+        [JsonProperty("id")]       public string Id { get; set; }
+        [JsonProperty("glb_path")] public string GlbPath { get; set; }
+        [JsonProperty("display_name")] public string DisplayName { get; set; }
+        [JsonProperty("group")]    public string Group { get; set; }
+        [JsonProperty("category")] public string Category { get; set; }
+        [JsonProperty("tags")]     public List<string> Tags { get; set; } = new();
+        [JsonProperty("emotional_tags")] public List<string> EmotionalTags { get; set; } = new();
+        [JsonProperty("personal_tags")]  public List<string> PersonalTags { get; set; } = new();
+        [JsonProperty("corporate_tags")] public List<string> CorporateTags { get; set; } = new();
+        [JsonProperty("poly_count")]    public int PolyCount { get; set; }
+        [JsonProperty("dimensions")]    public PropDimensions Dimensions { get; set; } = new();
+        [JsonProperty("size_category")] public string SizeCategory { get; set; } = "unknown";
+        [JsonProperty("confidence")]    public float Confidence { get; set; } = 1f;
+        [JsonProperty("vertex_count")]  public int VertexCount { get; set; }
+
+        // Curation-overlay runtime fields (not in base JSON; applied by CurationOverlay.ApplyToManifest)
+        [JsonProperty("scale_override")] public float ScaleOverride { get; set; } = 0f;  // 0 = auto
+        [JsonProperty("custom_tags")]    public List<string> CustomTags { get; set; } = new();
+        [JsonProperty("notes")]          public string Notes { get; set; } = "";
+
+        // Convenience: longest axis in metres (0 if dimensions unknown)
+        public float LongestAxis => Mathf.Max(
+            Dimensions?.X ?? 0f,
+            Mathf.Max(Dimensions?.Y ?? 0f, Dimensions?.Z ?? 0f));
+    }
+
+    [Serializable]
+    public class PropDimensions
+    {
+        [JsonProperty("x")] public float X { get; set; }
+        [JsonProperty("y")] public float Y { get; set; }
+        [JsonProperty("z")] public float Z { get; set; }
+    }
+
+    public class CuratedPropManifest
+    {
+        /// <summary>Default gameplay manifest under StreamingAssets.</summary>
+        public const string DefaultManifestFileName = "curated-props.json";
+
+        private List<PropEntry> _all = new();
+        private List<PropEntry> _allHighConf = new();   // confidence ≥ 0.8 (pipeline-validated)
+        private Dictionary<string, List<PropEntry>> _byGroup = new();
+        private Dictionary<string, List<PropEntry>> _byEmotionalTag = new();
+        private Dictionary<string, PropEntry> _byId = new();
+        private Dictionary<string, List<PropEntry>> _byNameToken = new();
+
+        public int Count => _all.Count;
+        public IReadOnlyList<PropEntry> All => _all;
+        public IEnumerable<string> Groups => _byGroup.Keys;
+
+        private static string StreamingManifestPath =>
+            ManifestPath(DefaultManifestFileName);
+
+        /// <summary>StreamingAssets-relative manifest file name (e.g. curated-props.game-ready.json).</summary>
+        public static string ManifestPath(string manifestFileName)
+        {
+            if (string.IsNullOrWhiteSpace(manifestFileName))
+                manifestFileName = DefaultManifestFileName;
+            manifestFileName = manifestFileName.Trim().TrimStart('/', '\\');
+            return Path.Combine(Application.streamingAssetsPath, manifestFileName);
+        }
+
+        /// <summary>Load the default curated manifest (curated-props.json).</summary>
+        public static CuratedPropManifest LoadFromStreamingAssets()
+            => LoadFromStreamingAssets(DefaultManifestFileName);
+
+        /// <summary>Load a curated manifest by file name under StreamingAssets.</summary>
+        public static CuratedPropManifest LoadFromStreamingAssets(string manifestFileName)
+        {
+            string path = ManifestPath(manifestFileName);
+            if (!File.Exists(path))
+            {
+                Debug.LogError($"CuratedPropManifest: file not found at {path}");
+                return null;
+            }
+
+            string json = File.ReadAllText(path);
+            var root = JsonConvert.DeserializeObject<ManifestRoot>(json);
+            if (root?.Props == null)
+            {
+                Debug.LogError("CuratedPropManifest: failed to parse JSON");
+                return null;
+            }
+
+            int originalCount = root.Props.Count;
+            var missingPaths = root.Props
+                .Where(p => p != null && !ModelFileExists(p.GlbPath))
+                .Select(p => p.GlbPath ?? "(null)")
+                .Distinct(StringComparer.OrdinalIgnoreCase)
+                .OrderBy(p => p, StringComparer.OrdinalIgnoreCase)
+                .ToList();
+
+            if (missingPaths.Count > 0)
+            {
+                root.Props = root.Props
+                    .Where(p => p != null && ModelFileExists(p.GlbPath))
+                    .ToList();
+
+                string sample = string.Join(", ", missingPaths.Take(5));
+                if (missingPaths.Count > 5)
+                    sample += ", ...";
+
+                Debug.LogWarning(
+                    $"CuratedPropManifest: filtered out {originalCount - root.Props.Count} props with missing model files " +
+                    $"from {manifestFileName}. Sample missing paths: {sample}");
+            }
+
+            foreach (var p in root.Props)
+            {
+                // Backward compatibility for old manifests and forward compatibility for new schema.
+                p.EmotionalTags ??= new List<string>();
+                p.PersonalTags ??= new List<string>();
+                if (p.PersonalTags.Count == 0 && p.EmotionalTags.Count > 0)
+                    p.PersonalTags = new List<string>(p.EmotionalTags);
+                if (p.EmotionalTags.Count == 0 && p.PersonalTags.Count > 0)
+                    p.EmotionalTags = new List<string>(p.PersonalTags);
+            }
+
+            return BuildFromProps(root.Props, manifestFileName);
+        }
+
+        private static bool ModelFileExists(string glbRelativePath)
+            => StreamingAssetModelPaths.Exists(glbRelativePath);
+
+        /// <summary>
+        /// Builds a runtime catalog by scanning a folder under StreamingAssets (e.g. RandomObjects).
+        /// No curated-props.json required.
+        /// </summary>
+        public static CuratedPropManifest LoadFromStreamingFolder(string folderName = "RandomObjects")
+        {
+            if (string.IsNullOrWhiteSpace(folderName))
+                folderName = "RandomObjects";
+
+            string folderPath = Path.Combine(Application.streamingAssetsPath, folderName.Trim().TrimStart('/', '\\'));
+            if (!Directory.Exists(folderPath))
+            {
+                Debug.LogError($"CuratedPropManifest: folder not found at {folderPath}");
+                return null;
+            }
+
+            var props = new List<PropEntry>();
+            foreach (string fullPath in Directory.EnumerateFiles(folderPath, "*.*", SearchOption.AllDirectories))
+            {
+                string ext = Path.GetExtension(fullPath);
+                if (!ext.Equals(".glb", StringComparison.OrdinalIgnoreCase)
+                    && !ext.Equals(".gltf", StringComparison.OrdinalIgnoreCase))
+                    continue;
+
+                string rel = StreamingAssetModelPaths.ToStreamingRelativePath(fullPath);
+                string fileName = Path.GetFileNameWithoutExtension(fullPath);
+                props.Add(new PropEntry
+                {
+                    Id = rel,
+                    GlbPath = rel,
+                    DisplayName = FormatDisplayName(fileName),
+                    Group = "randomobjects",
+                    Category = "random",
+                    Tags = new List<string>(),
+                    EmotionalTags = new List<string>(),
+                    PersonalTags = new List<string>(),
+                    CorporateTags = new List<string>(),
+                    Confidence = 1f,
+                });
+            }
+
+            if (props.Count == 0)
+            {
+                Debug.LogError(
+                    $"CuratedPropManifest: no .glb/.gltf files in {folderPath}. " +
+                    "Add models under Assets/StreamingAssets/RandomObjects.");
+                return null;
+            }
+
+            props.Sort((a, b) => string.Compare(a.Id, b.Id, StringComparison.OrdinalIgnoreCase));
+            return BuildFromProps(props, $"StreamingAssets/{folderName}");
+        }
+
+        private static string FormatDisplayName(string fileName)
+        {
+            if (string.IsNullOrWhiteSpace(fileName))
+                return "Object";
+            return fileName.Replace('_', ' ').Replace('-', ' ');
+        }
+
+        private static CuratedPropManifest BuildFromProps(List<PropEntry> props, string sourceLabel)
+        {
+            var manifest = new CuratedPropManifest();
+            manifest._all = props;
+            manifest._allHighConf = props.Where(p => p.Confidence >= 0.8f).ToList();
+
+            foreach (var p in props)
+            {
+                p.EmotionalTags ??= new List<string>();
+                p.PersonalTags ??= new List<string>();
+                p.CorporateTags ??= new List<string>();
+                p.CustomTags ??= new List<string>();
+                p.Tags ??= new List<string>();
+
+                if (!string.IsNullOrEmpty(p.Id))
+                    manifest._byId[p.Id] = p;
+
+                if (!manifest._byGroup.TryGetValue(p.Group, out var list))
+                    manifest._byGroup[p.Group] = list = new List<PropEntry>();
+                list.Add(p);
+
+                foreach (var etag in p.EmotionalTags)
+                {
+                    if (!manifest._byEmotionalTag.TryGetValue(etag, out var tagList))
+                        manifest._byEmotionalTag[etag] = tagList = new List<PropEntry>();
+                    tagList.Add(p);
+                }
+
+                foreach (var token in TokenizeName(p.DisplayName))
+                {
+                    if (!manifest._byNameToken.TryGetValue(token, out var tokenList))
+                        manifest._byNameToken[token] = tokenList = new List<PropEntry>();
+                    tokenList.Add(p);
+                }
+            }
+
+            Debug.Log($"CuratedPropManifest: loaded {sourceLabel} — {props.Count} props (folder scan).");
+            return manifest;
+        }
+
+        /// <summary>
+        /// Persists the current in-memory manifest to StreamingAssets/curated-props.json.
+        /// This is the gameplay source of truth read by runtime systems.
+        /// </summary>
+        public void SaveToStreamingAssets(ISet<string> removedIds = null)
+        {
+            var propsToWrite = _all
+                .Where(p => p != null && (removedIds == null || !removedIds.Contains(p.Id)))
+                .OrderBy(p => p.Id ?? string.Empty, StringComparer.Ordinal)
+                .ThenBy(p => p.DisplayName ?? string.Empty, StringComparer.Ordinal)
+                .ToList();
+
+            var root = new ManifestRoot { Props = propsToWrite };
+            string json = JsonConvert.SerializeObject(root, Formatting.Indented);
+            File.WriteAllText(StreamingManifestPath, json);
+
+            Debug.Log($"CuratedPropManifest: wrote {propsToWrite.Count} props to {StreamingManifestPath}");
+        }
+
+        public PropEntry GetById(string id)
+        {
+            if (string.IsNullOrEmpty(id)) return null;
+            return _byId.TryGetValue(id, out var prop) ? prop : null;
+        }
+
+        public List<PropEntry> FindByNameTokens(IEnumerable<string> tokens, int max = 30, HashSet<string> excludeIds = null)
+        {
+            var tokenList = (tokens ?? Enumerable.Empty<string>())
+                .Select(t => t?.Trim().ToLowerInvariant())
+                .Where(t => !string.IsNullOrWhiteSpace(t))
+                .Distinct()
+                .ToList();
+
+            if (tokenList.Count == 0) return new List<PropEntry>();
+
+            var scores = new Dictionary<string, int>();
+            foreach (var token in tokenList)
+            {
+                if (!_byNameToken.TryGetValue(token, out var candidates)) continue;
+                foreach (var c in candidates)
+                {
+                    if (c == null || string.IsNullOrEmpty(c.Id)) continue;
+                    if (excludeIds != null && excludeIds.Contains(c.Id)) continue;
+                    scores[c.Id] = scores.TryGetValue(c.Id, out var s) ? s + 1 : 1;
+                }
+            }
+
+            return scores
+                .OrderByDescending(kv => kv.Value)
+                .ThenBy(kv => kv.Key)
+                .Take(Mathf.Max(1, max))
+                .Select(kv => GetById(kv.Key))
+                .Where(p => p != null)
+                .ToList();
+        }
+
+        public PropEntry GetWeightedByPromptIntent(
+            PromptDefinition prompt,
+            IEnumerable<string> nameTokens,
+            HashSet<string> excludeIds = null)
+        {
+            if (prompt == null) return GetRandomHighConf();
+
+            // 1) Literal matches first
+            var literal = FindByNameTokens(nameTokens, max: 24, excludeIds: excludeIds);
+            if (literal.Count > 0)
+            {
+                int top = Mathf.Min(6, literal.Count);
+                return literal[UnityEngine.Random.Range(0, top)];
+            }
+
+            // 2) Seed IDs if present
+            if (prompt.ResolvedSeedPropIds != null && prompt.ResolvedSeedPropIds.Length > 0)
+            {
+                var pool = prompt.ResolvedSeedPropIds
+                    .Select(GetById)
+                    .Where(p => p != null && (excludeIds == null || !excludeIds.Contains(p.Id)))
+                    .ToList();
+                if (pool.Count > 0)
+                    return pool[UnityEngine.Random.Range(0, pool.Count)];
+            }
+
+            // 3) Emotional+group fallback
+            if (prompt.EmotionalTags != null && prompt.EmotionalTags.Length > 0)
+                return GetWeightedByEmotionalTagsInGroups(
+                    prompt.EmotionalTags,
+                    prompt.PrimaryGroups,
+                    randomness: prompt.IsAbstract ? 0.12f : 0.2f,
+                    excludeIds: excludeIds
+                );
+
+            // 4) Safe random fallback
+            return GetRandomHighConfFromGroups(prompt.PrimaryGroups, excludeIds);
+        }
+
+        public PropEntry GetRandom()
+        {
+            if (_all.Count == 0) return null;
+            return _all[UnityEngine.Random.Range(0, _all.Count)];
+        }
+
+        public PropEntry GetRandomExcluding(HashSet<string> excludeIds)
+        {
+            if (_all.Count == 0) return null;
+
+            List<PropEntry> pool = _all;
+            if (excludeIds != null && excludeIds.Count > 0)
+            {
+                pool = _all.Where(p => p != null && !excludeIds.Contains(p.Id)).ToList();
+                if (pool.Count == 0)
+                    pool = _all;
+            }
+
+            return pool[UnityEngine.Random.Range(0, pool.Count)];
+        }
+
+        // Returns a random prop with confidence ≥ 0.8 (pipeline-validated geometry).
+        // Used as the fallback for abstract/emotional prompts where any prop must feel intentional.
+        public PropEntry GetRandomHighConf()
+        {
+            var pool = _allHighConf.Count > 0 ? _allHighConf : _all;
+            return pool[UnityEngine.Random.Range(0, pool.Count)];
+        }
+
+        // Returns a random prop from the given groups, constrained to high-confidence entries.
+        public PropEntry GetRandomHighConfFromGroups(string[] groups, HashSet<string> excludeIds = null)
+        {
+            if (groups == null || groups.Length == 0) return GetRandomHighConf();
+            var pool = _allHighConf.Count > 0 ? _allHighConf : _all;
+            var candidates = pool.Where(p => Array.IndexOf(groups, p.Group) >= 0);
+            if (excludeIds != null)
+                candidates = candidates.Where(p => !excludeIds.Contains(p.Id));
+            var list = candidates.ToList();
+            if (list.Count == 0) return GetRandomFromGroups(groups, excludeIds);
+            return list[UnityEngine.Random.Range(0, list.Count)];
+        }
+
+        public PropEntry GetRandomFromGroup(string group)
+        {
+            if (_byGroup.TryGetValue(group, out var list) && list.Count > 0)
+                return list[UnityEngine.Random.Range(0, list.Count)];
+            return GetRandom();
+        }
+
+        // Returns a random prop whose tags overlap with the given tag set (weighted toward best match).
+        // Falls back to fully random if no match found.
+        public PropEntry GetWeightedByTags(IEnumerable<string> preferredTags, float randomness = 0.2f)
+        {
+            if (_all.Count == 0) return null;
+            if (UnityEngine.Random.value < randomness)
+                return GetRandom();
+
+            var tagSet = new HashSet<string>(preferredTags);
+            var scored = _all
+                .Select(p => (prop: p, score: p.Tags.Count(t => tagSet.Contains(t))))
+                .Where(x => x.score > 0)
+                .OrderByDescending(x => x.score)
+                .ToList();
+
+            if (scored.Count == 0) return GetRandom();
+
+            // Weighted sample from top matches
+            int topN = Mathf.Min(10, scored.Count);
+            return scored[UnityEngine.Random.Range(0, topN)].prop;
+        }
+
+        public PropEntry GetRandomFromGroups(string[] groups, HashSet<string> excludeIds = null)
+        {
+            if (groups == null || groups.Length == 0) return GetRandom();
+            var candidates = _all.Where(p => Array.IndexOf(groups, p.Group) >= 0);
+            if (excludeIds != null)
+                candidates = candidates.Where(p => !excludeIds.Contains(p.Id));
+            var list = candidates.ToList();
+            if (list.Count == 0) return GetRandom();
+            return list[UnityEngine.Random.Range(0, list.Count)];
+        }
+
+        public PropEntry GetWeightedByTagsInGroups(IEnumerable<string> preferredTags, string[] groups,
+            float randomness = 0.2f, HashSet<string> excludeIds = null)
+        {
+            if (_all.Count == 0) return null;
+            if (UnityEngine.Random.value < randomness)
+                return GetRandomFromGroups(groups, excludeIds);
+
+            var tagSet = new HashSet<string>(preferredTags);
+            var pool = groups != null && groups.Length > 0
+                ? _all.Where(p => Array.IndexOf(groups, p.Group) >= 0)
+                : (IEnumerable<PropEntry>)_all;
+
+            if (excludeIds != null)
+                pool = pool.Where(p => !excludeIds.Contains(p.Id));
+
+            var scored = pool
+                .Select(p => (prop: p, score: p.Tags.Count(t => tagSet.Contains(t))))
+                .Where(x => x.score > 0)
+                .OrderByDescending(x => x.score)
+                .ToList();
+
+            if (scored.Count == 0) return GetRandomFromGroups(groups, excludeIds);
+            return WeightedPick(scored);
+        }
+
+        /// <summary>
+        /// Prefers props whose <see cref="PropEntry.CorporateTags"/> contains <paramref name="corporateSlug"/>.
+        /// Constrained to <paramref name="groups"/>; falls back to emotional-weighted pick then random in groups.
+        /// </summary>
+        public PropEntry GetWeightedByCorporateTagInGroups(
+            string corporateSlug,
+            string[] groups,
+            IEnumerable<string> secondaryEmotionalTags = null,
+            float randomness = 0.18f,
+            HashSet<string> excludeIds = null)
+        {
+            if (_all.Count == 0) return null;
+            string slug = (corporateSlug ?? "").Trim().ToLowerInvariant();
+            if (string.IsNullOrEmpty(slug))
+                return GetRandomFromGroups(groups, excludeIds);
+
+            if (UnityEngine.Random.value < randomness)
+                return GetRandomFromGroups(groups, excludeIds);
+
+            var pool = groups != null && groups.Length > 0
+                ? _all.Where(p => Array.IndexOf(groups, p.Group) >= 0)
+                : (IEnumerable<PropEntry>)_all;
+
+            if (excludeIds != null)
+                pool = pool.Where(p => !excludeIds.Contains(p.Id));
+
+            var secondary = secondaryEmotionalTags != null
+                ? new HashSet<string>(secondaryEmotionalTags, StringComparer.OrdinalIgnoreCase)
+                : null;
+
+            var scored = pool
+                .Select(p =>
+                {
+                    bool corpHit = p.CorporateTags != null && p.CorporateTags.Any(c =>
+                        string.Equals((c ?? "").Trim(), slug, StringComparison.OrdinalIgnoreCase));
+                    int corpScore = corpHit ? 4 : 0;
+                    int emScore = 0;
+                    if (secondary != null && secondary.Count > 0 && p.EmotionalTags != null)
+                        emScore = p.EmotionalTags.Count(t => secondary.Contains(t));
+                    return (prop: p, score: corpScore * 3 + emScore);
+                })
+                .Where(x => x.score > 0)
+                .OrderByDescending(x => x.score)
+                .ToList();
+
+            if (scored.Count == 0)
+            {
+                if (secondary != null && secondary.Count > 0)
+                    return GetWeightedByEmotionalTagsInGroups(secondary, groups, randomness: randomness * 1.25f, excludeIds);
+                return GetRandomFromGroups(groups, excludeIds);
+            }
+
+            return WeightedPick(scored);
+        }
+
+        // Returns a prop from adjacent/different tags — used for assistant drift behavior.
+        public PropEntry GetDriftedFromTags(IEnumerable<string> avoidTags, float driftStrength = 0.5f)
+        {
+            if (_all.Count == 0) return null;
+            if (UnityEngine.Random.value > driftStrength)
+                return GetRandom();
+
+            var avoidSet = new HashSet<string>(avoidTags);
+            var candidates = _all.Where(p => !p.Tags.Any(t => avoidSet.Contains(t))).ToList();
+            if (candidates.Count == 0) return GetRandom();
+            return candidates[UnityEngine.Random.Range(0, candidates.Count)];
+        }
+
+        public PropEntry GetFromDriftGroups(string[] driftGroups)
+        {
+            if (driftGroups == null || driftGroups.Length == 0) return GetRandom();
+            var candidates = _all.Where(p => Array.IndexOf(driftGroups, p.Group) >= 0).ToList();
+            if (candidates.Count == 0) return GetRandom();
+            return candidates[UnityEngine.Random.Range(0, candidates.Count)];
+        }
+
+        // Selects a prop by scoring emotional_tags overlap within the given group filter.
+        // Use this for abstract/emotional prompts where emotional texture matters more than category.
+        // excludeIds: set of prop IDs to skip (for hotbar dedup).
+        public PropEntry GetWeightedByEmotionalTagsInGroups(
+            IEnumerable<string> emotionalTags, string[] groups, float randomness = 0.2f,
+            HashSet<string> excludeIds = null)
+        {
+            if (_all.Count == 0) return null;
+            if (UnityEngine.Random.value < randomness)
+                return GetRandomFromGroups(groups, excludeIds);
+
+            var tagSet = new HashSet<string>(emotionalTags);
+            var pool = groups != null && groups.Length > 0
+                ? _all.Where(p => Array.IndexOf(groups, p.Group) >= 0)
+                : (IEnumerable<PropEntry>)_all;
+
+            if (excludeIds != null)
+                pool = pool.Where(p => !excludeIds.Contains(p.Id));
+
+            var scored = pool
+                .Select(p => (prop: p, score: p.EmotionalTags.Count(t => tagSet.Contains(t))))
+                .Where(x => x.score > 0)
+                .OrderByDescending(x => x.score)
+                .ToList();
+
+            if (scored.Count == 0) return GetRandomFromGroups(groups, excludeIds);
+            return WeightedPick(scored);
+        }
+
+        // Selects a drift prop whose emotional_tags match the given drift vocabulary,
+        // constrained to the drift groups. Used during assistant Suggesting/Overriding phases
+        // with abstract prompts — the system pushes toward an emotionally alien register.
+        public PropEntry GetFromDriftEmotionalGroups(
+            string[] driftEmotionalTags, string[] driftGroups, float randomness = 0.2f)
+        {
+            if (_all.Count == 0) return null;
+            if (driftEmotionalTags == null || driftEmotionalTags.Length == 0)
+                return GetFromDriftGroups(driftGroups);
+            if (UnityEngine.Random.value < randomness)
+                return GetFromDriftGroups(driftGroups);
+
+            var tagSet = new HashSet<string>(driftEmotionalTags);
+            var pool = driftGroups != null && driftGroups.Length > 0
+                ? _all.Where(p => Array.IndexOf(driftGroups, p.Group) >= 0)
+                : (IEnumerable<PropEntry>)_all;
+
+            var scored = pool
+                .Select(p => (prop: p, score: p.EmotionalTags.Count(t => tagSet.Contains(t))))
+                .Where(x => x.score > 0)
+                .OrderByDescending(x => x.score)
+                .ToList();
+
+            if (scored.Count == 0) return GetFromDriftGroups(driftGroups);
+            int topN = Mathf.Min(12, scored.Count);
+            return scored[UnityEngine.Random.Range(0, topN)].prop;
+        }
+
+        // Score-weighted random: higher-scoring props are proportionally more likely.
+        private static PropEntry WeightedPick(List<(PropEntry prop, int score)> scored)
+        {
+            if (scored.Count == 0) return null;
+            int totalScore = 0;
+            foreach (var s in scored) totalScore += s.score;
+            int roll = UnityEngine.Random.Range(0, totalScore);
+            int acc = 0;
+            foreach (var s in scored)
+            {
+                acc += s.score;
+                if (roll < acc) return s.prop;
+            }
+            return scored[scored.Count - 1].prop;
+        }
+
+        private class ManifestRoot
+        {
+            [JsonProperty("props")] public List<PropEntry> Props { get; set; }
+        }
+
+        private static IEnumerable<string> TokenizeName(string name)
+        {
+            if (string.IsNullOrWhiteSpace(name))
+                yield break;
+
+            var chars = name.ToLowerInvariant()
+                .Select(c => char.IsLetterOrDigit(c) ? c : ' ')
+                .ToArray();
+            foreach (var token in new string(chars).Split(' ', StringSplitOptions.RemoveEmptyEntries))
+            {
+                if (token.Length >= 2)
+                    yield return token;
+            }
+        }
+    }
+}
