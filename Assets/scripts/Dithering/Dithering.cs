@@ -4,6 +4,7 @@ using UnityEngine.Rendering.Universal;
 
 namespace PSX
 {
+    [VolumeComponentMenu("PSX/Dithering")]
     public class Dithering : VolumeComponent, IPostProcessComponent
     {
         //PIXELATION
@@ -15,7 +16,7 @@ namespace PSX
         
         
         //INTERFACE REQUIREMENT 
-        public bool IsActive() => true;
+        public bool IsActive() => active;
         public bool IsTileCompatible() => false;
     }
 }

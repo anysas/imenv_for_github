@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.Rendering.Universal;
 
+[VolumeComponentMenu("PSX/CRT")]
 public class Crt : VolumeComponent, IPostProcessComponent
 {
     public FloatParameter scanlinesWeight = new FloatParameter(1f);
@@ -37,6 +38,6 @@ public class Crt : VolumeComponent, IPostProcessComponent
 
 
     //INTERFACE REQUIREMENT 
-    public bool IsActive() => true;
+    public bool IsActive() => active;
     public bool IsTileCompatible() => false;
 }

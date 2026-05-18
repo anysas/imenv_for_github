@@ -4,6 +4,7 @@ using UnityEngine.Rendering.Universal;
 
 namespace PSX
 {
+    [VolumeComponentMenu("PSX/Pixelation")]
     public class Pixelation : VolumeComponent, IPostProcessComponent
     {
         //PIXELATION
@@ -14,7 +15,7 @@ namespace PSX
         public FloatParameter colorPrecision = new FloatParameter(32.0f);
         
         //INTERFACE REQUIREMENT 
-        public bool IsActive() => true;
+        public bool IsActive() => active;
         public bool IsTileCompatible() => false;
     }
 }

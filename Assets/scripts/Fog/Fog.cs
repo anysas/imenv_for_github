@@ -4,6 +4,7 @@ using UnityEngine.Rendering.Universal;
 
 namespace PSX
 {
+    [VolumeComponentMenu("PSX/Fog")]
     public class Fog : VolumeComponent, IPostProcessComponent
     {
         //PARAMETERS HERE!
@@ -28,7 +29,7 @@ namespace PSX
         public FloatParameter noiseStrength = new FloatParameter(0.05f);
 
         //INTERFACE REQUIREMENT 
-        public bool IsActive() => true;
+        public bool IsActive() => active;
         public bool IsTileCompatible() => false;
     }
 }

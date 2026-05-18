@@ -6,7 +6,7 @@ namespace AlgorithmicGallery.Corruption
     /// <summary>
     /// Grid alignment by placement phase (1-based player placement count):
     /// 1–20: new props stay at click; the previous prop moves to a random empty grid cell on the next click.
-    /// 21+: new props spawn on a random empty grid cell immediately.
+    /// 21+: new props spawn on a random empty grid cell immediately (no full-scene relayout).
     /// </summary>
     public class SandboxPropGridAligner : MonoBehaviour
     {
@@ -25,9 +25,9 @@ namespace AlgorithmicGallery.Corruption
 
         [Header("Grid")]
         [Tooltip("Distance between grid slot centers (larger = props spread farther apart).")]
-        [SerializeField] private float _gridSpacing = 1.75f;
+        [SerializeField] private float _gridSpacing = 2.1f;
         [Tooltip("Never use a spacing smaller than this, even when props are tiny.")]
-        [SerializeField] private float _minGridSpacing = 1.5f;
+        [SerializeField] private float _minGridSpacing = 2.1f;
         [Tooltip("Extra gap between prop footprints when reserving cells and checking overlap.")]
         [SerializeField] private float _cellPadding = 0.15f;
         [Tooltip("Fallback footprint radius when placing before the model exists (metres, half-extent).")]
@@ -39,8 +39,6 @@ namespace AlgorithmicGallery.Corruption
         [SerializeField] private bool _snapRotationToCardinal = true;
         [Tooltip("If no empty cells remain, fall back to ring search around a random point in the grid region.")]
         [SerializeField] private int _overlapSearchRings = 6;
-        [Tooltip("Minimum grid slots across the shortest pedestal axis (prevents one huge center slot).")]
-        [SerializeField] private int _minCellsAcrossGrid = 5;
 
         private readonly List<GameObject> _propsScratch = new();
         private readonly List<Vector3> _gridCellsScratch = new();
@@ -143,42 +141,10 @@ namespace AlgorithmicGallery.Corruption
                 return;
 
             if (UsesImmediateGridPlacement(placementNumber))
-            {
-                // Full relayout on first immediate-grid placement; later ones are placed by PropPlacer.
-                if (placementNumber == _immediateGridFrom)
-                    SnapAllPlayerPropsToGrid();
                 return;
-            }
 
             if (UsesDeferredGridForPrevious(placementNumber))
                 SnapPreviousPlayerPropToRandomEmptyGrid();
-        }
-
-        /// <summary>
-        /// On transition to immediate-grid phase: move every player prop onto a unique grid cell.
-        /// </summary>
-        private void SnapAllPlayerPropsToGrid()
-        {
-            ResolveReferences();
-            _propsScratch.Clear();
-            PropBudget.Instance?.GetTrackedPlayerPlacedProps(_propsScratch);
-
-            if (_propsScratch.Count == 0 || !TryGetSandboxBounds(out Bounds sandboxBounds))
-                return;
-
-            Bounds gridRegion = GetCenteredGridRegion(sandboxBounds);
-            float grid = GetEffectiveGridSpacing(gridRegion);
-            Vector3 gridOrigin = gridRegion.center;
-            _occupiedCells.Clear();
-
-            for (int i = 0; i < _propsScratch.Count; i++)
-            {
-                GameObject prop = _propsScratch[i];
-                if (prop == null || !prop.activeInHierarchy)
-                    continue;
-
-                SnapPropToRandomEmptyGrid(prop);
-            }
         }
 
         private void SnapPreviousPlayerPropToRandomEmptyGrid()
@@ -329,15 +295,6 @@ namespace AlgorithmicGallery.Corruption
 
             if (largestDiameter > spacing)
                 spacing = largestDiameter;
-
-            float pad = Mathf.Max(0f, _sandboxEdgeInset);
-            float regionSpan = Mathf.Min(gridRegion.size.x, gridRegion.size.z) - pad * 2f;
-            int minCells = Mathf.Max(3, _minCellsAcrossGrid);
-            if (regionSpan > 0f)
-            {
-                float maxSpacingForSpread = regionSpan / minCells;
-                spacing = Mathf.Min(spacing, maxSpacingForSpread);
-            }
 
             return Mathf.Max(0.25f, spacing);
         }
