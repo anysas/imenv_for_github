@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
@@ -14,8 +15,11 @@ namespace AlgorithmicGallery.Corruption
 
         [Header("References")]
         [SerializeField] private SandboxManager _sandbox;
+        [SerializeField] private SandboxPropGridAligner _gridAligner;
         [SerializeField] private Transform _mainPedestal;
         [SerializeField] private TMP_Text _mainPlateText;
+        [Tooltip("Extra pause after grid slides finish before building the exhibit.")]
+        [SerializeField] private float _settleDelayAfterGridSlides = 0.08f;
 
         [Header("Scene object names")]
         [SerializeField] private string _mainPedestalObjectName = "mainPedestal";
@@ -53,6 +57,9 @@ namespace AlgorithmicGallery.Corruption
             if (_sandbox == null)
                 _sandbox = FindFirstObjectByType<SandboxManager>();
 
+            if (_gridAligner == null)
+                _gridAligner = FindFirstObjectByType<SandboxPropGridAligner>();
+
             if (_mainPedestal == null && !string.IsNullOrWhiteSpace(_mainPedestalObjectName))
             {
                 var pedestalGo = GameObject.Find(_mainPedestalObjectName);
@@ -89,8 +96,22 @@ namespace AlgorithmicGallery.Corruption
         private void HandleSessionComplete()
         {
             ResolveReferences();
-            BuildExhibit();
             ApplyPromptText();
+            StartCoroutine(BuildExhibitAfterGridSettles());
+        }
+
+        private IEnumerator BuildExhibitAfterGridSettles()
+        {
+            if (_gridAligner == null)
+                _gridAligner = FindFirstObjectByType<SandboxPropGridAligner>();
+
+            if (_gridAligner != null && _gridAligner.HasActiveSlides)
+                yield return _gridAligner.WaitUntilSlidesFinished();
+
+            if (_settleDelayAfterGridSlides > 0f)
+                yield return new WaitForSeconds(_settleDelayAfterGridSlides);
+
+            BuildExhibit();
         }
 
         public void BuildExhibit()

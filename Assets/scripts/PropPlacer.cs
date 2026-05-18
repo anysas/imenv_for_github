@@ -478,6 +478,16 @@ namespace AlgorithmicGallery.Corruption
                 return false;
 
             gridPos.y = y;
+
+            if (_gridAligner == null)
+                _gridAligner = FindFirstObjectByType<SandboxPropGridAligner>();
+
+            if (_gridAligner != null)
+            {
+                _gridAligner.SlidePropToGridPosition(placed, gridPos);
+                return true;
+            }
+
             placed.transform.position = gridPos;
             SandboxGameplaySfx.NotifyPropMovedOnGrid(placed, from, gridPos);
             return true;

@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -10,7 +11,7 @@ namespace AlgorithmicGallery.Corruption
     /// </summary>
     public class SandboxPropGridAligner : MonoBehaviour
     {
-        /// <summary>Fired after the system moves a prop to a grid slot (from, to are world positions).</summary>
+        /// <summary>Fired when a prop begins sliding to a grid slot (from, to are world positions).</summary>
         public event System.Action<GameObject, Vector3, Vector3> OnPropMovedOnGrid;
 
         [Header("References")]
@@ -40,7 +41,17 @@ namespace AlgorithmicGallery.Corruption
         [Tooltip("If no empty cells remain, fall back to ring search around a random point in the grid region.")]
         [SerializeField] private int _overlapSearchRings = 6;
 
+        [Header("Grid slide")]
+        [Tooltip("Pause before a prop starts sliding (lets the newly placed prop read clearly first).")]
+        [SerializeField] private float _gridSlideStartDelay = 0.45f;
+        [Tooltip("How long props take to slide into a grid cell (seconds).")]
+        [SerializeField] private float _gridSlideDuration = 1f;
+        [Tooltip("XZ distance below this snaps instantly with no slide.")]
+        [SerializeField] private float _gridSlideMinDistance = 0.05f;
+        [SerializeField] private AnimationCurve _gridSlideEase = AnimationCurve.EaseInOut(0f, 0f, 1f, 1f);
+
         private readonly List<GameObject> _propsScratch = new();
+        private readonly Dictionary<int, Coroutine> _activeSlides = new();
         private readonly List<Vector3> _gridCellsScratch = new();
         private readonly List<Vector3> _emptyCellsScratch = new();
         private readonly HashSet<long> _occupiedCells = new();
@@ -55,6 +66,49 @@ namespace AlgorithmicGallery.Corruption
         void OnDestroy()
         {
             Unsubscribe();
+            _activeSlides.Clear();
+        }
+
+        /// <summary>Slides a prop to a grid world position on XZ (preserves Y). Used for immediate-grid placement.</summary>
+        public void SlidePropToGridPosition(GameObject prop, Vector3 targetWorld)
+        {
+            if (prop == null)
+                return;
+
+            Transform t = prop.transform;
+            Vector3 from = t.position;
+            targetWorld.y = from.y;
+            BeginSlide(prop, from, targetWorld, GetCardinalRotation(t));
+        }
+
+        public bool HasActiveSlides => _activeSlides.Count > 0;
+
+        /// <summary>Waits until every in-flight grid slide has finished (used before main-pedestal exhibit).</summary>
+        public IEnumerator WaitUntilSlidesFinished()
+        {
+            while (true)
+            {
+                PruneFinishedSlides();
+                if (_activeSlides.Count == 0)
+                    yield break;
+                yield return null;
+            }
+        }
+
+        private void PruneFinishedSlides()
+        {
+            if (_activeSlides.Count == 0)
+                return;
+
+            var finished = new List<int>();
+            foreach (var entry in _activeSlides)
+            {
+                if (entry.Value == null)
+                    finished.Add(entry.Key);
+            }
+
+            for (int i = 0; i < finished.Count; i++)
+                _activeSlides.Remove(finished[i]);
         }
 
         public bool UsesImmediateGridPlacement(int placementNumber1Based) =>
@@ -222,24 +276,113 @@ namespace AlgorithmicGallery.Corruption
 
             target.y = current.y;
             Vector3 from = t.position;
-            t.position = target;
-            ApplyCardinalRotation(t);
-            RaisePropMovedOnGrid(prop, from, target);
+            BeginSlide(prop, from, target, GetCardinalRotation(t));
+        }
+
+        private void BeginSlide(GameObject prop, Vector3 from, Vector3 to, Quaternion targetRotation)
+        {
+            if (prop == null)
+                return;
+
+            Transform t = prop.transform;
+            Vector3 delta = to - from;
+            delta.y = 0f;
+
+            int id = prop.GetInstanceID();
+            if (_activeSlides.TryGetValue(id, out Coroutine running) && running != null)
+                StopCoroutine(running);
+
+            if (delta.sqrMagnitude < _gridSlideMinDistance * _gridSlideMinDistance)
+            {
+                _activeSlides[id] = StartCoroutine(DelayedSnapRoutine(prop, from, to, targetRotation));
+                return;
+            }
+
+            _activeSlides[id] = StartCoroutine(DelayedSlideRoutine(prop, from, to, targetRotation));
+        }
+
+        private IEnumerator DelayedSnapRoutine(GameObject prop, Vector3 from, Vector3 to, Quaternion targetRotation)
+        {
+            int id = prop.GetInstanceID();
+            if (_gridSlideStartDelay > 0f)
+                yield return new WaitForSeconds(_gridSlideStartDelay);
+
+            if (prop == null)
+            {
+                _activeSlides.Remove(id);
+                yield break;
+            }
+
+            prop.transform.position = to;
+            prop.transform.rotation = targetRotation;
+            RaisePropMovedOnGrid(prop, from, to);
+            _activeSlides.Remove(id);
+        }
+
+        private IEnumerator DelayedSlideRoutine(GameObject prop, Vector3 from, Vector3 to, Quaternion targetRotation)
+        {
+            int id = prop.GetInstanceID();
+            if (_gridSlideStartDelay > 0f)
+                yield return new WaitForSeconds(_gridSlideStartDelay);
+
+            if (prop == null)
+            {
+                _activeSlides.Remove(id);
+                yield break;
+            }
+
+            RaisePropMovedOnGrid(prop, from, to);
+            yield return SlidePropRoutine(prop, from, to, targetRotation, id);
+        }
+
+        private IEnumerator SlidePropRoutine(GameObject prop, Vector3 from, Vector3 to, Quaternion targetRotation, int id)
+        {
+            Transform t = prop.transform;
+            Quaternion startRotation = t.rotation;
+            float duration = Mathf.Max(0.01f, _gridSlideDuration);
+            float elapsed = 0f;
+
+            while (elapsed < duration)
+            {
+                if (prop == null || t == null)
+                {
+                    _activeSlides.Remove(id);
+                    yield break;
+                }
+
+                elapsed += Time.deltaTime;
+                float normalized = Mathf.Clamp01(elapsed / duration);
+                float eased = _gridSlideEase != null && _gridSlideEase.length > 0
+                    ? _gridSlideEase.Evaluate(normalized)
+                    : normalized;
+
+                t.position = Vector3.Lerp(from, to, eased);
+                t.rotation = Quaternion.Slerp(startRotation, targetRotation, eased);
+                yield return null;
+            }
+
+            if (prop != null && t != null)
+            {
+                t.position = to;
+                t.rotation = targetRotation;
+            }
+
+            _activeSlides.Remove(id);
+        }
+
+        private Quaternion GetCardinalRotation(Transform t)
+        {
+            if (!_snapRotationToCardinal || t == null)
+                return t != null ? t.rotation : Quaternion.identity;
+
+            float yaw = Mathf.Round(t.eulerAngles.y / 90f) * 90f;
+            return Quaternion.Euler(0f, yaw, 0f);
         }
 
         private void RaisePropMovedOnGrid(GameObject prop, Vector3 from, Vector3 to)
         {
             OnPropMovedOnGrid?.Invoke(prop, from, to);
             SandboxGameplaySfx.NotifyPropMovedOnGrid(prop, from, to);
-        }
-
-        private void ApplyCardinalRotation(Transform t)
-        {
-            if (!_snapRotationToCardinal || t == null)
-                return;
-
-            float yaw = Mathf.Round(t.eulerAngles.y / 90f) * 90f;
-            t.rotation = Quaternion.Euler(0f, yaw, 0f);
         }
 
         private void CollectOccupiedCellsFromPlacedProps(Vector3 gridOrigin, float gridSpacing, GameObject excludeProp = null)
