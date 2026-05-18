@@ -139,7 +139,11 @@ namespace AlgorithmicGallery.Corruption
                 OpeningState = PromptState.AwaitingPrompt;
 
             if (_hotbarController != null)
-                _hotbarController.Initialize(Manifest, StyleProfile, simpleRandomPicks: true);
+                _hotbarController.Initialize(
+                    Manifest,
+                    StyleProfile,
+                    simpleRandomPicks: true,
+                    maxSessionPlacements: _maxTotalPlacements);
 
             if (_propPlacer != null)
             {

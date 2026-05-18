@@ -6,9 +6,10 @@ namespace PSX
 {
     public class DitheringRenderFeature : ScriptableRendererFeature
     {
+        [SerializeField] private Shader effectShader;
         private DitheringPass _pass;
 
-        public override void Create() => _pass = new DitheringPass(RenderPassEvent.BeforeRenderingPostProcessing);
+        public override void Create() => _pass = new DitheringPass(effectShader, RenderPassEvent.BeforeRenderingPostProcessing);
 
         public override void AddRenderPasses(ScriptableRenderer renderer, ref RenderingData renderingData)
         {
@@ -35,8 +36,8 @@ namespace PSX
         private static readonly int DitherStrength = Shader.PropertyToID("_DitherStrength");
         private static readonly int DitherScale = Shader.PropertyToID("_DitherScale");
 
-        public DitheringPass(RenderPassEvent evt)
-            : base("PostEffect/Dithering", "PSX Dithering", evt) { }
+        public DitheringPass(Shader shader, RenderPassEvent evt)
+            : base(shader, "PSX Dithering", evt) { }
 
         protected override void ApplyMaterialProperties(Dithering dithering)
         {

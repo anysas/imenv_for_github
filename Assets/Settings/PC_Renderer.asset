@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7813741425bf9df4b8f6b5a4f6b1f66f, type: 3}
   m_Name: Crt
   m_EditorClassIdentifier: 
+  effectShader: {fileID: 4800000, guid: 00914bc33eaf6174eb8c82447a307c84, type: 3}
   m_Active: 1
 --- !u!114 &-1925210268287778290
 MonoBehaviour:
@@ -25,6 +26,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7a17da147615463497e4bd9e04f0dce1, type: 3}
   m_Name: Dithering
   m_EditorClassIdentifier: 
+  effectShader: {fileID: 4800000, guid: 0b3fbf35a693e2e42a255895e5be9dbd, type: 3}
   m_Active: 1
 --- !u!114 &11400000
 MonoBehaviour:
@@ -97,6 +99,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3277e3c6431244fb960cbd72870858e2, type: 3}
   m_Name: Fog
   m_EditorClassIdentifier: 
+  effectShader: {fileID: 4800000, guid: a64e8590867649e4aaad5c1e24175437, type: 3}
   m_Active: 1
 --- !u!114 &6965443398785072023
 MonoBehaviour:
@@ -110,6 +113,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: df6534dd185a4f18b50629b58de296b6, type: 3}
   m_Name: Pixelation
   m_EditorClassIdentifier: 
+  effectShader: {fileID: 4800000, guid: 6cc37f589a3171847bd1dc6f9224ccf3, type: 3}
   m_Active: 1
 --- !u!114 &7833122117494664109
 MonoBehaviour:

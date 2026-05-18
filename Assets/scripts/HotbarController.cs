@@ -32,14 +32,30 @@ namespace AlgorithmicGallery.Corruption
         private readonly Queue<string> _seedQueue = new();
         private Coroutine _postPlacementThinkingRoutine;
         private bool _simpleRandomPicks;
+        private int _maxSessionPlacements = int.MaxValue;
+        private readonly HashSet<string> _placedPropIds = new();
 
-        public void Initialize(CuratedPropManifest manifest, StyleProfile styleProfile, bool simpleRandomPicks = false)
+        public void Initialize(
+            CuratedPropManifest manifest,
+            StyleProfile styleProfile,
+            bool simpleRandomPicks = false,
+            int maxSessionPlacements = int.MaxValue)
         {
             _manifest = manifest;
             _styleProfile = styleProfile;
             _simpleRandomPicks = simpleRandomPicks;
+            _maxSessionPlacements = Mathf.Max(1, maxSessionPlacements);
+            _placedPropIds.Clear();
             for (int i = 0; i < SlotCount; i++)
                 Reroll(i);
+        }
+
+        /// <summary>Marks a player-placed prop so rerolls prefer unused catalog entries.</summary>
+        public void RegisterPlayerPlacedProp(PropEntry prop)
+        {
+            string id = ResolvePropId(prop);
+            if (string.IsNullOrEmpty(id)) return;
+            _placedPropIds.Add(id);
         }
 
         public void SetActivePrompt(PromptDefinition prompt)
@@ -128,13 +144,7 @@ namespace AlgorithmicGallery.Corruption
         {
             if (_manifest == null) return;
 
-            // Collect IDs of props in other slots to avoid duplicates
-            var excludeIds = new HashSet<string>();
-            for (int i = 0; i < SlotCount; i++)
-            {
-                if (i != index && Slots[i] != null)
-                    excludeIds.Add(Slots[i].Id);
-            }
+            var excludeIds = BuildRerollExcludeIds(index);
 
             if (_simpleRandomPicks)
             {
@@ -219,6 +229,8 @@ namespace AlgorithmicGallery.Corruption
             while (_seedQueue.Count > 0)
             {
                 string id = _seedQueue.Dequeue();
+                if (ShouldExcludePlacedProps() && _placedPropIds.Contains(id))
+                    continue;
                 var candidate = _manifest.GetById(id);
                 if (candidate == null) continue;
                 prop = candidate;
@@ -226,6 +238,53 @@ namespace AlgorithmicGallery.Corruption
             }
 
             return false;
+        }
+
+        private HashSet<string> BuildRerollExcludeIds(int slotIndex)
+        {
+            var excludeIds = new HashSet<string>();
+            for (int i = 0; i < SlotCount; i++)
+            {
+                if (i == slotIndex || Slots[i] == null) continue;
+                string id = ResolvePropId(Slots[i]);
+                if (!string.IsNullOrEmpty(id))
+                    excludeIds.Add(id);
+            }
+
+            if (ShouldExcludePlacedProps())
+            {
+                foreach (string placedId in _placedPropIds)
+                    excludeIds.Add(placedId);
+            }
+
+            return excludeIds;
+        }
+
+        /// <summary>
+        /// Keeps placed props out of the hotbar while enough unused catalog entries remain
+        /// for the rest of the session and the current 3-slot roll.
+        /// </summary>
+        private bool ShouldExcludePlacedProps()
+        {
+            if (_manifest == null || _manifest.Count == 0 || _placedPropIds.Count == 0)
+                return false;
+
+            int unusedCount = _manifest.Count - _placedPropIds.Count;
+            if (unusedCount <= 0)
+                return false;
+
+            int placementsLeft = _maxSessionPlacements;
+            if (_styleProfile != null)
+                placementsLeft = Mathf.Max(0, _maxSessionPlacements - _styleProfile.PlayerPlacementCount);
+
+            return unusedCount >= placementsLeft;
+        }
+
+        private static string ResolvePropId(PropEntry prop)
+        {
+            if (prop == null) return null;
+            if (!string.IsNullOrEmpty(prop.Id)) return prop.Id;
+            return prop.GlbPath;
         }
     }
 }

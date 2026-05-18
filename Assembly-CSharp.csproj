@@ -49,6 +49,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\scripts\_legacy\LinearGalleryController.cs" />
+    <Compile Include="Assets\scripts\UrpLitGltfMaterialGenerator.cs" />
     <Compile Include="Assets\scripts\SandboxPropGridAligner.cs" />
     <Compile Include="Assets\scripts\PromptMoodLighting.cs" />
     <Compile Include="Assets\scripts\_legacy\DesperationStrategy.cs" />
@@ -100,6 +101,7 @@
     <Compile Include="Assets\scripts\_legacy\ExplorationStrategy.cs" />
     <Compile Include="Assets\scripts\Dithering\Dithering.cs" />
     <Compile Include="Assets\scripts\HotbarController.cs" />
+    <Compile Include="Assets\scripts\PropMaterialRemap.cs" />
     <Compile Include="Assets\scripts\_legacy\cubeAppear.cs" />
     <Compile Include="Assets\scripts\_legacy\GazeManager.cs" />
     <Compile Include="Assets\scripts\_legacy\VRGazeProvider.cs" />

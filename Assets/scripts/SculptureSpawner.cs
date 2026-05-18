@@ -3,6 +3,7 @@ using System.IO;
 using System.Threading.Tasks;
 using AlgorithmicGallery.Corruption;
 using GLTFast;
+using GLTFast.Materials;
 using UnityEngine;
 
 namespace AlgorithmicGallery
@@ -23,9 +24,12 @@ namespace AlgorithmicGallery
         [SerializeField] private float _minScaleFactor = 0.05f;
         [SerializeField] private float _maxScaleFactor = 5f;
         [SerializeField] private bool _centerAndGroundModel = true;
+        [Tooltip("URP Lit template used for glTF props in builds (falls back to Resources/PropGltfFallback).")]
+        [SerializeField] private Material _urpLitMaterialTemplate;
 
         private bool _skipMaterialCompatibilityPass;
         private bool _forceGrowthShaderMaterialOverride;
+        private UrpLitGltfMaterialGenerator _materialGenerator;
 
         public bool IsSkippingMaterialCompatibilityPass => _skipMaterialCompatibilityPass;
         public bool IsForceGrowthShaderMaterialOverrideEnabled => _forceGrowthShaderMaterialOverride;
@@ -63,7 +67,7 @@ namespace AlgorithmicGallery
             // non-uniform scale and squashes props (flattened on Y).
             var container = new GameObject(Path.GetFileNameWithoutExtension(fullPath));
 
-            var gltfImport = new GltfImport();
+            var gltfImport = new GltfImport(materialGenerator: GetMaterialGenerator());
             bool loadSuccess;
             try
             {
@@ -147,15 +151,28 @@ namespace AlgorithmicGallery
             return container;
         }
 
+        private IMaterialGenerator GetMaterialGenerator()
+        {
+            Material template = _urpLitMaterialTemplate != null
+                ? _urpLitMaterialTemplate
+                : PropMaterialRemap.LoadFallbackTemplate();
+            _materialGenerator ??= new UrpLitGltfMaterialGenerator(template);
+            return _materialGenerator;
+        }
+
         private void ApplyMaterialCompatibility(GameObject root)
         {
             if (root == null)
                 return;
 
-            Shader urpLit = Shader.Find("Universal Render Pipeline/Lit")
-                         ?? Shader.Find("Universal Render Pipeline/Simple Lit");
-            if (urpLit == null)
+            Material template = _urpLitMaterialTemplate != null
+                ? _urpLitMaterialTemplate
+                : PropMaterialRemap.LoadFallbackTemplate();
+            if (template == null || template.shader == null)
+            {
+                Debug.LogError("SculptureSpawner: URP Lit template unavailable — assign Urp Lit Material Template or add Resources/PropGltfFallback.mat.");
                 return;
+            }
 
             foreach (var renderer in root.GetComponentsInChildren<Renderer>(true))
             {
@@ -164,22 +181,7 @@ namespace AlgorithmicGallery
 
                 var mats = renderer.sharedMaterials;
                 for (int i = 0; i < mats.Length; i++)
-                {
-                    var mat = mats[i];
-                    if (mat == null || mat.shader == null)
-                        continue;
-
-                    string shaderName = mat.shader.name;
-                    if (shaderName.Contains("Error") || shaderName.Contains("Hidden/InternalErrorShader"))
-                    {
-                        var replacement = new Material(urpLit);
-                        if (mat.HasProperty("_BaseColor"))
-                            replacement.color = mat.GetColor("_BaseColor");
-                        else if (mat.HasProperty("_Color"))
-                            replacement.color = mat.GetColor("_Color");
-                        mats[i] = replacement;
-                    }
-                }
+                    mats[i] = PropMaterialRemap.CreateUrpLitMaterial(mats[i], template);
 
                 renderer.sharedMaterials = mats;
             }

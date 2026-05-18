@@ -6,9 +6,10 @@ namespace PSX
 {
     public class FogRenderFeature : ScriptableRendererFeature
     {
+        [SerializeField] private Shader effectShader;
         private FogPass _pass;
 
-        public override void Create() => _pass = new FogPass(RenderPassEvent.BeforeRenderingPostProcessing);
+        public override void Create() => _pass = new FogPass(effectShader, RenderPassEvent.BeforeRenderingPostProcessing);
 
         public override void AddRenderPasses(ScriptableRenderer renderer, ref RenderingData renderingData)
         {
@@ -41,8 +42,8 @@ namespace PSX
         private static readonly int NoiseScale = Shader.PropertyToID("_NoiseScale");
         private static readonly int NoiseStrength = Shader.PropertyToID("_NoiseStrength");
 
-        public FogPass(RenderPassEvent evt)
-            : base("PostEffect/Fog", "PSX Fog", evt, requiresDepth: true) { }
+        public FogPass(Shader shader, RenderPassEvent evt)
+            : base(shader, "PSX Fog", evt, requiresDepth: true) { }
 
         protected override void ApplyMaterialProperties(Fog fog)
         {

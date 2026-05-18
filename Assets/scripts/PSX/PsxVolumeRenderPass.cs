@@ -21,18 +21,20 @@ namespace PSX
         protected Material Material { get; private set; }
         private RenderTargetIdentifier _source;
 
-        protected PsxVolumeRenderPass(string shaderName, string passName, RenderPassEvent evt, bool requiresDepth = false)
+        protected PsxVolumeRenderPass(Shader shader, string passName, RenderPassEvent evt, bool requiresDepth = false)
         {
             _passName = passName;
             _tempTargetId = Shader.PropertyToID($"_TempTarget_{passName}");
             _requiresDepth = requiresDepth;
             renderPassEvent = evt;
 
-            var shader = Shader.Find(shaderName);
             if (shader == null)
-                Debug.LogError($"[PSX] Shader not found: {shaderName}");
-            else
-                Material = CoreUtils.CreateEngineMaterial(shader);
+            {
+                Debug.LogError($"[PSX] Missing shader reference for pass \"{passName}\". Assign it on the renderer feature asset.");
+                return;
+            }
+
+            Material = CoreUtils.CreateEngineMaterial(shader);
         }
 
         public void SetSource(RTHandle source)

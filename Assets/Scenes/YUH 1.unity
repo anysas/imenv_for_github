@@ -43917,7 +43917,7 @@ MonoBehaviour:
   _autoBootstrap: 1
   _startSandboxImmediately: 0
   _defaultFloorSize: {x: 20, y: 20}
-  _maxTotalPlacements: 30
+  _maxTotalPlacements: 35
   _endGracePeriod: 10
   _hotbarFadeOutDuration: 0.35
   _endFadeCanvasGroup: {fileID: 0}

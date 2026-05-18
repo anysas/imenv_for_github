@@ -6,9 +6,10 @@ namespace PSX
 {
     public class CRTRenderFeature : ScriptableRendererFeature
     {
+        [SerializeField] private Shader effectShader;
         private CRTPass _pass;
 
-        public override void Create() => _pass = new CRTPass(RenderPassEvent.BeforeRenderingPostProcessing);
+        public override void Create() => _pass = new CRTPass(effectShader, RenderPassEvent.BeforeRenderingPostProcessing);
 
         public override void AddRenderPasses(ScriptableRenderer renderer, ref RenderingData renderingData)
         {
@@ -53,8 +54,8 @@ namespace PSX
         private static readonly int GrilleUvMidPoint = Shader.PropertyToID("_GrilleUvMidPoint");
         private static readonly int GrilleShift = Shader.PropertyToID("_GrilleShift");
 
-        public CRTPass(RenderPassEvent evt)
-            : base("PostEffect/CRTShader", "PSX CRT", evt) { }
+        public CRTPass(Shader shader, RenderPassEvent evt)
+            : base(shader, "PSX CRT", evt) { }
 
         protected override void ApplyMaterialProperties(Crt crt)
         {

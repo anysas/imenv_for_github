@@ -20,10 +20,16 @@ namespace AlgorithmicGallery.Corruption
         private RTHandle _tempRT;
         private PSXRendererFeature.PSXSettings _settings;
 
-        public PSXPass(PSXRendererFeature.PSXSettings settings)
+        public PSXPass(PSXRendererFeature.PSXSettings settings, Shader shader)
         {
             _settings = settings;
-            _material = CoreUtils.CreateEngineMaterial("Hidden/PSXPost");
+            if (shader == null)
+            {
+                Debug.LogError("PSXPass: missing PSXPost shader reference on PSXRendererFeature.");
+                return;
+            }
+
+            _material = CoreUtils.CreateEngineMaterial(shader);
         }
 
         public void UpdateSettings(PSXRendererFeature.PSXSettings settings) => _settings = settings;

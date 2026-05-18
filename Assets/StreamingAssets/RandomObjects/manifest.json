@@ -1,0 +1,1001 @@
+[
+  {
+    "file": "orange.glb",
+    "colors": [
+      "#ffcf48",
+      "#f6c768",
+      "#fdd148"
+    ],
+    "colorScore": 487,
+    "glb_path": "css/props/cs_italy/orange.glb"
+  },
+  {
+    "file": "potted_plant1.glb",
+    "colors": [
+      "#93a034",
+      "#96a95b",
+      "#b1c364"
+    ],
+    "colorScore": 386,
+    "glb_path": "css/props/de_inferno/potted_plant1.glb"
+  },
+  {
+    "file": "bananana_peel.glb",
+    "colors": [
+      "#d2d1d1",
+      "#e7d34e",
+      "#ecd900"
+    ],
+    "colorScore": 359,
+    "glb_path": "tf2/props_farm/scenes/bananana_peel.glb"
+  },
+  {
+    "file": "sauce_bottle.glb",
+    "colors": [
+      "#d16c68",
+      "#dc716f",
+      "#e2ce85"
+    ],
+    "colorScore": 331,
+    "glb_path": "tf2/props_diner/sauce_bottle.glb"
+  },
+  {
+    "file": "candelabra_01_flame.glb",
+    "colors": [
+      "#000000",
+      "#ffcb78",
+      "#ffd489"
+    ],
+    "colorScore": 289,
+    "glb_path": "tf2/props_hearth/candelabra_01_flame.glb"
+  },
+  {
+    "file": "chandelier_01_flame.glb",
+    "colors": [
+      "#ffcb78",
+      "#000000",
+      "#ffd489"
+    ],
+    "colorScore": 289,
+    "glb_path": "tf2/props_hearth/chandelier_01_flame.glb"
+  },
+  {
+    "file": "halloween_gift.glb",
+    "colors": [
+      "#bbb9ff",
+      "#abb258",
+      "#dabb53"
+    ],
+    "colorScore": 275,
+    "glb_path": "tf2/props_halloween/halloween_gift.glb"
+  },
+  {
+    "file": "mop01.glb",
+    "colors": [
+      "#000000",
+      "#a5a148",
+      "#aba541"
+    ],
+    "colorScore": 265,
+    "glb_path": "l4d2/props_unique/mop01.glb"
+  },
+  {
+    "file": "mopbucket01.glb",
+    "colors": [
+      "#000000",
+      "#a5a148",
+      "#aba541"
+    ],
+    "colorScore": 265,
+    "glb_path": "l4d2/props_unique/mopbucket01.glb"
+  },
+  {
+    "file": "dish_soap.glb",
+    "colors": [
+      "#cac57e",
+      "#6f9700",
+      "#efe99e"
+    ],
+    "colorScore": 260,
+    "glb_path": "l4d2/props_interiors/dish_soap.glb"
+  },
+  {
+    "file": "mate01_cup.glb",
+    "colors": [
+      "#a17534",
+      "#8e8d8e",
+      "#9e7334"
+    ],
+    "colorScore": 259,
+    "glb_path": "tf2/custom/patagonia/mate01_cup.glb"
+  },
+  {
+    "file": "shavingcan01.glb",
+    "colors": [
+      "#5da0e2",
+      "#f1e7d4",
+      "#e25875"
+    ],
+    "colorScore": 256,
+    "glb_path": "tf2/props_enclosure/shavingcan01.glb"
+  },
+  {
+    "file": "garland_wreath.glb",
+    "colors": [
+      "#b9b9ff",
+      "#f3dc34",
+      "#7b4e75"
+    ],
+    "colorScore": 239,
+    "glb_path": "tf2/props_christmas/garland_wreath.glb"
+  },
+  {
+    "file": "chair.glb",
+    "colors": [
+      "#c47372",
+      "#bd6d6f",
+      "#bb706b"
+    ],
+    "colorScore": 236,
+    "glb_path": "tf2/props_diner/chair.glb"
+  },
+  {
+    "file": "pumpkin_68.glb",
+    "colors": [
+      "#000000",
+      "#896a3d",
+      "#b59353"
+    ],
+    "colorScore": 236,
+    "glb_path": "tf2/props_halloween/pumpkin_68.glb"
+  },
+  {
+    "file": "redwagon.glb",
+    "colors": [
+      "#c98877",
+      "#888888",
+      "#d77b6d"
+    ],
+    "colorScore": 201,
+    "glb_path": "tf2/props_christmas/redwagon.glb"
+  },
+  {
+    "file": "bananna.glb",
+    "colors": [
+      "#ebd889",
+      "#e0cc85",
+      "#e7dab3"
+    ],
+    "colorScore": 198,
+    "glb_path": "css/props/cs_italy/bananna.glb"
+  },
+  {
+    "file": "bananna_bunch.glb",
+    "colors": [
+      "#ebd889",
+      "#e0cc85",
+      "#e7dab3"
+    ],
+    "colorScore": 198,
+    "glb_path": "css/props/cs_italy/bananna_bunch.glb"
+  },
+  {
+    "file": "plush_lobster.glb",
+    "colors": [
+      "#c87b6f",
+      "#783f34",
+      "#b16a60"
+    ],
+    "colorScore": 189,
+    "glb_path": "tf2/props_mall/plush_lobster.glb"
+  },
+  {
+    "file": "shroom_glowing_01.glb",
+    "colors": [
+      "#f8d2b0",
+      "#e9c596",
+      "#f2c599"
+    ],
+    "colorScore": 188,
+    "glb_path": "tf2/props_camp/shroom_glowing_01.glb"
+  },
+  {
+    "file": "shroom_glowing_01_cluster.glb",
+    "colors": [
+      "#f8d2b0",
+      "#e9c596",
+      "#f2c599"
+    ],
+    "colorScore": 188,
+    "glb_path": "tf2/props_camp/shroom_glowing_01_cluster.glb"
+  },
+  {
+    "file": "shroom_glowing_02.glb",
+    "colors": [
+      "#f8d2b0",
+      "#e9c596",
+      "#f2c599"
+    ],
+    "colorScore": 188,
+    "glb_path": "tf2/props_camp/shroom_glowing_02.glb"
+  },
+  {
+    "file": "shroom_glowing_02_cluster.glb",
+    "colors": [
+      "#f8d2b0",
+      "#e9c596",
+      "#f2c599"
+    ],
+    "colorScore": 188,
+    "glb_path": "tf2/props_camp/shroom_glowing_02_cluster.glb"
+  },
+  {
+    "file": "tray.glb",
+    "colors": [
+      "#82a0b5",
+      "#cb7975",
+      "#cc7976"
+    ],
+    "colorScore": 163,
+    "glb_path": "tf2/props_diner/tray.glb"
+  },
+  {
+    "file": "glassbottle01a.glb",
+    "colors": [
+      "#6b906f",
+      "#8e6300",
+      "#588158"
+    ],
+    "colorScore": 160,
+    "glb_path": "css/props_junk/glassbottle01a.glb"
+  },
+  {
+    "file": "plantpot_01a.glb",
+    "colors": [
+      "#c4ab34",
+      "#a3a975",
+      "#9ea96f"
+    ],
+    "colorScore": 154,
+    "glb_path": "tf2/venice/plantpot_01a.glb"
+  },
+  {
+    "file": "banana_pile.glb",
+    "colors": [
+      "#bdaa34",
+      "#ece19e",
+      "#e2d898"
+    ],
+    "colorScore": 152,
+    "glb_path": "tf2/props_bananas/banana_pile.glb"
+  },
+  {
+    "file": "banana_single.glb",
+    "colors": [
+      "#bdaa34",
+      "#ece19e",
+      "#e2d898"
+    ],
+    "colorScore": 152,
+    "glb_path": "tf2/props_bananas/banana_single.glb"
+  },
+  {
+    "file": "candle_cluster_flame.glb",
+    "colors": [
+      "#000000",
+      "#ffcb78",
+      "#bbb9ff"
+    ],
+    "colorScore": 147,
+    "glb_path": "tf2/props_hearth/candle_cluster_flame.glb"
+  },
+  {
+    "file": "candle_cluster_flame_low.glb",
+    "colors": [
+      "#000000",
+      "#ffcb78",
+      "#bbb9ff"
+    ],
+    "colorScore": 147,
+    "glb_path": "tf2/props_hearth/candle_cluster_flame_low.glb"
+  },
+  {
+    "file": "candle_cluster_flame_smaller01.glb",
+    "colors": [
+      "#000000",
+      "#ffcb78",
+      "#bbb9ff"
+    ],
+    "colorScore": 147,
+    "glb_path": "tf2/props_hearth/candle_cluster_flame_smaller01.glb"
+  },
+  {
+    "file": "wall_lantern_01.glb",
+    "colors": [
+      "#000000",
+      "#ffcb78",
+      "#585b58"
+    ],
+    "colorScore": 147,
+    "glb_path": "tf2/props_hearth/wall_lantern_01.glb"
+  },
+  {
+    "file": "pumpkin_loot.glb",
+    "colors": [
+      "#d2d1d1",
+      "#584821",
+      "#caae4e"
+    ],
+    "colorScore": 142,
+    "glb_path": "tf2/props_halloween/pumpkin_loot.glb"
+  },
+  {
+    "file": "sausage_singular_small.glb",
+    "colors": [
+      "#885d57",
+      "#e9b7d0",
+      "#b57b6d"
+    ],
+    "colorScore": 141,
+    "glb_path": "tf2/props_slaughter/sausage_singular_small.glb"
+  },
+  {
+    "file": "petfoodbag01.glb",
+    "colors": [
+      "#c7aca5",
+      "#785048",
+      "#b16d64"
+    ],
+    "colorScore": 141,
+    "glb_path": "l4d2/props_junk/petfoodbag01.glb"
+  },
+  {
+    "file": "potted_plant3.glb",
+    "colors": [
+      "#93a034",
+      "#72412a",
+      "#64534e"
+    ],
+    "colorScore": 139,
+    "glb_path": "css/props/de_inferno/potted_plant3.glb"
+  },
+  {
+    "file": "claypot03.glb",
+    "colors": [
+      "#6f8100",
+      "#000000",
+      "#585048"
+    ],
+    "colorScore": 134,
+    "glb_path": "css/props/de_inferno/claypot03.glb"
+  },
+  {
+    "file": "72_jam_jar.glb",
+    "colors": [
+      "#b9baff",
+      "#ef8f75",
+      "#b9bab9"
+    ],
+    "colorScore": 129,
+    "glb_path": "tf2/custom/72_jam_jar.glb"
+  },
+  {
+    "file": "jackolantern_01.glb",
+    "colors": [
+      "#bbb9ff",
+      "#000000",
+      "#ab8c48"
+    ],
+    "colorScore": 126,
+    "glb_path": "tf2/props_halloween/jackolantern_01.glb"
+  },
+  {
+    "file": "jackolantern_02.glb",
+    "colors": [
+      "#bbb9ff",
+      "#000000",
+      "#ab8c48"
+    ],
+    "colorScore": 126,
+    "glb_path": "tf2/props_halloween/jackolantern_02.glb"
+  },
+  {
+    "file": "pumpkin_01.glb",
+    "colors": [
+      "#bbb9ff",
+      "#000000",
+      "#ab8c48"
+    ],
+    "colorScore": 126,
+    "glb_path": "tf2/props_halloween/pumpkin_01.glb"
+  },
+  {
+    "file": "pumpkin_02.glb",
+    "colors": [
+      "#bbb9ff",
+      "#000000",
+      "#ab8c48"
+    ],
+    "colorScore": 126,
+    "glb_path": "tf2/props_halloween/pumpkin_02.glb"
+  },
+  {
+    "file": "pumpkin_03.glb",
+    "colors": [
+      "#bbb9ff",
+      "#000000",
+      "#ab8c48"
+    ],
+    "colorScore": 126,
+    "glb_path": "tf2/props_halloween/pumpkin_03.glb"
+  },
+  {
+    "file": "candy_cane_01.glb",
+    "colors": [
+      "#f7ebe7",
+      "#eb6a6b",
+      "#f3f4ed"
+    ],
+    "colorScore": 124,
+    "glb_path": "tf2/props_misc/candy_cane_01.glb"
+  },
+  {
+    "file": "bottle004.glb",
+    "colors": [
+      "#bbb9ff",
+      "#98753d",
+      "#d5d6d5"
+    ],
+    "colorScore": 120,
+    "glb_path": "tf2/props_frontline/bottle004.glb"
+  },
+  {
+    "file": "table_candelabra01_flame.glb",
+    "colors": [
+      "#ffcb78",
+      "#000000",
+      "#a59a78"
+    ],
+    "colorScore": 117,
+    "glb_path": "tf2/custom/iron/badwater_event/table_candelabra01_flame.glb"
+  },
+  {
+    "file": "wall_candelabra_01_flame.glb",
+    "colors": [
+      "#ffcb78",
+      "#000000",
+      "#a59a78"
+    ],
+    "colorScore": 117,
+    "glb_path": "tf2/props_hearth/wall_candelabra_01_flame.glb"
+  },
+  {
+    "file": "wall_candelabra_02_flame.glb",
+    "colors": [
+      "#000000",
+      "#ffcb78",
+      "#878468"
+    ],
+    "colorScore": 117,
+    "glb_path": "tf2/props_hearth/wall_candelabra_02_flame.glb"
+  },
+  {
+    "file": "gnome.glb",
+    "colors": [
+      "#bbb9ff",
+      "#dad4c7",
+      "#de7c78"
+    ],
+    "colorScore": 116,
+    "glb_path": "l4d2/props_junk/gnome.glb"
+  },
+  {
+    "file": "mushroom3.glb",
+    "colors": [
+      "#ecd9ab",
+      "#cba578",
+      "#cba364"
+    ],
+    "colorScore": 98,
+    "glb_path": "tf2/props_woods/mushroom3.glb"
+  },
+  {
+    "file": "mushroom3_cluster.glb",
+    "colors": [
+      "#ecd9ab",
+      "#cba578",
+      "#cba364"
+    ],
+    "colorScore": 98,
+    "glb_path": "tf2/props_woods/mushroom3_cluster.glb"
+  },
+  {
+    "file": "carnival_signs.glb",
+    "colors": [
+      "#ab8dc4",
+      "#af93c7",
+      "#b3d27e"
+    ],
+    "colorScore": 93,
+    "glb_path": "tf2/props_halloween/carnival_signs.glb"
+  },
+  {
+    "file": "bday_hat.glb",
+    "colors": [
+      "#bbb9ff",
+      "#d2d1d1",
+      "#dc7c7b"
+    ],
+    "colorScore": 85,
+    "glb_path": "tf2/effects/bday_hat.glb"
+  },
+  {
+    "file": "coffeepot.glb",
+    "colors": [
+      "#7e553d",
+      "#6f736f",
+      "#b5b5b5"
+    ],
+    "colorScore": 75,
+    "glb_path": "tf2/props_2fort/coffeepot.glb"
+  },
+  {
+    "file": "lantern001.glb",
+    "colors": [
+      "#000000",
+      "#bda76f",
+      "#f4d98c"
+    ],
+    "colorScore": 73,
+    "glb_path": "tf2/props_2fort/lantern001.glb"
+  },
+  {
+    "file": "egg_tart.glb",
+    "colors": [
+      "#d2d1d1",
+      "#7e503d",
+      "#be9168"
+    ],
+    "colorScore": 44,
+    "glb_path": "tf2/tf2_food_pack_4/egg_tart.glb"
+  },
+  {
+    "file": "popcan01a.glb",
+    "colors": [
+      "#78a2b3",
+      "#7296a3",
+      "#7898a8"
+    ],
+    "colorScore": -1,
+    "glb_path": "css/props_junk/popcan01a.glb"
+  },
+  {
+    "file": "flowerpot_empty01.glb",
+    "colors": [
+      "#f7b889",
+      "#f4b584",
+      "#edad7b"
+    ],
+    "colorScore": -1,
+    "glb_path": "dod/props_italian/flowerpot_empty01.glb"
+  },
+  {
+    "file": "pumpkin_big.glb",
+    "colors": [
+      "#e2bb89",
+      "#efca9e",
+      "#f1cca1"
+    ],
+    "colorScore": -1,
+    "glb_path": "tf2/harvest/pumpkin/pumpkin_big.glb"
+  },
+  {
+    "file": "pumpkin_small.glb",
+    "colors": [
+      "#e2bb89",
+      "#efca9e",
+      "#f1cca1"
+    ],
+    "colorScore": -1,
+    "glb_path": "tf2/harvest/pumpkin/pumpkin_small.glb"
+  },
+  {
+    "file": "lantern.glb",
+    "colors": [
+      "#85bda5",
+      "#e7e7e7",
+      "#6fa489"
+    ],
+    "colorScore": -1,
+    "glb_path": "l4d2/props_unique/spawn_apartment/lantern.glb"
+  },
+  {
+    "file": "apple_0.glb",
+    "colors": [
+      "#89b582",
+      "#d2d1d1",
+      "#78a16f"
+    ],
+    "colorScore": -1,
+    "glb_path": "tf2/tf2_food_pack_2/apple_0.glb"
+  },
+  {
+    "file": "bottlecrate001.glb",
+    "colors": [
+      "#82b082",
+      "#7ba778",
+      "#89b37e"
+    ],
+    "colorScore": -1,
+    "glb_path": "tf2/props_soho/bottlecrate001.glb"
+  },
+  {
+    "file": "rocking_horse.glb",
+    "colors": [
+      "#a78357",
+      "#b5936d",
+      "#997651"
+    ],
+    "colorScore": -1,
+    "glb_path": "tf2/props_christmas/rocking_horse.glb"
+  },
+  {
+    "file": "clock01.glb",
+    "colors": [
+      "#8e614e",
+      "#9e7858",
+      "#8b5e48"
+    ],
+    "colorScore": -1,
+    "glb_path": "css/props/de_inferno/clock01.glb"
+  },
+  {
+    "file": "plasticbucket001a.glb",
+    "colors": [
+      "#5d6385",
+      "#605e68",
+      "#606787"
+    ],
+    "colorScore": -1,
+    "glb_path": "css/props_junk/plasticbucket001a.glb"
+  },
+  {
+    "file": "trashbin01a.glb",
+    "colors": [
+      "#5d6385",
+      "#605e68",
+      "#606787"
+    ],
+    "colorScore": -1,
+    "glb_path": "css/props_junk/trashbin01a.glb"
+  },
+  {
+    "file": "plushie_04.glb",
+    "colors": [
+      "#5b6883",
+      "#6d726d",
+      "#4e576d"
+    ],
+    "colorScore": -1,
+    "glb_path": "tf2/props_moneymap/plushie_04.glb"
+  },
+  {
+    "file": "baguette.glb",
+    "colors": [
+      "#e1be7b",
+      "#e2cda5",
+      "#e5dbb9"
+    ],
+    "colorScore": -1,
+    "glb_path": "tf2/props_mall/food/baguette.glb"
+  },
+  {
+    "file": "burger.glb",
+    "colors": [
+      "#342600",
+      "#342634",
+      "#c2b264"
+    ],
+    "colorScore": -1,
+    "glb_path": "tf2/props_diner/burger.glb"
+  },
+  {
+    "file": "t_shirt_merchandise.glb",
+    "colors": [
+      "#d2d1d1",
+      "#b1c0ff",
+      "#bbb9ff"
+    ],
+    "colorScore": -1,
+    "glb_path": "tf2/props_hades/boathouse/t_shirt_merchandise.glb"
+  },
+  {
+    "file": "lamp001.glb",
+    "colors": [
+      "#d8d6d2",
+      "#000000",
+      "#b7c3ff"
+    ],
+    "colorScore": -1,
+    "glb_path": "tf2/props_facemovie/lamp001/lamp001.glb"
+  },
+  {
+    "file": "lamp002_snow.glb",
+    "colors": [
+      "#b2bff8",
+      "#6a6c6d",
+      "#dee5e5"
+    ],
+    "colorScore": -1,
+    "glb_path": "tf2/props_snow/lamp002_snow.glb"
+  },
+  {
+    "file": "siren001_snow.glb",
+    "colors": [
+      "#b2bff8",
+      "#c9cece",
+      "#676c6d"
+    ],
+    "colorScore": -1,
+    "glb_path": "tf2/props_snow/siren001_snow.glb"
+  },
+  {
+    "file": "tire002_snow.glb",
+    "colors": [
+      "#b2bff8",
+      "#6a6c6d",
+      "#dee5e5"
+    ],
+    "colorScore": -1,
+    "glb_path": "tf2/props_snow/tire002_snow.glb"
+  },
+  {
+    "file": "tire003_snow.glb",
+    "colors": [
+      "#b2bff8",
+      "#6a6c6d",
+      "#dee5e5"
+    ],
+    "colorScore": -1,
+    "glb_path": "tf2/props_snow/tire003_snow.glb"
+  },
+  {
+    "file": "furniture_vanity01a.glb",
+    "colors": [
+      "#785034",
+      "#784834",
+      "#3d2a2a"
+    ],
+    "colorScore": -1,
+    "glb_path": "dod/props_interiors/furniture_vanity01a.glb"
+  },
+  {
+    "file": "pot01.glb",
+    "colors": [
+      "#c2c7cb",
+      "#d2d5d9",
+      "#bd8e83"
+    ],
+    "colorScore": -1,
+    "glb_path": "tf2/props_lacry/pot01.glb"
+  },
+  {
+    "file": "skybase_trim02.glb",
+    "colors": [
+      "#c4908c",
+      "#c9999d"
+    ],
+    "colorScore": -1,
+    "glb_path": "tf2/props_aquarius/skybase_trim02.glb"
+  },
+  {
+    "file": "table.glb",
+    "colors": [
+      "#c3c4c3",
+      "#82a0b5",
+      "#eed4c7"
+    ],
+    "colorScore": -1,
+    "glb_path": "tf2/props_diner/table.glb"
+  },
+  {
+    "file": "table_round.glb",
+    "colors": [
+      "#c3c4c3",
+      "#82a0b5",
+      "#eed4c7"
+    ],
+    "colorScore": -1,
+    "glb_path": "tf2/props_diner/table_round.glb"
+  },
+  {
+    "file": "medic_present.glb",
+    "colors": [
+      "#a9b9bc",
+      "#af7777",
+      "#b18180"
+    ],
+    "colorScore": -1,
+    "glb_path": "tf2/props_cutter/medic_present.glb"
+  },
+  {
+    "file": "scout_present.glb",
+    "colors": [
+      "#af7777",
+      "#b18180",
+      "#a98080"
+    ],
+    "colorScore": -1,
+    "glb_path": "tf2/props_cutter/scout_present.glb"
+  },
+  {
+    "file": "buoy_ref.glb",
+    "colors": [
+      "#000000",
+      "#bd9389",
+      "#ab8178"
+    ],
+    "colorScore": -1,
+    "glb_path": "tf2/props_swamp/buoy_ref.glb"
+  },
+  {
+    "file": "security_fence64_barbedwire.glb",
+    "colors": [
+      "#c1c2c1",
+      "#8f8d63",
+      "#bfbfbf"
+    ],
+    "colorScore": -1,
+    "glb_path": "tf2/custom/patagonia/security_fence64_barbedwire.glb"
+  },
+  {
+    "file": "security_fence_pole01_barbedwire.glb",
+    "colors": [
+      "#c1c2c1",
+      "#8f8d63",
+      "#bfbfbf"
+    ],
+    "colorScore": -1,
+    "glb_path": "tf2/custom/patagonia/security_fence_pole01_barbedwire.glb"
+  },
+  {
+    "file": "seatingbooth.glb",
+    "colors": [
+      "#688698",
+      "#fce5e0",
+      "#829eb3"
+    ],
+    "colorScore": -1,
+    "glb_path": "tf2/props_diner/seatingbooth.glb"
+  },
+  {
+    "file": "chairlobby01.glb",
+    "colors": [
+      "#000000",
+      "#957172",
+      "#9d6a6f"
+    ],
+    "colorScore": -1,
+    "glb_path": "l4d2/props_interiors/chairlobby01.glb"
+  },
+  {
+    "file": "bookpile_01.glb",
+    "colors": [
+      "#916160",
+      "#3d3d34",
+      "#343434"
+    ],
+    "colorScore": -1,
+    "glb_path": "tf2/props_manor/bookpile_01.glb"
+  },
+  {
+    "file": "atomic_crowbar.glb",
+    "colors": [
+      "#4e4e4e",
+      "#956a68",
+      "#787172"
+    ],
+    "colorScore": -1,
+    "glb_path": "tf2/props_atom_smash/atomic_crowbar.glb"
+  },
+  {
+    "file": "plush_tiger.glb",
+    "colors": [
+      "#000000",
+      "#d5a778",
+      "#bd9064"
+    ],
+    "colorScore": -1,
+    "glb_path": "tf2/props_mall/plush_tiger.glb"
+  },
+  {
+    "file": "toothbrushset01.glb",
+    "colors": [
+      "#21212a",
+      "#536478",
+      "#000000"
+    ],
+    "colorScore": -1,
+    "glb_path": "css/props/cs_militia/toothbrushset01.glb"
+  },
+  {
+    "file": "frontline_console01.glb",
+    "colors": [
+      "#919089",
+      "#9f9e93",
+      "#bb7c64"
+    ],
+    "colorScore": -1,
+    "glb_path": "tf2/props_frontline/frontline_console01.glb"
+  },
+  {
+    "file": "frontline_console02.glb",
+    "colors": [
+      "#919089",
+      "#9f9e93",
+      "#bb7c64"
+    ],
+    "colorScore": -1,
+    "glb_path": "tf2/props_frontline/frontline_console02.glb"
+  },
+  {
+    "file": "frontline_console04.glb",
+    "colors": [
+      "#919089",
+      "#9f9e93",
+      "#bb7c64"
+    ],
+    "colorScore": -1,
+    "glb_path": "tf2/props_frontline/frontline_console04.glb"
+  },
+  {
+    "file": "barlamp_001.glb",
+    "colors": [
+      "#b1beff",
+      "#b7a572",
+      "#c0ccfd"
+    ],
+    "colorScore": -1,
+    "glb_path": "tf2/props_overgrown/barlamp_001.glb"
+  },
+  {
+    "file": "rat.glb",
+    "colors": [
+      "#a9a2f8",
+      "#d2d1d1",
+      "#8f8477"
+    ],
+    "colorScore": -1,
+    "glb_path": "tf2/props_sewer/rat.glb"
+  },
+  {
+    "file": "tools_fork.glb",
+    "colors": [
+      "#443721",
+      "#685d4e",
+      "#91aa78"
+    ],
+    "colorScore": -1,
+    "glb_path": "tf2/props_farm/tools_fork.glb"
+  },
+  {
+    "file": "tools_rack.glb",
+    "colors": [
+      "#443721",
+      "#685d4e",
+      "#91aa78"
+    ],
+    "colorScore": -1,
+    "glb_path": "tf2/props_farm/tools_rack.glb"
+  },
+  {
+    "file": "tools_rope.glb",
+    "colors": [
+      "#443721",
+      "#685d4e",
+      "#91aa78"
+    ],
+    "colorScore": -1,
+    "glb_path": "tf2/props_farm/tools_rope.glb"
+  }
+]

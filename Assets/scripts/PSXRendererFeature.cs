@@ -20,6 +20,7 @@ namespace AlgorithmicGallery.Corruption
         }
 
         public PSXSettings settings = new();
+        [SerializeField] private Shader psxPostShader;
 
         private PSXPass _pass;
         private static PSXRendererFeature _instance;
@@ -51,7 +52,7 @@ namespace AlgorithmicGallery.Corruption
 
         public override void Create()
         {
-            _pass = new PSXPass(settings);
+            _pass = new PSXPass(settings, psxPostShader);
             _pass.renderPassEvent = RenderPassEvent.BeforeRenderingPostProcessing;
             _instance = this;
             _baseGlitchIntensity = Mathf.Clamp01(settings.glitchIntensity);

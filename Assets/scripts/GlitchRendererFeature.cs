@@ -22,6 +22,7 @@ namespace AlgorithmicGallery
         }
 
         public GlitchSettings settings = new GlitchSettings();
+        [SerializeField] private Shader glitchShader;
         private GlitchPass _glitchPass;
         private Material _material;
 
@@ -32,14 +33,13 @@ namespace AlgorithmicGallery
 
         public override void Create()
         {
-            var shader = Shader.Find("Hidden/AlgorithmicGallery/ScreenGlitch");
-            if (shader == null)
+            if (glitchShader == null)
             {
-                Debug.LogWarning("GlitchRendererFeature: ScreenGlitch shader not found. Glitch effect disabled.");
+                Debug.LogWarning("GlitchRendererFeature: assign ScreenGlitch shader on the renderer feature. Glitch effect disabled.");
                 return;
             }
 
-            _material = CoreUtils.CreateEngineMaterial(shader);
+            _material = CoreUtils.CreateEngineMaterial(glitchShader);
             _glitchPass = new GlitchPass(_material, settings);
             _glitchPass.renderPassEvent = settings.renderPassEvent;
         }

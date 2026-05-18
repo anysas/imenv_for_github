@@ -224,6 +224,7 @@ namespace AlgorithmicGallery.Corruption
                         isPlayer: true,
                         go.transform.rotation,
                         go.transform.localScale);
+                    _hotbar?.RegisterPlayerPlacedProp(prop);
                     _hotbar?.BeginPostPlacementThinking(_postPlacementThinkingSeconds);
                     _sandbox?.NotifyPlayerPlaced(placedPosition);
                     OnPropPlacedWithContext?.Invoke(true, prop, floaterAnchor);
@@ -412,12 +413,7 @@ namespace AlgorithmicGallery.Corruption
             if (_runtimeGhostMaterial != null)
                 return _runtimeGhostMaterial;
 
-            Shader shader = Shader.Find("Universal Render Pipeline/Unlit");
-            if (shader == null)
-                shader = Shader.Find("Unlit/Color");
-            if (shader == null)
-                shader = Shader.Find("Standard");
-
+            Shader shader = PropMaterialRemap.ResolveUrpUnlitShader();
             if (shader == null)
                 return null;
 

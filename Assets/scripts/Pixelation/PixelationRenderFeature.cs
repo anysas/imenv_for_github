@@ -6,9 +6,10 @@ namespace PSX
 {
     public class PixelationRenderFeature : ScriptableRendererFeature
     {
+        [SerializeField] private Shader effectShader;
         private PixelationPass _pass;
 
-        public override void Create() => _pass = new PixelationPass(RenderPassEvent.BeforeRenderingPostProcessing);
+        public override void Create() => _pass = new PixelationPass(effectShader, RenderPassEvent.BeforeRenderingPostProcessing);
 
         public override void AddRenderPasses(ScriptableRenderer renderer, ref RenderingData renderingData)
         {
@@ -34,8 +35,8 @@ namespace PSX
         private static readonly int HeightPixelation = Shader.PropertyToID("_HeightPixelation");
         private static readonly int ColorPrecision = Shader.PropertyToID("_ColorPrecision");
 
-        public PixelationPass(RenderPassEvent evt)
-            : base("PostEffect/Pixelation", "PSX Pixelation", evt) { }
+        public PixelationPass(Shader shader, RenderPassEvent evt)
+            : base(shader, "PSX Pixelation", evt) { }
 
         protected override void ApplyMaterialProperties(Pixelation pixelation)
         {
