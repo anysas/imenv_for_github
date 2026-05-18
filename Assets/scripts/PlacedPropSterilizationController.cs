@@ -7,27 +7,23 @@ namespace AlgorithmicGallery.Corruption
 {
     /// <summary>
     /// Escalating sanitization by placement count:
-    /// Phase 1 (1–6): no bleaching.
-    /// Phase 2 (7–20): 1 then 2 oldest props bleached per click.
-    /// Phase 3 (21+): 3+ oldest per click (accelerating) and new props spawn sterile.
+    /// Phase 1 (1–6): no clarity pass.
+    /// Phase 2 (7–20): 1 then 2 oldest props clarified per click.
+    /// Phase 3 (21+): 3+ oldest per click (accelerating) and new props spawn clarified.
+    /// Clarified props keep their original materials, render on the clean overlay layer
+    /// (no PSX screen post), and get a slight brightness boost with reduced saturation.
     /// </summary>
     public class PlacedPropSterilizationController : MonoBehaviour
     {
-        /// <summary>Fired when the system starts turning a prop white (bleach queued or instant).</summary>
-        public event Action<GameObject> OnPropSterilizationStarted;
-
-        private const string DefaultSterileMaterialPath = "Assets/Materials/basic colours/SterileObject.mat";
-
         private static readonly int BaseColorId = Shader.PropertyToID("_BaseColor");
         private static readonly int ColorId = Shader.PropertyToID("_Color");
-        private static readonly int SmoothnessId = Shader.PropertyToID("_Smoothness");
-        private static readonly int GlossinessId = Shader.PropertyToID("_Glossiness");
-        private static readonly int MetallicId = Shader.PropertyToID("_Metallic");
+
+        /// <summary>Fired when a prop snaps to the clear overlay look (SFX sync).</summary>
+        public event Action<GameObject> OnPropSterilizationStarted;
 
         [Header("References")]
         [SerializeField] private SandboxManager _sandbox;
         [SerializeField] private PropPlacer _placer;
-        [SerializeField] private Material _sterileMaterial;
 
         [Header("Phase boundaries (placement count, 1-based)")]
         [SerializeField] private int _phase1End = 6;
@@ -35,31 +31,37 @@ namespace AlgorithmicGallery.Corruption
         [SerializeField] private int _phase2FastEnd = 20;
         [SerializeField] private int _phase3End = 35;
 
-        [Header("Bleach rates")]
+        [Header("Clarity rates")]
         [SerializeField] private int _phase2SlowBleachPerClick = 1;
         [SerializeField] private int _phase2FastBleachPerClick = 2;
         [SerializeField] private int _phase3BaseBleachPerClick = 3;
-        [Tooltip("Every N placements in phase 3 adds +1 bleach (accelerating catch-up).")]
+        [Tooltip("Every N placements in phase 3 adds +1 clarified prop (accelerating catch-up).")]
         [SerializeField] private int _phase3ExtraBleachEveryNPlacements = 2;
 
         [Header("Visuals")]
         [SerializeField] private float _blendSpeed = 0.22f;
-        [Tooltip("Blend level where props snap to the white sterile material (SFX is synced to this).")]
-        [SerializeField] private float _fullySterileThreshold = 0.985f;
+        [Tooltip("Sterility level where props move to the clean overlay layer.")]
+        [SerializeField] private float _clearVisualThreshold = 0.92f;
+        [Tooltip("Brightness multiplier applied on top of the prop's existing material colours.")]
+        [SerializeField] private float _clearBrightnessMultiplier = 1.28f;
+        [Tooltip("Colour saturation at full sterilization (1 = unchanged, lower = more washed out).")]
+        [SerializeField, Range(0f, 1f)] private float _clearSaturation = 0.5f;
 
         private readonly List<TrackedProp> _tracked = new();
         private readonly List<TrackedProp> _bleachScratch = new();
         private readonly List<GameObject> _propsScratch = new();
-        private Material _sterileMaterialInstance;
+        private MaterialPropertyBlock _propertyBlockScratch;
         private bool _subscribed;
 
         private sealed class TrackedProp
         {
             public GameObject Root;
             public int PlacementIndex;
+            public int OriginalLayer;
             public float CurrentSterility;
             public float TargetSterility;
             public bool PendingSterilizationSfx;
+            public bool IsOnCleanLayer;
             public readonly List<RendererSlot> Slots = new();
         }
 
@@ -67,12 +69,11 @@ namespace AlgorithmicGallery.Corruption
         {
             public Renderer Renderer;
             public Material[] Originals;
-            public Material[] Blends;
         }
 
         void Awake()
         {
-            ResolveSterileMaterial();
+            _propertyBlockScratch = new MaterialPropertyBlock();
         }
 
         void Start()
@@ -91,7 +92,7 @@ namespace AlgorithmicGallery.Corruption
                 TrackedProp tracked = _tracked[i];
                 if (tracked.Root == null)
                 {
-                    ReleaseTracked(tracked);
+                    ClearVisualOverrides(tracked);
                     _tracked.RemoveAt(i);
                     continue;
                 }
@@ -111,9 +112,9 @@ namespace AlgorithmicGallery.Corruption
         void OnDestroy()
         {
             Unsubscribe();
-            ReleaseBlendMaterials();
-            if (_sterileMaterialInstance != null)
-                Destroy(_sterileMaterialInstance);
+            for (int i = 0; i < _tracked.Count; i++)
+                ClearVisualOverrides(_tracked[i]);
+            _tracked.Clear();
         }
 
         private void ResolveReferences()
@@ -122,22 +123,6 @@ namespace AlgorithmicGallery.Corruption
                 _sandbox = FindFirstObjectByType<SandboxManager>();
             if (_placer == null)
                 _placer = FindFirstObjectByType<PropPlacer>();
-        }
-
-        private void ResolveSterileMaterial()
-        {
-            if (_sterileMaterial != null)
-                return;
-
-#if UNITY_EDITOR
-            _sterileMaterial = UnityEditor.AssetDatabase.LoadAssetAtPath<Material>(DefaultSterileMaterialPath);
-#endif
-            if (_sterileMaterial == null)
-            {
-                Debug.LogWarning(
-                    $"[PlacedPropSterilization] Assign SterileObject material in the inspector " +
-                    $"(expected at {DefaultSterileMaterialPath}).");
-            }
         }
 
         private void Subscribe()
@@ -175,13 +160,15 @@ namespace AlgorithmicGallery.Corruption
 
         private void HandleSandboxEntered()
         {
-            ReleaseBlendMaterials();
+            for (int i = 0; i < _tracked.Count; i++)
+                ClearVisualOverrides(_tracked[i]);
+            _tracked.Clear();
         }
 
         private void HandleSessionComplete()
         {
             for (int i = 0; i < _tracked.Count; i++)
-                ForceFullySterile(_tracked[i]);
+                ForceFullyClear(_tracked[i]);
         }
 
         private void HandlePropPlaced(bool isPlayer, PropEntry prop, Vector3 worldPosition)
@@ -189,12 +176,6 @@ namespace AlgorithmicGallery.Corruption
             if (!isPlayer || _sandbox == null || !_sandbox.SandboxActive)
                 return;
 
-            if (_sterileMaterial == null)
-                ResolveSterileMaterial();
-            if (_sterileMaterial == null)
-                return;
-
-            EnsureSterileInstance();
             StartCoroutine(ProcessPlacementBleach());
         }
 
@@ -220,11 +201,11 @@ namespace AlgorithmicGallery.Corruption
                     continue;
 
                 if (FindTracked(go) == null)
-                    RegisterProp(go, placementNumber, spawnSterile: ShouldNewPropsSpawnSterile(placementNumber));
+                    RegisterProp(go, placementNumber, spawnClear: ShouldNewPropsSpawnClear(placementNumber));
             }
         }
 
-        private bool ShouldNewPropsSpawnSterile(int placementNumber) =>
+        private bool ShouldNewPropsSpawnClear(int placementNumber) =>
             placementNumber > _phase2FastEnd;
 
         private int GetBleachCountForPlacement(int placementNumber)
@@ -255,7 +236,7 @@ namespace AlgorithmicGallery.Corruption
             if (bleachCount <= 0)
                 return;
 
-            CollectOldestUnsterile(_bleachScratch);
+            CollectOldestUnclear(_bleachScratch);
             if (_bleachScratch.Count == 0)
                 return;
 
@@ -264,10 +245,10 @@ namespace AlgorithmicGallery.Corruption
 
             bleachCount = Mathf.Min(bleachCount, _bleachScratch.Count);
             for (int i = 0; i < bleachCount; i++)
-                QueueFullSterilization(_bleachScratch[i]);
+                QueueFullClarity(_bleachScratch[i]);
         }
 
-        private void CollectOldestUnsterile(List<TrackedProp> buffer)
+        private void CollectOldestUnclear(List<TrackedProp> buffer)
         {
             buffer.Clear();
             for (int i = 0; i < _tracked.Count; i++)
@@ -275,8 +256,8 @@ namespace AlgorithmicGallery.Corruption
                 TrackedProp tracked = _tracked[i];
                 if (tracked.Root == null)
                     continue;
-                if (tracked.CurrentSterility >= _fullySterileThreshold
-                    && tracked.TargetSterility >= _fullySterileThreshold)
+                if (tracked.CurrentSterility >= _clearVisualThreshold
+                    && tracked.TargetSterility >= _clearVisualThreshold)
                     continue;
 
                 buffer.Add(tracked);
@@ -285,36 +266,36 @@ namespace AlgorithmicGallery.Corruption
             buffer.Sort((a, b) => a.PlacementIndex.CompareTo(b.PlacementIndex));
         }
 
-        private void QueueFullSterilization(TrackedProp tracked)
+        private void QueueFullClarity(TrackedProp tracked)
         {
             if (tracked == null)
                 return;
 
-            bool wasAlreadySterile = tracked.CurrentSterility >= _fullySterileThreshold
-                && tracked.TargetSterility >= _fullySterileThreshold;
+            bool wasAlreadyClear = tracked.CurrentSterility >= _clearVisualThreshold
+                && tracked.TargetSterility >= _clearVisualThreshold;
 
             tracked.TargetSterility = 1f;
-            if (tracked.CurrentSterility >= _fullySterileThreshold)
+            if (tracked.CurrentSterility >= _clearVisualThreshold)
             {
                 tracked.CurrentSterility = 1f;
                 ApplySterility(tracked, 1f);
             }
 
-            if (!wasAlreadySterile)
+            if (!wasAlreadyClear)
                 tracked.PendingSterilizationSfx = true;
         }
 
-        private void ForceFullySterile(TrackedProp tracked)
+        private void ForceFullyClear(TrackedProp tracked)
         {
             if (tracked == null || tracked.Root == null)
                 return;
 
-            bool wasAlreadySterile = tracked.CurrentSterility >= _fullySterileThreshold
-                && tracked.TargetSterility >= _fullySterileThreshold;
+            bool wasAlreadyClear = tracked.CurrentSterility >= _clearVisualThreshold
+                && tracked.TargetSterility >= _clearVisualThreshold;
 
             tracked.TargetSterility = 1f;
             tracked.CurrentSterility = 1f;
-            if (!wasAlreadySterile)
+            if (!wasAlreadyClear)
                 tracked.PendingSterilizationSfx = true;
 
             ApplySterility(tracked, 1f);
@@ -340,19 +321,18 @@ namespace AlgorithmicGallery.Corruption
             return null;
         }
 
-        private void RegisterProp(GameObject root, int placementIndex, bool spawnSterile)
+        private void RegisterProp(GameObject root, int placementIndex, bool spawnClear)
         {
-            if (root == null || _sterileMaterial == null)
+            if (root == null)
                 return;
-
-            EnsureSterileInstance();
 
             var tracked = new TrackedProp
             {
                 Root = root,
                 PlacementIndex = placementIndex,
-                CurrentSterility = spawnSterile ? 1f : 0f,
-                TargetSterility = spawnSterile ? 1f : 0f
+                OriginalLayer = root.layer,
+                CurrentSterility = spawnClear ? 1f : 0f,
+                TargetSterility = spawnClear ? 1f : 0f
             };
 
             var renderers = root.GetComponentsInChildren<Renderer>(true);
@@ -367,20 +347,13 @@ namespace AlgorithmicGallery.Corruption
                     continue;
 
                 var copies = new Material[originals.Length];
-                var blends = new Material[originals.Length];
                 for (int m = 0; m < originals.Length; m++)
-                {
                     copies[m] = originals[m];
-                    blends[m] = originals[m] != null
-                        ? new Material(originals[m])
-                        : new Material(_sterileMaterialInstance);
-                }
 
                 tracked.Slots.Add(new RendererSlot
                 {
                     Renderer = renderer,
-                    Originals = copies,
-                    Blends = blends
+                    Originals = copies
                 });
             }
 
@@ -388,61 +361,31 @@ namespace AlgorithmicGallery.Corruption
                 return;
 
             _tracked.Add(tracked);
-            if (spawnSterile)
+            if (spawnClear)
             {
                 tracked.PendingSterilizationSfx = true;
                 ApplySterility(tracked, 1f);
             }
         }
 
-        private void EnsureSterileInstance()
-        {
-            if (_sterileMaterialInstance != null)
-                return;
-
-            _sterileMaterialInstance = new Material(_sterileMaterial)
-            {
-                name = "SterileObject_RuntimeInstance"
-            };
-        }
-
         private void ApplySterility(TrackedProp tracked, float t)
         {
+            if (tracked?.Root == null)
+                return;
+
             t = Mathf.Clamp01(t);
-            bool playSfxOnSnap = tracked.PendingSterilizationSfx
-                && tracked.Root != null
-                && t >= _fullySterileThreshold;
+            bool applyClearLook = t >= _clearVisualThreshold;
+            bool playSfxOnSnap = tracked.PendingSterilizationSfx && applyClearLook;
 
-            for (int s = 0; s < tracked.Slots.Count; s++)
+            if (applyClearLook)
             {
-                RendererSlot slot = tracked.Slots[s];
-                if (slot.Renderer == null)
-                    continue;
-
-                int count = slot.Originals.Length;
-                var applied = new Material[count];
-
-                for (int m = 0; m < count; m++)
-                {
-                    Material original = slot.Originals[m];
-                    if (t >= _fullySterileThreshold || original == null)
-                    {
-                        applied[m] = _sterileMaterialInstance;
-                        continue;
-                    }
-
-                    if (t <= 0.001f)
-                    {
-                        applied[m] = original;
-                        continue;
-                    }
-
-                    Material blend = slot.Blends[m];
-                    LerpMaterialTowardSterile(blend, original, t);
-                    applied[m] = blend;
-                }
-
-                slot.Renderer.sharedMaterials = applied;
+                float brightness = GetBrightnessForSterility(t);
+                float saturation = GetSaturationForSterility(t);
+                ApplyClearVisual(tracked, brightness, saturation);
+            }
+            else
+            {
+                RestoreUnclearVisual(tracked);
             }
 
             if (playSfxOnSnap)
@@ -452,6 +395,151 @@ namespace AlgorithmicGallery.Corruption
             }
         }
 
+        private float GetBrightnessForSterility(float t)
+        {
+            float target = Mathf.Max(1f, _clearBrightnessMultiplier);
+            if (t >= 1f)
+                return target;
+
+            float ramp = Mathf.InverseLerp(_clearVisualThreshold, 1f, t);
+            return Mathf.Lerp(1f, target, ramp);
+        }
+
+        private float GetSaturationForSterility(float t)
+        {
+            float target = Mathf.Clamp01(_clearSaturation);
+            if (t >= 1f)
+                return target;
+
+            float ramp = Mathf.InverseLerp(_clearVisualThreshold, 1f, t);
+            return Mathf.Lerp(1f, target, ramp);
+        }
+
+        private void ApplyClearVisual(TrackedProp tracked, float brightnessMultiplier, float saturation)
+        {
+            for (int s = 0; s < tracked.Slots.Count; s++)
+            {
+                RendererSlot slot = tracked.Slots[s];
+                if (slot.Renderer == null)
+                    continue;
+
+                slot.Renderer.sharedMaterials = slot.Originals;
+                ApplyClearMaterialOverrides(slot, brightnessMultiplier, saturation);
+            }
+
+            ApplyClearLayer(tracked);
+        }
+
+        private void RestoreUnclearVisual(TrackedProp tracked)
+        {
+            for (int s = 0; s < tracked.Slots.Count; s++)
+                ClearBrightnessBoost(tracked.Slots[s]);
+
+            RestoreOriginalLayer(tracked);
+        }
+
+        private void ApplyClearMaterialOverrides(RendererSlot slot, float brightnessMultiplier, float saturation)
+        {
+            bool needsOverride = brightnessMultiplier > 1.001f || saturation < 0.999f;
+            if (slot.Renderer == null || !needsOverride)
+            {
+                ClearBrightnessBoost(slot);
+                return;
+            }
+
+            if (_propertyBlockScratch == null)
+                _propertyBlockScratch = new MaterialPropertyBlock();
+
+            int count = slot.Originals.Length;
+            for (int m = 0; m < count; m++)
+            {
+                Material material = slot.Originals[m];
+                if (material == null)
+                {
+                    slot.Renderer.SetPropertyBlock(null, m);
+                    continue;
+                }
+
+                _propertyBlockScratch.Clear();
+
+                if (material.HasProperty(BaseColorId))
+                {
+                    Color baseColor = material.GetColor(BaseColorId);
+                    _propertyBlockScratch.SetColor(
+                        BaseColorId,
+                        ApplyClearColorTreatment(baseColor, brightnessMultiplier, saturation));
+                }
+                else if (material.HasProperty(ColorId))
+                {
+                    Color baseColor = material.GetColor(ColorId);
+                    _propertyBlockScratch.SetColor(
+                        ColorId,
+                        ApplyClearColorTreatment(baseColor, brightnessMultiplier, saturation));
+                }
+
+                slot.Renderer.SetPropertyBlock(_propertyBlockScratch, m);
+            }
+        }
+
+        private static Color ApplyClearColorTreatment(Color color, float brightnessMultiplier, float saturation)
+        {
+            color = AdjustSaturation(color, saturation);
+            return BoostBrightness(color, brightnessMultiplier);
+        }
+
+        private static Color AdjustSaturation(Color color, float saturation)
+        {
+            float luma = color.r * 0.299f + color.g * 0.587f + color.b * 0.114f;
+            var gray = new Color(luma, luma, luma, color.a);
+            return Color.Lerp(gray, color, saturation);
+        }
+
+        private static Color BoostBrightness(Color color, float multiplier)
+        {
+            return new Color(
+                Mathf.Clamp01(color.r * multiplier),
+                Mathf.Clamp01(color.g * multiplier),
+                Mathf.Clamp01(color.b * multiplier),
+                color.a);
+        }
+
+        private static void ClearBrightnessBoost(RendererSlot slot)
+        {
+            if (slot.Renderer == null)
+                return;
+
+            for (int m = 0; m < slot.Originals.Length; m++)
+                slot.Renderer.SetPropertyBlock(null, m);
+        }
+
+        private void ApplyClearLayer(TrackedProp tracked)
+        {
+            if (tracked.IsOnCleanLayer)
+                return;
+
+            SetLayerRecursive(tracked.Root, SystemPropCleanOverlaySetup.SystemPropLayer);
+            tracked.IsOnCleanLayer = true;
+        }
+
+        private void RestoreOriginalLayer(TrackedProp tracked)
+        {
+            if (!tracked.IsOnCleanLayer)
+                return;
+
+            SetLayerRecursive(tracked.Root, tracked.OriginalLayer);
+            tracked.IsOnCleanLayer = false;
+        }
+
+        private static void SetLayerRecursive(GameObject root, int layer)
+        {
+            if (root == null)
+                return;
+
+            root.layer = layer;
+            foreach (Transform child in root.transform)
+                SetLayerRecursive(child.gameObject, layer);
+        }
+
         private IEnumerator PlaySterilizationSfxAfterVisualSnap(GameObject root)
         {
             yield return null;
@@ -459,76 +547,24 @@ namespace AlgorithmicGallery.Corruption
                 RaiseSterilizationStarted(root);
         }
 
-        private void LerpMaterialTowardSterile(Material dest, Material source, float t)
-        {
-            if (dest == null || source == null || _sterileMaterialInstance == null)
-                return;
-
-            if (source.HasProperty(BaseColorId) && dest.HasProperty(BaseColorId))
-            {
-                Color from = source.GetColor(BaseColorId);
-                Color to = _sterileMaterialInstance.GetColor(BaseColorId);
-                dest.SetColor(BaseColorId, Color.Lerp(from, to, t));
-            }
-            else if (source.HasProperty(ColorId) && dest.HasProperty(ColorId))
-            {
-                Color from = source.GetColor(ColorId);
-                Color to = _sterileMaterialInstance.HasProperty(ColorId)
-                    ? _sterileMaterialInstance.GetColor(ColorId)
-                    : Color.white;
-                dest.SetColor(ColorId, Color.Lerp(from, to, t));
-            }
-
-            if (source.HasProperty(SmoothnessId) && dest.HasProperty(SmoothnessId))
-            {
-                float from = source.GetFloat(SmoothnessId);
-                float to = _sterileMaterialInstance.GetFloat(SmoothnessId);
-                dest.SetFloat(SmoothnessId, Mathf.Lerp(from, to, t));
-            }
-            else if (source.HasProperty(GlossinessId) && dest.HasProperty(GlossinessId))
-            {
-                float from = source.GetFloat(GlossinessId);
-                float to = _sterileMaterialInstance.HasProperty(GlossinessId)
-                    ? _sterileMaterialInstance.GetFloat(GlossinessId)
-                    : 0.5f;
-                dest.SetFloat(GlossinessId, Mathf.Lerp(from, to, t));
-            }
-
-            if (source.HasProperty(MetallicId) && dest.HasProperty(MetallicId))
-            {
-                float from = source.GetFloat(MetallicId);
-                float to = _sterileMaterialInstance.GetFloat(MetallicId);
-                dest.SetFloat(MetallicId, Mathf.Lerp(from, to, t));
-            }
-
-            if (t >= 0.92f)
-                dest.shader = _sterileMaterialInstance.shader;
-        }
-
-        private static void ReleaseTracked(TrackedProp tracked)
+        private static void ClearVisualOverrides(TrackedProp tracked)
         {
             if (tracked == null)
                 return;
 
-            for (int i = 0; i < tracked.Slots.Count; i++)
-            {
-                Material[] blends = tracked.Slots[i].Blends;
-                if (blends == null)
-                    continue;
+            for (int s = 0; s < tracked.Slots.Count; s++)
+                ClearBrightnessBoost(tracked.Slots[s]);
 
-                for (int m = 0; m < blends.Length; m++)
-                {
-                    if (blends[m] != null)
-                        Destroy(blends[m]);
-                }
-            }
+            RestoreOriginalLayerStatic(tracked);
         }
 
-        private void ReleaseBlendMaterials()
+        private static void RestoreOriginalLayerStatic(TrackedProp tracked)
         {
-            for (int i = 0; i < _tracked.Count; i++)
-                ReleaseTracked(_tracked[i]);
-            _tracked.Clear();
+            if (tracked.Root == null || !tracked.IsOnCleanLayer)
+                return;
+
+            SetLayerRecursive(tracked.Root, tracked.OriginalLayer);
+            tracked.IsOnCleanLayer = false;
         }
     }
 }
