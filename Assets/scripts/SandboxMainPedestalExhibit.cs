@@ -112,6 +112,19 @@ namespace AlgorithmicGallery.Corruption
                 yield return new WaitForSeconds(_settleDelayAfterGridSlides);
 
             BuildExhibit();
+            NotifyExhibitBuilt();
+        }
+
+        private void NotifyExhibitBuilt()
+        {
+            if (_sandbox == null)
+                _sandbox = FindFirstObjectByType<SandboxManager>();
+
+            if (_sandbox == null)
+                return;
+
+            _sandbox.OnMainPedestalExhibitBuilt?.Invoke();
+            GameplayEventDebugLog.Push("Sandbox", "OnMainPedestalExhibitBuilt");
         }
 
         public void BuildExhibit()

@@ -52,6 +52,8 @@ namespace AlgorithmicGallery.Corruption
         [Header("Events")]
         public UnityEvent OnSandboxEntered;
         public UnityEvent OnSessionComplete;
+        [Tooltip("Fires after placed props are moved onto mainPedestal (after grid slides settle).")]
+        public UnityEvent OnMainPedestalExhibitBuilt;
         public UnityEvent OnPromptCommitted;
         public UnityEvent OnHallwayUnlocked;
         public UnityEvent OnPromptSquishStarted;
@@ -643,7 +645,7 @@ namespace AlgorithmicGallery.Corruption
 
             _assistantSystem?.StopSession();
 
-            // Fire completion immediately so the hallway door opens the moment placements run out.
+            // Fire completion immediately for UI/VFX; hallway door reopen waits for OnMainPedestalExhibitBuilt.
             OnSessionComplete?.Invoke();
             GameplayEventDebugLog.Push("Sandbox", "OnSessionComplete");
             Debug.Log("[SandboxManager] Session complete.");

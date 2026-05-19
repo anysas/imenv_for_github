@@ -108,6 +108,7 @@
     <Compile Include="Assets\scripts\CurationOverlay.cs" />
     <Compile Include="Assets\scripts\UserProfile.cs" />
     <Compile Include="Assets\scripts\Fog\FogRenderFeature.cs" />
+    <Compile Include="Assets\scripts\TerminalOpenSfx.cs" />
     <Compile Include="Assets\scripts\CRT\Crt.cs" />
     <Compile Include="Assets\scripts\Fog\FogController.cs" />
     <Compile Include="Assets\scripts\PropBudget.cs" />

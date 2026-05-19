@@ -11,6 +11,7 @@ namespace AlgorithmicGallery.Corruption
     public class ThemeSelectionUI : MonoBehaviour
     {
         public event Action<PromptDefinition> OnPromptSelected;
+        public event Action OnPromptHudOpened;
         public event Action OnUiFadeOutComplete;
 
         [SerializeField] private Color _cardColor = new Color(0.08f, 0.08f, 0.1f, 0.92f);
@@ -440,6 +441,7 @@ namespace AlgorithmicGallery.Corruption
             }
 
             ShowInput();
+            OnPromptHudOpened?.Invoke();
         }
 
         // header / subheader / tags are stored directly — no Find() needed.

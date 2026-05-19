@@ -30,9 +30,9 @@ namespace AlgorithmicGallery.Corruption
         [Header("Open Triggers")]
         [Tooltip("Open the door after the player selects a prompt and the prompt UI fades out. Drives the entry beat.")]
         [SerializeField] private bool _openOnPromptSelected = true;
-        [Tooltip("Re-open the door when SandboxManager.OnSessionComplete fires. Drives the walkback beat for a single shared door.")]
+        [Tooltip("Re-open the door after props are moved onto mainPedestal (OnMainPedestalExhibitBuilt). Drives the walkback beat.")]
         [SerializeField] private bool _openOnSessionComplete = true;
-        [Tooltip("Optional explicit reference. If left null and OnSessionComplete is enabled, the door auto-finds the SandboxManager at runtime.")]
+        [Tooltip("Optional explicit reference. If left null and session-end reopen is enabled, the door auto-finds SandboxManager at runtime.")]
         [SerializeField] private SandboxManager _sandbox;
 
         private ThemeSelectionUI _themeUI;
@@ -126,15 +126,15 @@ namespace AlgorithmicGallery.Corruption
 
             if (_sandbox != null && !_isSandboxSubscribed)
             {
-                Debug.Log("Door Script: Found SandboxManager, subscribing to OnSessionComplete.");
-                _sandbox.OnSessionComplete.AddListener(OnSessionComplete);
+                Debug.Log("Door Script: Found SandboxManager, subscribing to OnMainPedestalExhibitBuilt.");
+                _sandbox.OnMainPedestalExhibitBuilt.AddListener(OnMainPedestalExhibitBuilt);
                 _isSandboxSubscribed = true;
             }
         }
 
-        private void OnSessionComplete()
+        private void OnMainPedestalExhibitBuilt()
         {
-            Debug.Log("Door Script: SandboxManager.OnSessionComplete received — re-opening door for walkback.");
+            Debug.Log("Door Script: OnMainPedestalExhibitBuilt received — re-opening door for walkback.");
             _openedFromSessionComplete = _keepOpenAfterSessionComplete;
 
             // If the door is already open (player hasn't crossed the threshold yet), leave it alone.
@@ -318,9 +318,9 @@ namespace AlgorithmicGallery.Corruption
 
             if (_sandbox != null && _isSandboxSubscribed)
             {
-                _sandbox.OnSessionComplete.RemoveListener(OnSessionComplete);
+                _sandbox.OnMainPedestalExhibitBuilt.RemoveListener(OnMainPedestalExhibitBuilt);
                 _isSandboxSubscribed = false;
-                Debug.Log("Door Script: Unsubscribed from SandboxManager.OnSessionComplete.");
+                Debug.Log("Door Script: Unsubscribed from SandboxManager.OnMainPedestalExhibitBuilt.");
             }
         }
     }
