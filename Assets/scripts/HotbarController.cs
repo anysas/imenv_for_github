@@ -35,6 +35,17 @@ namespace AlgorithmicGallery.Corruption
         private int _maxSessionPlacements = int.MaxValue;
         private readonly HashSet<string> _placedPropIds = new();
 
+        public int MaxSessionPlacements => _maxSessionPlacements;
+
+        public int GetPlacementsLeft()
+        {
+            if (_maxSessionPlacements == int.MaxValue)
+                return int.MaxValue;
+            if (_styleProfile == null)
+                return Mathf.Max(0, _maxSessionPlacements);
+            return Mathf.Max(0, _maxSessionPlacements - _styleProfile.PlayerPlacementCount);
+        }
+
         public void Initialize(
             CuratedPropManifest manifest,
             StyleProfile styleProfile,

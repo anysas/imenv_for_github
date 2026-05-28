@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: Crt
   m_EditorClassIdentifier: 
   m_Active: 1
+  crtShader: {fileID: 0}
 --- !u!114 &-1925210268287778290
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -26,6 +27,7 @@ MonoBehaviour:
   m_Name: Dithering
   m_EditorClassIdentifier: 
   m_Active: 1
+  ditheringShader: {fileID: 0}
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -55,7 +57,8 @@ MonoBehaviour:
   - {fileID: 6965443398785072023}
   - {fileID: -1925210268287778290}
   - {fileID: -5677514569700259782}
-  m_RendererFeatureMap: 3a48e961946a35b1
+  - {fileID: 8844221100998877665}
+  m_RendererFeatureMap: 3a48e961946a35b13f2e1d0c9b8a7765
   m_UseNativeRenderPass: 0
   xrSystemData: {fileID: 11400000, guid: 60e1133243b97e347b653163a8c01b64, type: 2}
   postProcessData: {fileID: 11400000, guid: 41439944d30ece34e96484bdb6645b55, type: 2}
@@ -94,6 +97,7 @@ MonoBehaviour:
   m_Name: Fog
   m_EditorClassIdentifier: 
   m_Active: 1
+  fogShader: {fileID: 0}
 --- !u!114 &6965443398785072023
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -107,3 +111,23 @@ MonoBehaviour:
   m_Name: Pixelation
   m_EditorClassIdentifier: 
   m_Active: 1
+  pixelationShader: {fileID: 0}
+--- !u!114 &8844221100998877665
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c47dd2d68368b40c2bc3d73b7de56037, type: 3}
+  m_Name: PSXRendererFeature
+  m_EditorClassIdentifier: Assembly-CSharp::AlgorithmicGallery.Corruption.PSXRendererFeature
+  m_Active: 1
+  settings:
+    colorBits: 5
+    ditherStrength: 0.6
+    glitchIntensity: 0
+    pixelScale: 1
+  psxPostShader: {fileID: 4800000, guid: 2356c0ddfd75f4031a875f58e48b148e, type: 3}

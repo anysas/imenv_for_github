@@ -72,7 +72,7 @@ namespace AlgorithmicGallery
             try
             {
                 byte[] data = await Task.Run(() => File.ReadAllBytes(fullPath));
-                loadSuccess = await gltfImport.LoadGltfBinary(data, new Uri(fullPath));
+                loadSuccess = await gltfImport.Load(data, new Uri(fullPath));
             }
             catch (Exception ex)
             {
@@ -181,7 +181,12 @@ namespace AlgorithmicGallery
 
                 var mats = renderer.sharedMaterials;
                 for (int i = 0; i < mats.Length; i++)
+                {
+                    if (mats[i] != null && PropMaterialRemap.IsPsxShader(mats[i].shader))
+                        continue;
+
                     mats[i] = PropMaterialRemap.CreateUrpLitMaterial(mats[i], template);
+                }
 
                 renderer.sharedMaterials = mats;
             }

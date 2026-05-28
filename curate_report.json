@@ -1,0 +1,27 @@
+{
+  "input_count": 6245,
+  "kept_count": 6245,
+  "removed_count": 0,
+  "removal_reasons": {},
+  "size_distribution": {
+    "medium": 1547,
+    "large": 4424,
+    "small": 248,
+    "tiny": 26
+  },
+  "group_distribution": {
+    "item": 3996,
+    "lab": 334,
+    "furniture": 150,
+    "retail": 517,
+    "office": 106,
+    "workshop": 625,
+    "domestic": 465,
+    "tech": 52
+  },
+  "confidence_distribution": {
+    "high": 6211,
+    "mid": 34
+  },
+  "removed": []
+}

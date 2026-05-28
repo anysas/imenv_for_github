@@ -30,9 +30,13 @@ namespace AlgorithmicGallery.Corruption
         [Header("Open Triggers")]
         [Tooltip("Open the door after the player selects a prompt and the prompt UI fades out. Drives the entry beat.")]
         [SerializeField] private bool _openOnPromptSelected = true;
-        [Tooltip("Re-open the door after props are moved onto mainPedestal (OnMainPedestalExhibitBuilt). Drives the walkback beat.")]
+        [Tooltip("Re-open the door when SandboxManager.OnSessionComplete fires. Drives the walkback beat for a single shared door.")]
         [SerializeField] private bool _openOnSessionComplete = true;
-        [Tooltip("Optional explicit reference. If left null and session-end reopen is enabled, the door auto-finds SandboxManager at runtime.")]
+        [Tooltip("If enabled, session-end door opening waits until SandboxMainPedestalExhibit has built the combined exhibit.")]
+        [SerializeField] private bool _waitForExhibitBuildBeforeSessionOpen = true;
+        [Tooltip("Max seconds to wait for exhibit build before opening anyway.")]
+        [SerializeField] private float _sessionOpenExhibitWaitTimeout = 8f;
+        [Tooltip("Optional explicit reference. If left null and OnSessionComplete is enabled, the door auto-finds the SandboxManager at runtime.")]
         [SerializeField] private SandboxManager _sandbox;
 
         private ThemeSelectionUI _themeUI;
@@ -126,15 +130,15 @@ namespace AlgorithmicGallery.Corruption
 
             if (_sandbox != null && !_isSandboxSubscribed)
             {
-                Debug.Log("Door Script: Found SandboxManager, subscribing to OnMainPedestalExhibitBuilt.");
-                _sandbox.OnMainPedestalExhibitBuilt.AddListener(OnMainPedestalExhibitBuilt);
+                Debug.Log("Door Script: Found SandboxManager, subscribing to OnSessionComplete.");
+                _sandbox.OnSessionComplete.AddListener(OnSessionComplete);
                 _isSandboxSubscribed = true;
             }
         }
 
-        private void OnMainPedestalExhibitBuilt()
+        private void OnSessionComplete()
         {
-            Debug.Log("Door Script: OnMainPedestalExhibitBuilt received — re-opening door for walkback.");
+            Debug.Log("Door Script: SandboxManager.OnSessionComplete received — re-opening door for walkback.");
             _openedFromSessionComplete = _keepOpenAfterSessionComplete;
 
             // If the door is already open (player hasn't crossed the threshold yet), leave it alone.
@@ -160,7 +164,36 @@ namespace AlgorithmicGallery.Corruption
                 StopCoroutine(_doorOpenRoutine);
 
             _doorHasOpened = true;
-            _doorOpenRoutine = StartCoroutine(DelayedDoorOpen());
+            if (_waitForExhibitBuildBeforeSessionOpen)
+                _doorOpenRoutine = StartCoroutine(WaitForExhibitThenOpenDoor());
+            else
+                _doorOpenRoutine = StartCoroutine(DelayedDoorOpen());
+        }
+
+        private IEnumerator WaitForExhibitThenOpenDoor()
+        {
+            float timeout = Mathf.Max(0f, _sessionOpenExhibitWaitTimeout);
+            float elapsed = 0f;
+
+            SandboxMainPedestalExhibit exhibit = FindFirstObjectByType<SandboxMainPedestalExhibit>();
+            while (elapsed < timeout)
+            {
+                if (exhibit == null)
+                    exhibit = FindFirstObjectByType<SandboxMainPedestalExhibit>();
+
+                if (exhibit != null && exhibit.CombinedExhibitRoot != null)
+                {
+                    Debug.Log("Door Script: Exhibit build detected — opening session-end door now.");
+                    yield return StartCoroutine(DelayedDoorOpen());
+                    yield break;
+                }
+
+                elapsed += Time.deltaTime;
+                yield return null;
+            }
+
+            Debug.LogWarning("Door Script: Exhibit build wait timed out — opening door anyway.");
+            yield return StartCoroutine(DelayedDoorOpen());
         }
 
         private void OnPromptSelected(PromptDefinition prompt)
@@ -318,9 +351,9 @@ namespace AlgorithmicGallery.Corruption
 
             if (_sandbox != null && _isSandboxSubscribed)
             {
-                _sandbox.OnMainPedestalExhibitBuilt.RemoveListener(OnMainPedestalExhibitBuilt);
+                _sandbox.OnSessionComplete.RemoveListener(OnSessionComplete);
                 _isSandboxSubscribed = false;
-                Debug.Log("Door Script: Unsubscribed from SandboxManager.OnMainPedestalExhibitBuilt.");
+                Debug.Log("Door Script: Unsubscribed from SandboxManager.OnSessionComplete.");
             }
         }
     }

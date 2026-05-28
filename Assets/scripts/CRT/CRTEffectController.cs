@@ -16,9 +16,9 @@ public class CRTEffectController : MonoBehaviour
     [SerializeField] protected float screenBendX = 1000.0f;
     [SerializeField] protected float screenBendY = 1000.0f;
     [SerializeField] protected float vignetteAmount = 0.0f;
-    [SerializeField] protected float vignetteSize = 0.0f;
-    [SerializeField] protected float vignetteRounding = 0.0f;
-    [SerializeField] protected float vignetteSmoothing = 0.0f;
+    [SerializeField] protected float vignetteSize = 2.0f;
+    [SerializeField] protected float vignetteRounding = 2.0f;
+    [SerializeField] protected float vignetteSmoothing = 1.0f;
     
     [SerializeField] protected float scanLinesDensity = 200.0f;
     [SerializeField] protected float scanLinesSpeed = -10.0f;

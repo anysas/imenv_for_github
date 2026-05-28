@@ -22,7 +22,7 @@ namespace AlgorithmicGallery.Corruption
         [SerializeField] private Color _unlockedColor = new Color(0.55f, 1f, 0.72f);
         [SerializeField] private bool _openOnStartIfAlreadyUnlocked = true;
 
-        [Tooltip("If true, this gate also opens after props are moved onto mainPedestal (OnMainPedestalExhibitBuilt). Used for the sandbox-exit door.")]
+        [Tooltip("If true, this gate also opens when SandboxManager.OnSessionComplete fires. Used for the sandbox-exit door.")]
         [SerializeField] private bool _openOnSessionComplete = false;
 
         private Vector3 _closedLocalPos;
@@ -46,7 +46,7 @@ namespace AlgorithmicGallery.Corruption
             {
                 _sandbox.OnHallwayUnlocked.AddListener(HandleHallwayUnlocked);
                 if (_openOnSessionComplete)
-                    _sandbox.OnMainPedestalExhibitBuilt.AddListener(HandleHallwayUnlocked);
+                    _sandbox.OnSessionComplete.AddListener(HandleHallwayUnlocked);
             }
 
             if (_openOnStartIfAlreadyUnlocked && _sandbox != null && _sandbox.HallwayUnlocked)
@@ -59,7 +59,7 @@ namespace AlgorithmicGallery.Corruption
             {
                 _sandbox.OnHallwayUnlocked.RemoveListener(HandleHallwayUnlocked);
                 if (_openOnSessionComplete)
-                    _sandbox.OnMainPedestalExhibitBuilt.RemoveListener(HandleHallwayUnlocked);
+                    _sandbox.OnSessionComplete.RemoveListener(HandleHallwayUnlocked);
             }
         }
 

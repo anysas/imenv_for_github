@@ -1,5 +1,6 @@
 using System.Reflection;
 using UnityEngine;
+using UnityEngine.Rendering;
 using UnityEngine.Rendering.Universal;
 
 namespace AlgorithmicGallery.Corruption
@@ -79,7 +80,7 @@ namespace AlgorithmicGallery.Corruption
             TrySetOverlayClearDepth(_overlayCameraData, false);
             _overlayCameraData.volumeLayerMask = 0;
             _overlayCameraData.volumeTrigger = null;
-            TrySetRendererIndex(_overlayCameraData, CleanRendererIndex);
+            TrySetRendererIndex(_overlayCameraData, ResolveCleanRendererIndex());
 
             var stack = _baseCameraData.cameraStack;
             if (!stack.Contains(_overlayCamera))
@@ -105,6 +106,22 @@ namespace AlgorithmicGallery.Corruption
             _overlayCamera.clearFlags = CameraClearFlags.Nothing;
             _overlayCamera.cullingMask = 1 << SystemPropLayer;
             _overlayCamera.depth = _baseCamera.depth + 1f;
+        }
+
+        private static int ResolveCleanRendererIndex()
+        {
+            var urpAsset = GraphicsSettings.currentRenderPipeline as UniversalRenderPipelineAsset;
+            if (urpAsset == null)
+                return 0;
+
+            var renderers = urpAsset.rendererDataList;
+            if (renderers.Length == 0)
+                return 0;
+
+            if (renderers.Length > CleanRendererIndex)
+                return CleanRendererIndex;
+
+            return 0;
         }
 
         private static void TrySetRendererIndex(UniversalAdditionalCameraData cameraData, int rendererIndex)

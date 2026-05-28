@@ -93,7 +93,7 @@ namespace AlgorithmicGallery.Corruption
             _titleText.font = UiFontResolver.LoadVt323OrFallback();
             _titleText.fontSize = 56;
             _titleText.fontStyle = FontStyle.Bold;
-            _titleText.color = new Color(1f, 0.55f, 0.2f);
+            _titleText.color = InstitutionalUiPalette.Accent;
             _titleText.alignment = TextAnchor.MiddleCenter;
             _titleText.text = "It built you.";
 

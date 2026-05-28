@@ -7,6 +7,8 @@ namespace AlgorithmicGallery.Corruption
     [RequireComponent(typeof(AudioSource))]
     public class SandboxSfx : MonoBehaviour
     {
+        private const string SfxResourcePrefix = "Sfx/";
+
         [Header("References (auto-resolve if null)")]
         [SerializeField] private SandboxManager _sandbox;
         [SerializeField] private HotbarController _hotbar;
@@ -39,6 +41,7 @@ namespace AlgorithmicGallery.Corruption
             _source.loop = false;
 
             ResolveReferences();
+            LoadDefaultClipsFromResources();
             EnsureFallbackClips();
         }
 
@@ -104,7 +107,10 @@ namespace AlgorithmicGallery.Corruption
 
         private void HandlePropPlaced(bool isPlayer)
         {
-            return;
+            if (!_playPlacementOneShots || !isPlayer)
+                return;
+
+            Play(_placeClip, _placeVolume);
         }
 
         private void HandlePropRemoved()
@@ -144,6 +150,22 @@ namespace AlgorithmicGallery.Corruption
             if (_sandboxEnterClip == null) _sandboxEnterClip = CreateSweepClip("sfx_enter", 340f, 620f, 0.22f, 0.25f);
             if (_assistantActivateClip == null) _assistantActivateClip = CreateSweepClip("sfx_activate", 420f, 980f, 0.18f, 0.3f);
             if (_sessionCompleteClip == null) _sessionCompleteClip = CreateSweepClip("sfx_complete", 620f, 260f, 0.32f, 0.24f);
+        }
+
+        private void LoadDefaultClipsFromResources()
+        {
+            if (_slotChangeClip == null)
+                _slotChangeClip = Resources.Load<AudioClip>(SfxResourcePrefix + "UiClick");
+            if (_placeClip == null)
+                _placeClip = Resources.Load<AudioClip>(SfxResourcePrefix + "PlayerPlace");
+            if (_removeClip == null)
+                _removeClip = Resources.Load<AudioClip>(SfxResourcePrefix + "PropGridMove");
+            if (_sandboxEnterClip == null)
+                _sandboxEnterClip = Resources.Load<AudioClip>(SfxResourcePrefix + "SandboxEnter");
+            if (_assistantActivateClip == null)
+                _assistantActivateClip = Resources.Load<AudioClip>(SfxResourcePrefix + "AssistantActivate");
+            if (_sessionCompleteClip == null)
+                _sessionCompleteClip = Resources.Load<AudioClip>(SfxResourcePrefix + "SessionComplete");
         }
 
         private static AudioClip CreateToneClip(string name, float frequency, float duration, float amplitude)

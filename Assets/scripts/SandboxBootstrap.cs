@@ -12,12 +12,18 @@ namespace AlgorithmicGallery.Corruption
 
         void Awake()
         {
-            if (_ensureSandboxManager && FindFirstObjectByType<SandboxManager>() == null)
-            {
-                var go = new GameObject("SandboxManager");
-                go.AddComponent<SandboxManager>();
-                Debug.Log("[SandboxBootstrap] Created SandboxManager.");
-            }
+            if (!_ensureSandboxManager)
+                return;
+
+            if (GetComponent<SandboxManager>() != null)
+                return;
+
+            if (FindFirstObjectByType<SandboxManager>() != null)
+                return;
+
+            var go = new GameObject("SandboxManager");
+            go.AddComponent<SandboxManager>();
+            Debug.Log("[SandboxBootstrap] Created SandboxManager.");
         }
     }
 }

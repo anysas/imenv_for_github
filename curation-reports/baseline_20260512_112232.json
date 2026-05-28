@@ -1,0 +1,666 @@
+{
+  "meta": {
+    "source_manifest": "/Users/ezrajohnston/Desktop/unity/Immersive Environments/Assets/StreamingAssets/curated-props.json",
+    "taxonomy": "/Users/ezrajohnston/Desktop/unity/Immersive Environments/Assets/StreamingAssets/tag-taxonomy-v1.json",
+    "generated_at": "2026-05-12T11:22:32",
+    "n_models": 1581,
+    "floor_ratio": 0.25,
+    "cap_ratio": 2.5,
+    "max_personal_slots": 8,
+    "max_corporate_slots": 4
+  },
+  "summary": {
+    "total_personal_assignments": 4369,
+    "total_corporate_assignments": 1792,
+    "unique_personal_tags_used": 20,
+    "unique_corporate_tags_used": 9,
+    "personal_tags_below_floor": 51,
+    "personal_tags_above_cap": 2,
+    "corporate_tags_below_floor": 11,
+    "corporate_tags_above_cap": 1
+  },
+  "personal_tags": {
+    "abandoned": {
+      "count": 270,
+      "target": 197.62,
+      "floor": 49,
+      "cap": 495,
+      "deficit": 0,
+      "surplus": 0
+    },
+    "ambiguous": {
+      "count": 0,
+      "target": 197.62,
+      "floor": 49,
+      "cap": 495,
+      "deficit": 49,
+      "surplus": 0
+    },
+    "anxious": {
+      "count": 0,
+      "target": 197.62,
+      "floor": 49,
+      "cap": 495,
+      "deficit": 49,
+      "surplus": 0
+    },
+    "aspirational": {
+      "count": 0,
+      "target": 197.62,
+      "floor": 49,
+      "cap": 495,
+      "deficit": 49,
+      "surplus": 0
+    },
+    "authentic": {
+      "count": 0,
+      "target": 197.62,
+      "floor": 49,
+      "cap": 495,
+      "deficit": 49,
+      "surplus": 0
+    },
+    "bureaucratic": {
+      "count": 81,
+      "target": 197.62,
+      "floor": 49,
+      "cap": 495,
+      "deficit": 0,
+      "surplus": 0
+    },
+    "cathartic": {
+      "count": 0,
+      "target": 197.62,
+      "floor": 49,
+      "cap": 495,
+      "deficit": 49,
+      "surplus": 0
+    },
+    "celebratory": {
+      "count": 0,
+      "target": 197.62,
+      "floor": 49,
+      "cap": 495,
+      "deficit": 49,
+      "surplus": 0
+    },
+    "chaotic": {
+      "count": 0,
+      "target": 197.62,
+      "floor": 49,
+      "cap": 495,
+      "deficit": 49,
+      "surplus": 0
+    },
+    "clinical": {
+      "count": 83,
+      "target": 197.62,
+      "floor": 49,
+      "cap": 495,
+      "deficit": 0,
+      "surplus": 0
+    },
+    "comforting": {
+      "count": 148,
+      "target": 197.62,
+      "floor": 49,
+      "cap": 495,
+      "deficit": 0,
+      "surplus": 0
+    },
+    "communal": {
+      "count": 0,
+      "target": 197.62,
+      "floor": 49,
+      "cap": 495,
+      "deficit": 49,
+      "surplus": 0
+    },
+    "contemplative": {
+      "count": 0,
+      "target": 197.62,
+      "floor": 49,
+      "cap": 495,
+      "deficit": 49,
+      "surplus": 0
+    },
+    "cozy": {
+      "count": 0,
+      "target": 197.62,
+      "floor": 49,
+      "cap": 495,
+      "deficit": 49,
+      "surplus": 0
+    },
+    "curious": {
+      "count": 0,
+      "target": 197.62,
+      "floor": 49,
+      "cap": 495,
+      "deficit": 49,
+      "surplus": 0
+    },
+    "decayed": {
+      "count": 78,
+      "target": 197.62,
+      "floor": 49,
+      "cap": 495,
+      "deficit": 0,
+      "surplus": 0
+    },
+    "defiant": {
+      "count": 0,
+      "target": 197.62,
+      "floor": 49,
+      "cap": 495,
+      "deficit": 49,
+      "surplus": 0
+    },
+    "devotional": {
+      "count": 3,
+      "target": 197.62,
+      "floor": 49,
+      "cap": 495,
+      "deficit": 46,
+      "surplus": 0
+    },
+    "domestic": {
+      "count": 288,
+      "target": 197.62,
+      "floor": 49,
+      "cap": 495,
+      "deficit": 0,
+      "surplus": 0
+    },
+    "dreamlike": {
+      "count": 0,
+      "target": 197.62,
+      "floor": 49,
+      "cap": 495,
+      "deficit": 49,
+      "surplus": 0
+    },
+    "eerie": {
+      "count": 0,
+      "target": 197.62,
+      "floor": 49,
+      "cap": 495,
+      "deficit": 49,
+      "surplus": 0
+    },
+    "exploratory": {
+      "count": 0,
+      "target": 197.62,
+      "floor": 49,
+      "cap": 495,
+      "deficit": 49,
+      "surplus": 0
+    },
+    "fragile": {
+      "count": 0,
+      "target": 197.62,
+      "floor": 49,
+      "cap": 495,
+      "deficit": 49,
+      "surplus": 0
+    },
+    "grieving": {
+      "count": 0,
+      "target": 197.62,
+      "floor": 49,
+      "cap": 495,
+      "deficit": 49,
+      "surplus": 0
+    },
+    "grounded": {
+      "count": 0,
+      "target": 197.62,
+      "floor": 49,
+      "cap": 495,
+      "deficit": 49,
+      "surplus": 0
+    },
+    "handcrafted": {
+      "count": 0,
+      "target": 197.62,
+      "floor": 49,
+      "cap": 495,
+      "deficit": 49,
+      "surplus": 0
+    },
+    "haunted": {
+      "count": 0,
+      "target": 197.62,
+      "floor": 49,
+      "cap": 495,
+      "deficit": 49,
+      "surplus": 0
+    },
+    "heavy": {
+      "count": 2,
+      "target": 197.62,
+      "floor": 49,
+      "cap": 495,
+      "deficit": 47,
+      "surplus": 0
+    },
+    "hopeful": {
+      "count": 0,
+      "target": 197.62,
+      "floor": 49,
+      "cap": 495,
+      "deficit": 49,
+      "surplus": 0
+    },
+    "improvised": {
+      "count": 0,
+      "target": 197.62,
+      "floor": 49,
+      "cap": 495,
+      "deficit": 49,
+      "surplus": 0
+    },
+    "institutional": {
+      "count": 393,
+      "target": 197.62,
+      "floor": 49,
+      "cap": 495,
+      "deficit": 0,
+      "surplus": 0
+    },
+    "intimate": {
+      "count": 210,
+      "target": 197.62,
+      "floor": 49,
+      "cap": 495,
+      "deficit": 0,
+      "surplus": 0
+    },
+    "isolated": {
+      "count": 0,
+      "target": 197.62,
+      "floor": 49,
+      "cap": 495,
+      "deficit": 49,
+      "surplus": 0
+    },
+    "joyful": {
+      "count": 0,
+      "target": 197.62,
+      "floor": 49,
+      "cap": 495,
+      "deficit": 49,
+      "surplus": 0
+    },
+    "liminal": {
+      "count": 44,
+      "target": 197.62,
+      "floor": 49,
+      "cap": 495,
+      "deficit": 5,
+      "surplus": 0
+    },
+    "lonely": {
+      "count": 0,
+      "target": 197.62,
+      "floor": 49,
+      "cap": 495,
+      "deficit": 49,
+      "surplus": 0
+    },
+    "melancholy": {
+      "count": 71,
+      "target": 197.62,
+      "floor": 49,
+      "cap": 495,
+      "deficit": 0,
+      "surplus": 0
+    },
+    "mundane": {
+      "count": 1337,
+      "target": 197.62,
+      "floor": 49,
+      "cap": 495,
+      "deficit": 0,
+      "surplus": 842
+    },
+    "nostalgic": {
+      "count": 292,
+      "target": 197.62,
+      "floor": 49,
+      "cap": 495,
+      "deficit": 0,
+      "surplus": 0
+    },
+    "oppressive": {
+      "count": 0,
+      "target": 197.62,
+      "floor": 49,
+      "cap": 495,
+      "deficit": 49,
+      "surplus": 0
+    },
+    "organic": {
+      "count": 0,
+      "target": 197.62,
+      "floor": 49,
+      "cap": 495,
+      "deficit": 49,
+      "surplus": 0
+    },
+    "personal": {
+      "count": 664,
+      "target": 197.62,
+      "floor": 49,
+      "cap": 495,
+      "deficit": 0,
+      "surplus": 169
+    },
+    "playful": {
+      "count": 0,
+      "target": 197.62,
+      "floor": 49,
+      "cap": 495,
+      "deficit": 49,
+      "surplus": 0
+    },
+    "proud": {
+      "count": 0,
+      "target": 197.62,
+      "floor": 49,
+      "cap": 495,
+      "deficit": 49,
+      "surplus": 0
+    },
+    "public": {
+      "count": 336,
+      "target": 197.62,
+      "floor": 49,
+      "cap": 495,
+      "deficit": 0,
+      "surplus": 0
+    },
+    "raw": {
+      "count": 0,
+      "target": 197.62,
+      "floor": 49,
+      "cap": 495,
+      "deficit": 49,
+      "surplus": 0
+    },
+    "rebellious": {
+      "count": 0,
+      "target": 197.62,
+      "floor": 49,
+      "cap": 495,
+      "deficit": 49,
+      "surplus": 0
+    },
+    "reflective": {
+      "count": 0,
+      "target": 197.62,
+      "floor": 49,
+      "cap": 495,
+      "deficit": 49,
+      "surplus": 0
+    },
+    "resilient": {
+      "count": 0,
+      "target": 197.62,
+      "floor": 49,
+      "cap": 495,
+      "deficit": 49,
+      "surplus": 0
+    },
+    "restorative": {
+      "count": 0,
+      "target": 197.62,
+      "floor": 49,
+      "cap": 495,
+      "deficit": 49,
+      "surplus": 0
+    },
+    "ritualistic": {
+      "count": 3,
+      "target": 197.62,
+      "floor": 49,
+      "cap": 495,
+      "deficit": 46,
+      "surplus": 0
+    },
+    "romantic": {
+      "count": 0,
+      "target": 197.62,
+      "floor": 49,
+      "cap": 495,
+      "deficit": 49,
+      "surplus": 0
+    },
+    "sacred": {
+      "count": 14,
+      "target": 197.62,
+      "floor": 49,
+      "cap": 495,
+      "deficit": 35,
+      "surplus": 0
+    },
+    "serene": {
+      "count": 0,
+      "target": 197.62,
+      "floor": 49,
+      "cap": 495,
+      "deficit": 49,
+      "surplus": 0
+    },
+    "solitary": {
+      "count": 0,
+      "target": 197.62,
+      "floor": 49,
+      "cap": 495,
+      "deficit": 49,
+      "surplus": 0
+    },
+    "surreal": {
+      "count": 0,
+      "target": 197.62,
+      "floor": 49,
+      "cap": 495,
+      "deficit": 49,
+      "surplus": 0
+    },
+    "tender": {
+      "count": 0,
+      "target": 197.62,
+      "floor": 49,
+      "cap": 495,
+      "deficit": 49,
+      "surplus": 0
+    },
+    "tense": {
+      "count": 0,
+      "target": 197.62,
+      "floor": 49,
+      "cap": 495,
+      "deficit": 49,
+      "surplus": 0
+    },
+    "threatening": {
+      "count": 26,
+      "target": 197.62,
+      "floor": 49,
+      "cap": 495,
+      "deficit": 23,
+      "surplus": 0
+    },
+    "tranquil": {
+      "count": 0,
+      "target": 197.62,
+      "floor": 49,
+      "cap": 495,
+      "deficit": 49,
+      "surplus": 0
+    },
+    "uncanny": {
+      "count": 0,
+      "target": 197.62,
+      "floor": 49,
+      "cap": 495,
+      "deficit": 49,
+      "surplus": 0
+    },
+    "vulnerable": {
+      "count": 0,
+      "target": 197.62,
+      "floor": 49,
+      "cap": 495,
+      "deficit": 49,
+      "surplus": 0
+    },
+    "warm": {
+      "count": 26,
+      "target": 197.62,
+      "floor": 49,
+      "cap": 495,
+      "deficit": 23,
+      "surplus": 0
+    },
+    "whimsical": {
+      "count": 0,
+      "target": 197.62,
+      "floor": 49,
+      "cap": 495,
+      "deficit": 49,
+      "surplus": 0
+    }
+  },
+  "corporate_tags": {
+    "brand_safe": {
+      "count": 9,
+      "target": 395.25,
+      "floor": 98,
+      "cap": 989,
+      "deficit": 89,
+      "surplus": 0
+    },
+    "broad_appeal": {
+      "count": 1063,
+      "target": 395.25,
+      "floor": 98,
+      "cap": 989,
+      "deficit": 0,
+      "surplus": 74
+    },
+    "campaign_ready": {
+      "count": 2,
+      "target": 395.25,
+      "floor": 98,
+      "cap": 989,
+      "deficit": 96,
+      "surplus": 0
+    },
+    "conversion_ready": {
+      "count": 131,
+      "target": 395.25,
+      "floor": 98,
+      "cap": 989,
+      "deficit": 0,
+      "surplus": 0
+    },
+    "discoverable": {
+      "count": 67,
+      "target": 395.25,
+      "floor": 98,
+      "cap": 989,
+      "deficit": 31,
+      "surplus": 0
+    },
+    "engaging": {
+      "count": 2,
+      "target": 395.25,
+      "floor": 98,
+      "cap": 989,
+      "deficit": 96,
+      "surplus": 0
+    },
+    "marketable": {
+      "count": 199,
+      "target": 395.25,
+      "floor": 98,
+      "cap": 989,
+      "deficit": 0,
+      "surplus": 0
+    },
+    "monetizable": {
+      "count": 0,
+      "target": 395.25,
+      "floor": 98,
+      "cap": 989,
+      "deficit": 98,
+      "surplus": 0
+    },
+    "niche_depth": {
+      "count": 219,
+      "target": 395.25,
+      "floor": 98,
+      "cap": 989,
+      "deficit": 0,
+      "surplus": 0
+    },
+    "premium_feel": {
+      "count": 0,
+      "target": 395.25,
+      "floor": 98,
+      "cap": 989,
+      "deficit": 98,
+      "surplus": 0
+    },
+    "recommendation_fit": {
+      "count": 0,
+      "target": 395.25,
+      "floor": 98,
+      "cap": 989,
+      "deficit": 98,
+      "surplus": 0
+    },
+    "replayable": {
+      "count": 0,
+      "target": 395.25,
+      "floor": 98,
+      "cap": 989,
+      "deficit": 98,
+      "surplus": 0
+    },
+    "retention_friendly": {
+      "count": 0,
+      "target": 395.25,
+      "floor": 98,
+      "cap": 989,
+      "deficit": 98,
+      "surplus": 0
+    },
+    "shareable": {
+      "count": 0,
+      "target": 395.25,
+      "floor": 98,
+      "cap": 989,
+      "deficit": 98,
+      "surplus": 0
+    },
+    "sticky": {
+      "count": 0,
+      "target": 395.25,
+      "floor": 98,
+      "cap": 989,
+      "deficit": 98,
+      "surplus": 0
+    },
+    "trend_aligned": {
+      "count": 100,
+      "target": 395.25,
+      "floor": 98,
+      "cap": 989,
+      "deficit": 0,
+      "surplus": 0
+    }
+  }
+}

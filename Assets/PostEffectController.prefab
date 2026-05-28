@@ -111,12 +111,12 @@ MonoBehaviour:
   isEnabled: 1
   scanlinesWeight: 0.2
   noiseWeight: 0.2
-  screenBendX: 3
-  screenBendY: 3
-  vignetteAmount: 0.98
-  vignetteSize: 2.06
-  vignetteRounding: 5.26
-  vignetteSmoothing: 0.2
+  screenBendX: 1000
+  screenBendY: 1000
+  vignetteAmount: 0
+  vignetteSize: 2
+  vignetteRounding: 2
+  vignetteSmoothing: 1
   scanLinesDensity: 200
   scanLinesSpeed: -10
   noiseAmount: 250

@@ -1,0 +1,35 @@
+{
+  "generated_at": "2026-05-12T11:39:15",
+  "mode": {
+    "apply": false,
+    "hard_delete": false,
+    "skip_meta": false
+  },
+  "inputs": {
+    "manifest": "/Users/ezrajohnston/Desktop/unity/Immersive Environments/Assets/StreamingAssets/curated-props.game-ready.json",
+    "models_dir": "/Users/ezrajohnston/Desktop/unity/Immersive Environments/Assets/StreamingAssets/models",
+    "archive_root": "/Users/ezrajohnston/Desktop/unity/_asset_archives/Immersive Environments_prune_20260512_113915"
+  },
+  "counts": {
+    "referenced_in_manifest": 1581,
+    "existing_glb_on_disk": 1581,
+    "kept_glb": 1581,
+    "unreferenced_glb": 0,
+    "missing_from_disk": 0,
+    "file_actions": 0,
+    "empty_dirs_removed": 0
+  },
+  "sizes": {
+    "kept_glb_bytes": 763705748,
+    "kept_glb_human": "728.33 MB",
+    "unreferenced_glb_bytes": 0,
+    "unreferenced_glb_human": "0.00 B"
+  },
+  "samples": {
+    "missing_from_disk": [],
+    "unreferenced_glb": []
+  },
+  "applied": false,
+  "actions": [],
+  "action_truncated": false
+}

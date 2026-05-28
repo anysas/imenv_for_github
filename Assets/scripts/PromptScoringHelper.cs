@@ -16,15 +16,15 @@ namespace AlgorithmicGallery.Corruption
             new(StringComparer.Ordinal)
             {
                 ["nostalgic"] = new[] { ("shareable", 1.2f), ("recommendation_fit", 1f), ("broad_appeal", 0.9f), ("marketable", 0.6f) },
-                ["personal"] = new[] { ("engaging", 1.1f), ("sticky", 1f), ("brand_safe", 0.8f), ("marketable", 0.7f) },
-                ["intimate"] = new[] { ("sticky", 1.2f), ("premium_feel", 1f), ("retention_friendly", 0.9f) },
-                ["comforting"] = new[] { ("sticky", 1.1f), ("brand_safe", 1f), ("premium_feel", 0.9f), ("retention_friendly", 0.7f) },
+                ["personal"] = new[] { ("engaging", 1.1f), ("retention_friendly", 1f), ("brand_safe", 0.8f), ("marketable", 0.7f) },
+                ["intimate"] = new[] { ("retention_friendly", 1.2f), ("premium_feel", 1f), ("brand_safe", 0.9f) },
+                ["comforting"] = new[] { ("retention_friendly", 1.1f), ("brand_safe", 1f), ("premium_feel", 0.9f), ("engaging", 0.7f) },
                 ["domestic"] = new[] { ("broad_appeal", 1f), ("marketable", 0.9f), ("discoverable", 0.7f) },
                 ["mundane"] = new[] { ("marketable", 1f), ("conversion_ready", 0.9f), ("campaign_ready", 0.8f) },
                 ["clinical"] = new[] { ("monetizable", 1.2f), ("premium_feel", 1f), ("retention_friendly", 1f) },
                 ["institutional"] = new[] { ("marketable", 1.2f), ("campaign_ready", 1.1f), ("brand_safe", 1f) },
                 ["bureaucratic"] = new[] { ("campaign_ready", 1.2f), ("conversion_ready", 1f), ("brand_safe", 0.9f) },
-                ["threatening"] = new[] { ("engaging", 1.3f), ("sticky", 1f), ("discoverable", 0.8f) },
+                ["threatening"] = new[] { ("engaging", 1.3f), ("retention_friendly", 1f), ("discoverable", 0.8f) },
                 ["melancholy"] = new[] { ("retention_friendly", 1.1f), ("recommendation_fit", 1f), ("engaging", 0.8f) },
                 ["abandoned"] = new[] { ("discoverable", 1f), ("trend_aligned", 1f), ("engaging", 0.9f) },
                 ["decayed"] = new[] { ("trend_aligned", 1.1f), ("broad_appeal", 0.9f), ("marketable", 0.7f) },
@@ -37,7 +37,7 @@ namespace AlgorithmicGallery.Corruption
         {
             (new Regex(@"\b(marketable|market\s*fit|sales|sell|brand)\b", RegexOptions.IgnoreCase), "marketable", 2.2f),
             (new Regex(@"\b(engage|engaging|attention|hook)\b", RegexOptions.IgnoreCase), "engaging", 2f),
-            (new Regex(@"\b(retain|retention|sticky|return|habit)\b", RegexOptions.IgnoreCase), "retention_friendly", 2f),
+            (new Regex(@"\b(retain|retention|return|habit)\b", RegexOptions.IgnoreCase), "retention_friendly", 2f),
             (new Regex(@"\b(monetis|monetiz|revenue|profit|conversion)\b", RegexOptions.IgnoreCase), "monetizable", 2.2f),
             (new Regex(@"\b(viral|share|social)\b", RegexOptions.IgnoreCase), "shareable", 1.6f),
             (new Regex(@"\b(trend|fashion|zeitgeist)\b", RegexOptions.IgnoreCase), "trend_aligned", 1.5f),
@@ -48,7 +48,7 @@ namespace AlgorithmicGallery.Corruption
 
         private static readonly string[] CorporateFallbackOrder =
         {
-            "marketable", "engaging", "retention_friendly", "monetizable", "sticky", "discoverable", "conversion_ready"
+            "marketable", "engaging", "retention_friendly", "monetizable", "shareable", "discoverable", "conversion_ready"
         };
 
         public static void EnsureCorporateTarget(PromptDefinition prompt)
@@ -187,7 +187,6 @@ namespace AlgorithmicGallery.Corruption
                 case "engaging": return "Engaging";
                 case "retention_friendly": return "Retention";
                 case "monetizable": return "Monetisable";
-                case "sticky": return "Sticky";
                 case "discoverable": return "Discoverable";
                 case "shareable": return "Shareable";
                 case "trend_aligned": return "Trending";
@@ -213,7 +212,6 @@ namespace AlgorithmicGallery.Corruption
                 case "engaging": return "Engagement";
                 case "retention_friendly": return "Retention";
                 case "monetizable": return "Monetisation";
-                case "sticky": return "Stickiness";
                 case "discoverable": return "Discoverability";
                 case "shareable": return "Shareability";
                 case "trend_aligned": return "Trend Alignment";

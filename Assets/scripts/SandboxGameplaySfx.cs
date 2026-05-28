@@ -11,6 +11,7 @@ namespace AlgorithmicGallery.Corruption
     public class SandboxGameplaySfx : MonoBehaviour
     {
         public static SandboxGameplaySfx Instance { get; private set; }
+        private const string SfxResourcePrefix = "Sfx/";
 
         [Header("Sound clips (drag files here)")]
         [Tooltip("Played when the system starts turning a prop white / sterile.")]
@@ -36,9 +37,12 @@ namespace AlgorithmicGallery.Corruption
         void Awake()
         {
             _source = GetComponent<AudioSource>();
+            if (_source == null)
+                _source = gameObject.AddComponent<AudioSource>();
             _source.playOnAwake = false;
             _source.spatialBlend = 0f;
             _source.loop = false;
+            LoadDefaultClipsFromResources();
 
             if (!Application.isPlaying)
                 return;
@@ -53,6 +57,16 @@ namespace AlgorithmicGallery.Corruption
             Instance = this;
         }
 
+        private void LoadDefaultClipsFromResources()
+        {
+            if (_playerPlacedBlockClip == null)
+                _playerPlacedBlockClip = Resources.Load<AudioClip>(SfxResourcePrefix + "PlayerPlace");
+            if (_objectTurnedWhiteClip == null)
+                _objectTurnedWhiteClip = Resources.Load<AudioClip>(SfxResourcePrefix + "PropSterilize");
+            if (_objectMovedOnGridClip == null)
+                _objectMovedOnGridClip = Resources.Load<AudioClip>(SfxResourcePrefix + "PropGridMove");
+        }
+
         void OnDestroy()
         {
             if (Instance == this)
@@ -62,6 +76,7 @@ namespace AlgorithmicGallery.Corruption
         /// <summary>Call when the player successfully places a prop.</summary>
         public static void NotifyPlayerPlaced()
         {
+            EnsureInstance();
             Instance?.PlayPlayerPlaced();
         }
 
@@ -88,19 +103,38 @@ namespace AlgorithmicGallery.Corruption
         /// <summary>Call from gameplay code when a prop is reassigned to a grid cell.</summary>
         public static void NotifyPropMovedOnGrid(GameObject prop, Vector3 from, Vector3 to)
         {
+            EnsureInstance();
             Instance?.HandlePropMovedOnGrid(prop, from, to);
         }
 
         /// <summary>Call when the system begins bleaching a prop white.</summary>
         public static void NotifyPropSterilizationStarted(GameObject prop)
         {
+            EnsureInstance();
             Instance?.HandlePropSterilizationStarted(prop);
+        }
+
+        private static void EnsureInstance()
+        {
+            if (Instance != null)
+                return;
+
+            Instance = FindFirstObjectByType<SandboxGameplaySfx>();
+            if (Instance != null)
+                return;
+
+            var go = new GameObject("SandboxGameplaySfx");
+            go.AddComponent<AudioSource>();
+            Instance = go.AddComponent<SandboxGameplaySfx>();
         }
 
         private void PlayClip(AudioClip clip, float volume)
         {
-            if (_source == null || clip == null)
+            if (_source == null)
                 return;
+
+            if (clip == null)
+                clip = CreateFallbackPlacementClip();
 
             if (_randomizePitch)
                 _source.pitch = UnityEngine.Random.Range(_pitchRange.x, _pitchRange.y);
@@ -108,6 +142,26 @@ namespace AlgorithmicGallery.Corruption
                 _source.pitch = 1f;
 
             _source.PlayOneShot(clip, Mathf.Clamp01(volume));
+        }
+
+        private static AudioClip CreateFallbackPlacementClip()
+        {
+            const int sampleRate = 44100;
+            const float duration = 0.05f;
+            const float frequency = 520f;
+            const float amplitude = 0.24f;
+            int sampleCount = Mathf.Max(1, Mathf.RoundToInt(sampleRate * duration));
+            float[] data = new float[sampleCount];
+            for (int i = 0; i < sampleCount; i++)
+            {
+                float t = i / (float)sampleRate;
+                float env = Mathf.Sin((i / (float)sampleCount) * Mathf.PI);
+                data[i] = Mathf.Sin(2f * Mathf.PI * frequency * t) * amplitude * env;
+            }
+
+            var clip = AudioClip.Create("sfx_place_fallback", sampleCount, 1, sampleRate, false);
+            clip.SetData(data, 0);
+            return clip;
         }
     }
 }

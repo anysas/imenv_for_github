@@ -227,13 +227,19 @@ namespace AlgorithmicGallery.Corruption
                     _hotbar?.RegisterPlayerPlacedProp(prop);
                     _hotbar?.BeginPostPlacementThinking(_postPlacementThinkingSeconds);
                     _sandbox?.NotifyPlayerPlaced(placedPosition);
+                    PropBudget.Instance?.Register(go, isPlayerPlaced: true);
+                    PlacedPropSterilizationController.NotifyPlayerPropPlaced(go);
+
                     OnPropPlacedWithContext?.Invoke(true, prop, floaterAnchor);
                     OnPropPlaced?.Invoke(true);
                     GameplayEventDebugLog.Push("Place", $"player placed \"{prop.DisplayName}\"");
                     SpawnPlayerPlacementVfx(go);
                 }
-
-                PropBudget.Instance?.Register(go, isPlayerPlaced: true);
+                else
+                {
+                    PropBudget.Instance?.Register(go, isPlayerPlaced: true);
+                    PlacedPropSterilizationController.NotifyPlayerPropPlaced(go);
+                }
             }
             else if (go != null)
             {

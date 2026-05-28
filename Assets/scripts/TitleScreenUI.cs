@@ -78,7 +78,7 @@ namespace AlgorithmicGallery.Corruption
             titleText.fontSize = 118;
             titleText.fontStyle = FontStyle.Bold;
             titleText.alignment = TextAnchor.UpperLeft;
-            titleText.color = new Color(1f, 0.55f, 0.2f, 1f);
+            titleText.color = new Color32(24, 119, 242, 255);
             titleText.horizontalOverflow = HorizontalWrapMode.Wrap;
             titleText.verticalOverflow = VerticalWrapMode.Overflow;
             titleText.text = _title;
@@ -96,7 +96,7 @@ namespace AlgorithmicGallery.Corruption
             subText.fontSize = 98;
             subText.fontStyle = FontStyle.Bold;
             subText.alignment = TextAnchor.UpperLeft;
-            subText.color = new Color(1f, 0.55f, 0.2f, 0.95f);
+            subText.color = Color.white;
             subText.horizontalOverflow = HorizontalWrapMode.Wrap;
             subText.verticalOverflow = VerticalWrapMode.Overflow;
             subText.text = _subtitle;
@@ -109,7 +109,7 @@ namespace AlgorithmicGallery.Corruption
             beginRect.offsetMin = Vector2.zero;
             beginRect.offsetMax = Vector2.zero;
             var beginImg = beginGO.AddComponent<Image>();
-            beginImg.color = new Color(1f, 0.55f, 0.2f, 1f);
+            beginImg.color = new Color32(24, 119, 242, 255);
             var beginBtn = beginGO.AddComponent<Button>();
             beginBtn.targetGraphic = beginImg;
             beginBtn.onClick.AddListener(Dismiss);
@@ -126,7 +126,7 @@ namespace AlgorithmicGallery.Corruption
             beginLabel.fontSize = 34;
             beginLabel.fontStyle = FontStyle.Bold;
             beginLabel.alignment = TextAnchor.MiddleCenter;
-            beginLabel.color = Color.black;
+            beginLabel.color = Color.white;
             beginLabel.text = "Begin";
         }
 

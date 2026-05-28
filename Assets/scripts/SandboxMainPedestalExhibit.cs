@@ -7,11 +7,12 @@ namespace AlgorithmicGallery.Corruption
 {
     /// <summary>
     /// When the sandbox session ends, merges placed props into one exhibit on
-    /// <c>mainPedestal</c> and shows the player's terminal prompt on <c>mainPlateTextBox</c>.
+    /// <c>glass-case/mainPedestal</c> and shows the player's terminal prompt on <c>pedestalTextBox</c>.
     /// </summary>
     public class SandboxMainPedestalExhibit : MonoBehaviour
     {
         private const string CombinedRootName = "_RuntimeSandboxCombinedModel";
+        private const string SterilityCleanProxyName = "_SterilityCleanProxy";
 
         [Header("References")]
         [SerializeField] private SandboxManager _sandbox;
@@ -22,19 +23,31 @@ namespace AlgorithmicGallery.Corruption
         [SerializeField] private float _settleDelayAfterGridSlides = 0.08f;
 
         [Header("Scene object names")]
+        [SerializeField] private string _mainPedestalHierarchyPath = "glasscase/mainPedestal";
         [SerializeField] private string _mainPedestalObjectName = "mainPedestal";
-        [SerializeField] private string _mainPlateTextObjectName = "mainPlateTextBox";
+        [SerializeField] private string _mainPlateTextObjectName = "pedestalTextBox";
 
         [Header("Layout")]
         [Tooltip("World-space offset applied after snapping to the pedestal top surface.")]
         [SerializeField] private Vector3 _exhibitOffsetFromAnchor = new Vector3(0f, 0.05f, 0f);
-        [SerializeField] private float _surfaceRaycastHeight = 80f;
-        [SerializeField] private float _surfaceRaycastDistance = 160f;
         [Tooltip("Max world footprint for the arrangement; only shrinks if the sandbox layout is larger.")]
         [SerializeField] private float _maxFootprintWorldSize = 11f;
         [Tooltip("Half-extent (m) used per prop when measuring layout span from positions.")]
         [SerializeField] private float _layoutBoundsPadding = 0.55f;
         [SerializeField] private bool _usePlayerPlacedPropsOnly = true;
+
+        [Header("Transfer reveal")]
+        [Tooltip("Fade in the exhibit via particle transfer toward mainPedestal after build.")]
+        [SerializeField] private bool _useTransferReveal = true;
+        [SerializeField] private DioramaTransferVfxController _transferVfx;
+
+        [Header("Restart trigger")]
+        [Tooltip("Extra trigger padding (metres) added around the glasscase bounds in X/Z.")]
+        [SerializeField] private float _restartTriggerExtraXZ = 10f;
+        [Tooltip("Extra trigger padding (metres) added above/below the glasscase bounds in Y.")]
+        [SerializeField] private float _restartTriggerExtraY = 0.75f;
+        [Tooltip("Minimum world height of the restart trigger.")]
+        [SerializeField] private float _restartTriggerMinHeight = 2.5f;
 
         private readonly List<GameObject> _propsScratch = new();
         private readonly List<Transform> _reparentedProps = new();
@@ -60,11 +73,11 @@ namespace AlgorithmicGallery.Corruption
             if (_gridAligner == null)
                 _gridAligner = FindFirstObjectByType<SandboxPropGridAligner>();
 
-            if (_mainPedestal == null && !string.IsNullOrWhiteSpace(_mainPedestalObjectName))
+            if (_mainPedestal == null)
             {
-                var pedestalGo = GameObject.Find(_mainPedestalObjectName);
-                if (pedestalGo != null)
-                    _mainPedestal = pedestalGo.transform;
+                _mainPedestal = SceneHierarchyLookup.FindTransform(
+                    _mainPedestalHierarchyPath,
+                    _mainPedestalObjectName);
             }
 
             if (_mainPlateText == null && !string.IsNullOrWhiteSpace(_mainPlateTextObjectName))
@@ -73,7 +86,16 @@ namespace AlgorithmicGallery.Corruption
                 if (textGo != null)
                     _mainPlateText = textGo.GetComponent<TMP_Text>();
             }
+
+            if (_transferVfx == null)
+                _transferVfx = FindFirstObjectByType<DioramaTransferVfxController>();
         }
+
+        /// <summary>Combined exhibit root after session end, or null if not built yet.</summary>
+        public GameObject CombinedExhibitRoot => _combinedRoot;
+
+        /// <summary>World anchor on the pedestal top used when placing the exhibit.</summary>
+        public Vector3 ExhibitAnchorWorldPoint => GetExhibitAnchorWorldPoint() + _exhibitOffsetFromAnchor;
 
         private void Subscribe()
         {
@@ -111,42 +133,38 @@ namespace AlgorithmicGallery.Corruption
             if (_settleDelayAfterGridSlides > 0f)
                 yield return new WaitForSeconds(_settleDelayAfterGridSlides);
 
-            BuildExhibit();
-            NotifyExhibitBuilt();
+            if (BuildExhibit(out Vector3 sourceLayoutCenter))
+                PlayTransferRevealIfEnabled(sourceLayoutCenter);
+
+            EnsureDioramaRestartTrigger();
         }
 
-        private void NotifyExhibitBuilt()
+        public void BuildExhibit() => BuildExhibit(out _);
+
+        /// <summary>Builds the combined exhibit; returns false if props or pedestal are missing.</summary>
+        public bool BuildExhibit(out Vector3 sourceLayoutCenter)
         {
-            if (_sandbox == null)
-                _sandbox = FindFirstObjectByType<SandboxManager>();
-
-            if (_sandbox == null)
-                return;
-
-            _sandbox.OnMainPedestalExhibitBuilt?.Invoke();
-            GameplayEventDebugLog.Push("Sandbox", "OnMainPedestalExhibitBuilt");
-        }
-
-        public void BuildExhibit()
-        {
+            sourceLayoutCenter = Vector3.zero;
             ResolveReferences();
             if (_mainPedestal == null)
             {
                 Debug.LogWarning("[SandboxMainPedestalExhibit] mainPedestal not found in scene.");
-                return;
+                return false;
             }
 
             if (!CollectExhibitProps())
             {
                 Debug.LogWarning("[SandboxMainPedestalExhibit] No placed props to exhibit.");
-                return;
+                return false;
             }
 
             if (!TryGetLayoutBoundsFromPositions(_propsScratch, out Bounds sourceLayout))
             {
                 Debug.LogWarning("[SandboxMainPedestalExhibit] Could not measure placed prop layout.");
-                return;
+                return false;
             }
+
+            sourceLayoutCenter = sourceLayout.center;
 
             DestroyExistingCombinedRoot();
 
@@ -168,7 +186,7 @@ namespace AlgorithmicGallery.Corruption
                     continue;
 
                 prop.SetActive(true);
-                EnsureRenderersEnabled(prop);
+                PreserveSterilityVisualState(prop);
 
                 Transform t = prop.transform;
                 Vector3 worldPos = t.position;
@@ -215,6 +233,128 @@ namespace AlgorithmicGallery.Corruption
                     $"[SandboxMainPedestalExhibit] Exhibit on mainPedestal: {_reparentedProps.Count} props, " +
                     $"scale {uniformScale:F3}, anchor {anchorPoint}.");
             }
+
+            return true;
+        }
+
+        private void PlayTransferRevealIfEnabled(Vector3 sourceLayoutCenter)
+        {
+            if (!_useTransferReveal || _combinedRoot == null)
+                return;
+
+            ResolveReferences();
+            if (_transferVfx == null)
+                _transferVfx = FindFirstObjectByType<DioramaTransferVfxController>();
+
+            if (_transferVfx == null || !_transferVfx.EffectEnabled)
+                return;
+
+            Vector3 target = _transferVfx.ResolvePedestalTargetAnchor();
+            _transferVfx.PlayTransfer(_combinedRoot, sourceLayoutCenter, target);
+            GameplayEventDebugLog.Push("DioramaTransfer", "started particle transfer to mainPedestal");
+        }
+
+        private void EnsureDioramaRestartTrigger()
+        {
+            if (_mainPedestal == null)
+                return;
+
+            const string triggerName = "DioramaRestartTrigger";
+            Transform triggerParent = _mainPedestal.parent != null ? _mainPedestal.parent : _mainPedestal;
+            Transform existing = triggerParent.Find(triggerName);
+            GameObject triggerGo = existing != null ? existing.gameObject : new GameObject(triggerName);
+
+            if (existing == null)
+            {
+                triggerGo.transform.SetParent(triggerParent, false);
+                triggerGo.transform.localPosition = new Vector3(0f, 0.12f, 0f);
+                triggerGo.transform.localRotation = Quaternion.identity;
+                triggerGo.transform.localScale = Vector3.one;
+            }
+
+            var box = triggerGo.GetComponent<BoxCollider>();
+            if (box == null)
+                box = triggerGo.AddComponent<BoxCollider>();
+            box.isTrigger = true;
+
+            // Size trigger to be larger than the enclosing glasscase/parent bounds.
+            if (TryGetWorldBoundsFromHierarchy(triggerParent, out Bounds parentBounds))
+            {
+                Vector3 worldSize = new Vector3(
+                    parentBounds.size.x + (_restartTriggerExtraXZ * 2f),
+                    Mathf.Max(_restartTriggerMinHeight, parentBounds.size.y + (_restartTriggerExtraY * 2f)),
+                    parentBounds.size.z + (_restartTriggerExtraXZ * 2f));
+
+                Vector3 lossy = triggerGo.transform.lossyScale;
+                box.size = new Vector3(
+                    worldSize.x / Mathf.Max(0.0001f, Mathf.Abs(lossy.x)),
+                    worldSize.y / Mathf.Max(0.0001f, Mathf.Abs(lossy.y)),
+                    worldSize.z / Mathf.Max(0.0001f, Mathf.Abs(lossy.z)));
+
+                box.center = triggerGo.transform.InverseTransformPoint(parentBounds.center);
+            }
+            else
+            {
+                // Fallback if bounds are unavailable.
+                box.center = Vector3.zero;
+                box.size = new Vector3(5f, 2.5f, 5f);
+            }
+
+            var proximity = triggerGo.GetComponent<DioramaProximityTrigger>();
+            if (proximity == null)
+                proximity = triggerGo.AddComponent<DioramaProximityTrigger>();
+
+            proximity.Arm();
+        }
+
+        private static bool TryGetWorldBoundsFromHierarchy(Transform root, out Bounds bounds)
+        {
+            bounds = default;
+            if (root == null)
+                return false;
+
+            bool hasBounds = false;
+
+            var colliders = root.GetComponentsInChildren<Collider>(true);
+            for (int i = 0; i < colliders.Length; i++)
+            {
+                Collider c = colliders[i];
+                if (c == null || !c.enabled || c.isTrigger)
+                    continue;
+
+                if (!hasBounds)
+                {
+                    bounds = c.bounds;
+                    hasBounds = true;
+                }
+                else
+                {
+                    bounds.Encapsulate(c.bounds);
+                }
+            }
+
+            if (hasBounds)
+                return true;
+
+            var renderers = root.GetComponentsInChildren<Renderer>(true);
+            for (int i = 0; i < renderers.Length; i++)
+            {
+                Renderer r = renderers[i];
+                if (r == null || !r.enabled)
+                    continue;
+
+                if (!hasBounds)
+                {
+                    bounds = r.bounds;
+                    hasBounds = true;
+                }
+                else
+                {
+                    bounds.Encapsulate(r.bounds);
+                }
+            }
+
+            return hasBounds;
         }
 
         public void ApplyPromptText()
@@ -222,7 +362,7 @@ namespace AlgorithmicGallery.Corruption
             ResolveReferences();
             if (_mainPlateText == null)
             {
-                Debug.LogWarning("[SandboxMainPedestalExhibit] mainPlateTextBox not found in scene.");
+                Debug.LogWarning("[SandboxMainPedestalExhibit] pedestalTextBox not found in scene.");
                 return;
             }
 
@@ -242,93 +382,14 @@ namespace AlgorithmicGallery.Corruption
         }
 
         /// <summary>
-        /// Top surface of <c>mainPedestal</c> at its transform XZ (not the separate nameplate object).
+        /// Top surface of <c>mainPedestal</c> using mesh bounds (not the separate nameplate object).
         /// </summary>
         private Vector3 GetExhibitAnchorWorldPoint()
         {
-            if (TryGetPedestalTopSurfaceAtTransform(out Vector3 surface))
+            if (SceneHierarchyLookup.TryGetPedestalTopSurface(_mainPedestal, out Vector3 surface))
                 return surface;
 
-            Vector3 anchor = _mainPedestal.position;
-            if (TryGetPedestalRendererTopY(out float topY))
-                anchor.y = topY;
-
-            return anchor;
-        }
-
-        private bool TryGetPedestalTopSurfaceAtTransform(out Vector3 surface)
-        {
-            surface = _mainPedestal.position;
-            Collider pedestalCollider = _mainPedestal.GetComponent<Collider>();
-            if (pedestalCollider == null)
-                return false;
-
-            Vector3 sampleXz = new Vector3(_mainPedestal.position.x, 0f, _mainPedestal.position.z);
-            float rayStartY = Mathf.Max(
-                pedestalCollider.bounds.max.y + 2f,
-                _mainPedestal.position.y + _surfaceRaycastHeight);
-            Vector3 origin = new Vector3(sampleXz.x, rayStartY, sampleXz.z);
-            var ray = new Ray(origin, Vector3.down);
-
-            if (pedestalCollider.Raycast(ray, out RaycastHit hit, _surfaceRaycastDistance))
-            {
-                surface = hit.point;
-                return true;
-            }
-
-            RaycastHit[] hits = Physics.RaycastAll(ray, _surfaceRaycastDistance);
-            float bestY = float.NegativeInfinity;
-            bool found = false;
-            for (int i = 0; i < hits.Length; i++)
-            {
-                Collider col = hits[i].collider;
-                if (col == null || !IsMainPedestalCollider(col))
-                    continue;
-
-                if (hits[i].point.y <= bestY)
-                    continue;
-
-                bestY = hits[i].point.y;
-                surface = hits[i].point;
-                found = true;
-            }
-
-            return found;
-        }
-
-        private bool IsMainPedestalCollider(Collider col)
-        {
-            if (col == null || _mainPedestal == null)
-                return false;
-
-            Transform hitTransform = col.transform;
-            return hitTransform == _mainPedestal || hitTransform.IsChildOf(_mainPedestal);
-        }
-
-        private bool TryGetPedestalRendererTopY(out float topY)
-        {
-            topY = _mainPedestal.position.y;
-            bool found = false;
-
-            var renderers = _mainPedestal.GetComponents<Renderer>();
-            for (int i = 0; i < renderers.Length; i++)
-            {
-                Renderer renderer = renderers[i];
-                if (renderer == null || !renderer.enabled)
-                    continue;
-
-                if (!found)
-                {
-                    topY = renderer.bounds.max.y;
-                    found = true;
-                }
-                else
-                {
-                    topY = Mathf.Max(topY, renderer.bounds.max.y);
-                }
-            }
-
-            return found;
+            return _mainPedestal != null ? _mainPedestal.position : Vector3.zero;
         }
 
         private bool CollectExhibitProps()
@@ -460,17 +521,50 @@ namespace AlgorithmicGallery.Corruption
             return hasBounds;
         }
 
-        private static void EnsureRenderersEnabled(GameObject root)
+        private static void PreserveSterilityVisualState(GameObject root)
         {
             if (root == null)
                 return;
 
-            var renderers = root.GetComponentsInChildren<Renderer>(true);
-            for (int i = 0; i < renderers.Length; i++)
+            Transform cleanProxy = root.transform.Find(SterilityCleanProxyName);
+            if (cleanProxy != null)
             {
-                if (renderers[i] != null)
-                    renderers[i].enabled = true;
+                // Keep hallway exhibit in the same final clean state reached at session end:
+                // disable processed renderers and render only the clean proxy.
+                SetLayerRecursive(cleanProxy.gameObject, SystemPropCleanOverlaySetup.SystemPropLayer);
+
+                var proxyRenderers = root.GetComponentsInChildren<Renderer>(true);
+                for (int i = 0; i < proxyRenderers.Length; i++)
+                {
+                    Renderer renderer = proxyRenderers[i];
+                    if (renderer == null)
+                        continue;
+
+                    bool isCleanRenderer = renderer.transform == cleanProxy
+                        || renderer.transform.IsChildOf(cleanProxy);
+                    renderer.enabled = isCleanRenderer;
+                }
+
+                return;
             }
+
+            // Non-sterilized fallback.
+            var allRenderers = root.GetComponentsInChildren<Renderer>(true);
+            for (int i = 0; i < allRenderers.Length; i++)
+            {
+                if (allRenderers[i] != null)
+                    allRenderers[i].enabled = true;
+            }
+        }
+
+        private static void SetLayerRecursive(GameObject root, int layer)
+        {
+            if (root == null)
+                return;
+
+            root.layer = layer;
+            foreach (Transform child in root.transform)
+                SetLayerRecursive(child.gameObject, layer);
         }
 
         private void DestroyExistingCombinedRoot()

@@ -1,0 +1,1658 @@
+# Algorithmic Gallery — Project Handoff Document
+
+**Author:** Ezra Johnston (RMIT Digital Media Design)
+**Date:** April 12, 2026
+**Course:** Immersive Environments, RMIT University
+**Deadlines:** Prototype April 16 | Final May 28
+
+---
+
+## 1. Project Concept
+
+**Algorithmic Gallery** is an interactive gallery experience where sculptures bloom when gazed at and decay when ignored. A recommendation engine tracks user preferences across three emotional phases, critiquing algorithmic attention retention (like TikTok's For You page).
+
+The visitor walks through procedurally-arranged gallery rooms. Sculptures start greyscale and small (seeds). When the visitor gazes at one, it blooms — saturating with color, growing, emitting light. When they look away, it decays — desaturating, dissolving, shrinking. Behind the scenes, a recommendation engine learns what the visitor lingers on and curates increasingly manipulative selections, mirroring how platforms like TikTok engineer engagement.
+
+**Three emotional phases:**
+1. **Fascination** — broad exploration, showing diverse objects (70% explore / 30% exploit)
+2. **Recognition** — the visitor notices patterns in what's shown; engine exploits preferences with strategic adjacent probing (30% explore / 70% exploit)
+3. **Unease** — aggressive exploitation of top preferences with wild-swing "Hail Mary" explores from lowest-scoring tags (15% explore / 85% exploit), creating an uncanny feeling of being watched/known
+
+**Platform:** Desktop-first (keyboard/mouse FPS controls), VR as optional enhancement (Quest 3, head gaze). Everything runs locally — no server, no internet. Must be packageable as a standalone game.
+
+**Asset source:** ~14,000 models from the [Source Engine Blender Collection](https://steamcommunity.com/sharedfiles/filedetails/?id=3170975582) (Portal, Portal 2, Half-Life 2, Team Fortress 2). These are .blend files with Source Engine custom materials (VertexLitGeneric node groups), batch-exported to .glb for Unity runtime loading.
+
+---
+
+## 2. Architecture Overview
+
+```
+┌─────────────────────────────────────────────────────────┐
+│                    OFFLINE PIPELINE                       │
+│  (Runs once on PC via Blender headless)                  │
+│                                                           │
+│  .blend files ──► batch_export.py ──► .glb files         │
+│  .blend files ──► auto_tagger_v2.py ──► per-game .json   │
+│  per-game .json ──► build_metadata.py ──► metadata.json  │
+└─────────────────────────────────────────────────────────┘
+                          │
+                          ▼
+┌─────────────────────────────────────────────────────────┐
+│                   UNITY RUNTIME                           │
+│                                                           │
+│  StreamingAssets/                                         │
+│  ├── metadata.json          (model index + tags)         │
+│  └── models/                                              │
+│      ├── portal/            (.glb files)                 │
+│      ├── portal2/                                        │
+│      ├── hl2/                                            │
+│      └── tf2/                                            │
+│                                                           │
+│  GalleryManager (orchestrator)                           │
+│    ├── MetadataIndex (loads metadata.json)               │
+│    ├── RecommendationEngine                              │
+│    │   ├── UserProfile (EMA preference learning)         │
+│    │   └── IRecommendationStrategy                       │
+│    │       ├── ExplorationStrategy (Fascination)         │
+│    │       ├── ExploitationStrategy (Recognition)        │
+│    │       └── DesperationStrategy (Unease)              │
+│    ├── SculptureSpawner (GLTFast async loading)          │
+│    └── GazeManager                                       │
+│        ├── IGazeProvider                                  │
+│        │   ├── DesktopGazeProvider (camera center ray)   │
+│        │   └── VRGazeProvider (HMD forward ray)          │
+│        └── SculptureController (bloom/decay state machine)│
+└─────────────────────────────────────────────────────────┘
+```
+
+---
+
+## 3. Tech Stack
+
+| Component | Technology |
+|-----------|-----------|
+| Engine | Unity 6, URP (Universal Render Pipeline) |
+| Runtime model loading | GLTFast (com.atteneder.gltfast) |
+| JSON parsing | Newtonsoft.Json (com.unity.nuget.newtonsoft-json) |
+| VR | Unity XR Interaction Toolkit (optional, Quest 3) |
+| Offline pipeline | Python (Blender's bpy module, headless mode) |
+| Shader effects | URP Shader Graph with MaterialPropertyBlock |
+| Namespace | `AlgorithmicGallery` (MonoBehaviours), `AlgorithmicGallery.Recommendation` (engine) |
+
+---
+
+## 4. File Inventory
+
+All project files live in: `immersive environments/pc transfer/imenv/`
+
+### 4.1 Offline Pipeline Scripts (Python/Blender)
+
+| File | Purpose |
+|------|---------|
+| `batch_export.py` | Exports each mesh object from .blend files as individual .glb with embedded textures. Replaces Source Engine custom node groups (VertexLitGeneric) with Principled BSDF so glTF exporter can parse them. CLI: `blender --background --python batch_export.py -- --input "path/_models" --output "./exports/portal" --game portal` |
+| `auto_tagger_v2.py` | **IMPROVED** tagger. Extracts metadata tags from .blend files using material name/path keyword matching (not PBR socket values, which are unreliable for Source materials). 25-pixel grid texture sampling, wider color thresholds. CLI: `blender --background --python auto_tagger_v2.py -- --input "path/_models" --output "./tags/portal.json" --game portal` |
+| `auto_tagger.py` | **DEPRECATED** — original tagger with critical bugs (see Section 7). Do not use. |
+| `build_metadata.py` | Merges per-game tag JSONs into unified `metadata.json` with deduplication and tag distribution stats. CLI: `python build_metadata.py --tags-dir ./tags --output ./metadata.json` |
+
+### 4.2 Unity C# Scripts (`UnityScripts/`)
+
+**Recommendation Engine** (namespace: `AlgorithmicGallery.Recommendation`):
+
+| File | Purpose |
+|------|---------|
+| `ModelEntry.cs` | Data classes: `ModelEntry`, `ModelTags`, `ModelDimensions` with `[JsonProperty]` attributes for Newtonsoft deserialization. `FlatTags` list populated by MetadataIndex at load time. |
+| `MetadataIndex.cs` | Loads `metadata.json`, builds O(1) lookup dictionary, tag index, tag adjacency graph. Provides filtering/scoring methods: `GetCandidates()`, `FilterByAnyTag()`, `FilterByAdjacentTags()`, `ScoreByPreference()`, `ScoreByPreferenceAscending()`. |
+| `UserProfile.cs` | EMA-based preference weight learning (α=0.15). Phase transitions: Fascination→Recognition at 12 sculptures or 180s, Recognition→Unease at 25 sculptures or 360s or declining dwell trend. Least-squares dwell trend over sliding window of 5. `GazeRecord` is a regular class (not C# record — Unity compatibility). Uses `Mathf.Clamp01`. |
+| `IRecommendationStrategy.cs` | Interface: `ArcPhase Phase { get; }` and `ModelEntry GetNext(UserProfile, MetadataIndex, Random)` |
+| `RecommendationEngine.cs` | Facade: `GetNext()` returns next model, `ReportGaze(modelId, dwellMs, elapsedSecs)` updates profile. Strategy pattern swaps `IRecommendationStrategy` on phase transition. |
+| `ExplorationStrategy.cs` | **Phase 1 (Fascination):** 70% explore underexplored tags / 30% exploit top 5 tags. Pool size 20. |
+| `ExploitationStrategy.cs` | **Phase 2 (Recognition):** 30% adjacent-tag explore / 70% exploit top 3 tags with adjacent bonus (0.3). Softmax-style weighted random selection. |
+| `DesperationStrategy.cs` | **Phase 3 (Unease):** 15% wild-swing explore from LOWEST scoring tags / 85% aggressive exploit top 2 tags only. |
+
+**Unity Runtime** (namespace: `AlgorithmicGallery`):
+
+| File | Purpose |
+|------|---------|
+| `IGazeProvider.cs` | Interface: `Ray GetGazeRay()` and `bool IsAvailable { get; }` |
+| `DesktopGazeProvider.cs` | Raycasts from camera through screen center (`ViewportPointToRay(0.5, 0.5)`) — simulates head gaze, NOT mouse. Attach to Main Camera. |
+| `VRGazeProvider.cs` | Queries HMD center eye position/rotation via `UnityEngine.XR.InputDevices`. Falls back to camera forward if XR unavailable. |
+| `GazeManager.cs` | Physics raycast every frame using IGazeProvider. Dwell threshold: 0.6s, grace period: 0.3s to prevent jitter. Tracks `_previousGazeTarget` separately during grace period (bug fix). Checks `GetComponentInParent<SculptureController>()` for GLTFast child objects. Auto-adds DesktopGazeProvider if none found. Reports gaze exits to GalleryManager. |
+| `SculptureController.cs` | State machine: Seed→Blooming→FullBloom→Decaying→Dead. Drives shader params via MaterialPropertyBlock on ALL child renderers (GLTFast creates children): `_Saturation` (0→1), `_EmissionPower` (0→max), `_DissolveAmount` (0→1). Bloom: 2s, scale 0.9→1.0. Decay: 4s, scale 1.0→0.5. Breathing pulse during FullBloom (sin wave). |
+| `SculptureSpawner.cs` | Async GLTFast loading via `GltfImport.Load()` then `InstantiateMainSceneAsync(container.transform)`. Loads from `StreamingAssets/models/{glbRelativePath}`. Adds SculptureController + BoxCollider sized to renderer bounds. |
+| `GalleryManager.cs` | Top-level orchestrator: loads `metadata.json` from StreamingAssets, initializes RecommendationEngine, manages pedestal slots (`Transform[]`). `SpawnAtPedestal()` calls `engine.GetNext()` then `spawner.LoadModel()`. `OnSculptureGazeExit()` calls `engine.ReportGaze()`. Refills empty pedestals in `Update()`. |
+| `RecommendationDebugUI.cs` | IMGUI overlay (F1 toggle). Shows phase with color coding (cyan/yellow/red), progress bar, sculptures viewed, session time, average dwell, top 5 preference weights with bars. |
+
+---
+
+## 5. Tag Adjacency Map
+
+The recommendation engine uses tag adjacency for strategic exploration. When the visitor likes "metallic + cool", the engine probes "glossy + cool" or "metallic + neutral":
+
+```
+tiny ↔ small ↔ medium ↔ large ↔ monumental
+low_poly ↔ medium_poly ↔ high_poly
+cubic ↔ wide ↔ irregular ↔ tall
+flat ↔ cubic, wide
+dark ↔ cool ↔ neutral ↔ warm ↔ earth
+matte ↔ rough
+glossy ↔ matte
+metallic → glossy
+organic → rough, matte
+glass → emissive, glossy
+concrete → rough, matte
+emissive → glossy
+```
+
+---
+
+## 6. Current State (April 12, 2026)
+
+### What's Done
+- **Portal models exported:** 279 .glb files from Portal .blend files via `batch_export.py` (0 errors, 7.9s)
+- **All C# scripts written** and should compile (last error was SculptureSpawner GLTFast API — fixed)
+- **Recommendation engine complete** with all three phase strategies
+- **auto_tagger_v2.py written** but NOT YET RUN on Portal models
+
+### What's NOT Done (Priority Order)
+
+1. **Re-tag Portal models with auto_tagger_v2.py** — The current `metadata.json` has 24,048 models ALL tagged "matte" and 80% "neutral" because it was generated with the buggy v1 tagger. Must re-run v2 on Portal .blend files, then `build_metadata.py` to generate a clean metadata.json with only target games.
+
+2. **Filter metadata.json** — Current file includes non-target games (CSS, DOD, L4D2) and uses Windows absolute paths for glb_paths. Needs to contain only portal/portal2/hl2/tf2 and use relative paths matching `StreamingAssets/models/` structure.
+
+3. **Copy files into Unity project:**
+   - `.glb` files → `Assets/StreamingAssets/models/portal/`
+   - `metadata.json` → `Assets/StreamingAssets/`
+   - All `.cs` files → `Assets/Scripts/` (maintaining namespace structure)
+
+4. **Verify Unity compilation** — Scripts should compile now after the SculptureSpawner fix, but hasn't been tested yet.
+
+5. **Set up Unity scene:**
+   - Main Camera with `GazeManager` + `DesktopGazeProvider` components
+   - Empty GameObject with `GalleryManager` + `SculptureSpawner` components
+   - 3-5 empty GameObjects as pedestal positions (spread in room layout), assigned to `GalleryManager._pedestalSlots`
+   - Any GameObject with `RecommendationDebugUI`
+   - FPS camera controller for movement (WASD + mouse look)
+
+6. **Build bloom/decay shader in Shader Graph** — URP Shader Graph that reads `_Saturation`, `_EmissionPower`, `_DissolveAmount` from MaterialPropertyBlock. Without this, SculptureController's property block writes will have no visual effect.
+
+7. **Build greybox gallery room** — Simple room/corridor prefabs for the gallery space. Can be ProBuilder or basic geometry for prototype.
+
+8. **Export remaining games** — Run `batch_export.py` and `auto_tagger_v2.py` for portal2, hl2, tf2 (total ~14K models).
+
+9. **Procedural gallery generation** — System to arrange rooms/corridors and place pedestals dynamically.
+
+---
+
+## 7. Known Bugs & Fixes Applied
+
+### Fixed
+| Bug | Cause | Fix |
+|-----|-------|-----|
+| Material tagging 100% "matte" | `auto_tagger.py` reads `metallic.default_value` from Principled BSDF, but Source materials use custom node groups where metallic is wired as texture (`is_linked=True`). Additionally, `batch_export.py` replaces all Source node groups with fresh Principled BSDF (metallic=0.0) BEFORE the tagger runs. | Created `auto_tagger_v2.py` with material name/path keyword matching instead of PBR socket values. |
+| Color mood 80% "neutral" | Warmth thresholds ±0.15 too tight for linear RGB values. | Widened to ±0.08, added "bright" category for high-brightness low-saturation. |
+| GazeManager lost reference to old target during grace period | When target changed, code set `_currentGazeTarget = newTarget` immediately, then during grace period timeout checked `_currentGazeTarget` (now the new target) and called OnGazeExit on wrong object. | Added `_previousGazeTarget` field to track old target through grace period. |
+| SculptureController only found root renderer | GLTFast creates mesh renderers as child objects. `GetComponent<Renderer>()` on root returned null. | Changed to `GetComponentsInChildren<Renderer>()` with `ApplyPropertyToAllRenderers()` helper. |
+| RecommendationDebugUI referenced `profile.Preferences` | Property is actually `PreferenceWeights`. | Changed to `profile.PreferenceWeights`. |
+| `FindObjectOfType` deprecated in Unity 6 | CS0618 warnings. | Replaced all instances with `FindFirstObjectByType`. |
+| SculptureSpawner GLTFast API mismatch | Code used `InstantiationSettings` with `parent`/`mask` properties and `GameObjectInstantiationFlags` that don't exist in user's GLTFast version. | Replaced with `await gltfImport.InstantiateMainSceneAsync(container.transform)`. |
+
+### Potential Issues
+- **GLTFast version sensitivity** — The `InstantiateMainSceneAsync(Transform)` API was the fix, but if the GLTFast version differs, the method signature might not match. Check the installed GLTFast package version.
+- **Shader doesn't exist yet** — SculptureController writes `_Saturation`, `_EmissionPower`, `_DissolveAmount` to MaterialPropertyBlock, but no shader currently reads these properties. The visual effect requires a custom URP Shader Graph.
+- **Quest VR path** — `File.Exists()` and `File.ReadAllText()` in SculptureSpawner and GalleryManager won't work on Android/Quest (StreamingAssets is inside APK). Need `UnityWebRequest` for Quest builds. Desktop prototype is fine.
+- **auto_tagger_v2.py reads .blend files** — It needs to run on the ORIGINAL .blend files (not the exported .glb files), because it inspects Blender node trees and material names. The .blend files live in the Source Engine Blender Collection asset library folders.
+
+---
+
+## 8. Recommendation Engine Deep Dive
+
+### User Profile Learning
+- **Exponential Moving Average (EMA):** For each tag on a gazed sculpture, `weight = weight * (1 - α) + signal * α` where α = 0.15 and signal = `clamp01(dwellMs / 8000)`
+- **Dwell trend:** Least-squares slope over sliding window of 5 recent dwell times, normalized by average. Negative trend indicates boredom.
+- **Preference weights dictionary:** Keys are tag strings (e.g. "metallic", "warm", "tall"), values are 0-1 floats.
+
+### Phase Transitions
+```
+Fascination → Recognition:  12 sculptures viewed OR 180s elapsed
+Recognition → Unease:       25 sculptures viewed OR 360s elapsed OR declining dwell trend (< -0.1)
+```
+
+### Strategy Behavior
+
+**Fascination (ExplorationStrategy):**
+- 70% chance: pick from underexplored tags (bottom 1/3 of all tag values by weight)
+- 30% chance: pick from top 5 preference-weighted tags
+- Pool size: 20, uniform random within pool
+
+**Recognition (ExploitationStrategy):**
+- 30% chance: pick from adjacent tags to top 3 (e.g. if metallic is top, probe glossy)
+- 70% chance: score all candidates by preference weights + adjacent tag bonus (0.3), softmax-weighted random from top 10
+- This creates the "it knows what I like but keeps surprising me" effect
+
+**Unease (DesperationStrategy):**
+- 15% chance: wild-swing explore from LOWEST scoring tags (deliberately jarring)
+- 85% chance: aggressively exploit top 2 tags only, softmax-weighted from top 10
+- This mirrors TikTok's desperation to retain — hyper-targeted with occasional wild swings
+
+---
+
+## 9. Shader Requirements
+
+The `SculptureController` drives these properties via `MaterialPropertyBlock`:
+
+| Property | Type | Range | Effect |
+|----------|------|-------|--------|
+| `_Saturation` | Float | 0–1 | 0 = greyscale, 1 = full color |
+| `_EmissionPower` | Float | 0–2 | Emission intensity multiplier |
+| `_DissolveAmount` | Float | 0–1 | 0 = fully visible, 1 = fully dissolved |
+
+A URP Shader Graph needs to be built that:
+1. Samples the base texture normally
+2. Lerps between greyscale and full color based on `_Saturation`
+3. Adds emission scaled by `_EmissionPower`
+4. Applies a dissolve effect (noise-based alpha cutoff or vertex displacement) based on `_DissolveAmount`
+5. Works with GLTFast-loaded materials (the shader must either be the default GLTFast shader modified, or materials must be swapped post-load)
+
+**Important:** GLTFast assigns its own shaders to loaded models. You'll need to either:
+- Replace materials post-instantiation with your custom shader material
+- Or modify GLTFast's default URP shader to include these properties
+- The material swap should happen in `SculptureSpawner` after `InstantiateMainSceneAsync`
+
+---
+
+## 10. Scene Setup Checklist
+
+```
+Scene Hierarchy:
+├── Main Camera
+│   ├── GazeManager (component)
+│   ├── DesktopGazeProvider (component)
+│   └── FPS Camera Controller (for WASD + mouse look)
+├── GallerySystem (empty GO)
+│   ├── GalleryManager (component)
+│   │   └── _pedestalSlots: [Pedestal_1, Pedestal_2, ...]
+│   │   └── _metadataJsonPath: "metadata.json"
+│   └── SculptureSpawner (component)
+├── Pedestal_1 (empty GO at position)
+├── Pedestal_2 (empty GO at position)
+├── Pedestal_3 (empty GO at position)
+├── DebugUI (empty GO)
+│   └── RecommendationDebugUI (component)
+└── Environment
+    └── Gallery room geometry (greybox)
+```
+
+---
+
+## 11. Full Code Listing
+
+Every script is included below for copy-paste into a fresh Unity project.
+
+### 11.1 IGazeProvider.cs
+```csharp
+using UnityEngine;
+
+namespace AlgorithmicGallery
+{
+    public interface IGazeProvider
+    {
+        Ray GetGazeRay();
+        bool IsAvailable { get; }
+    }
+}
+```
+
+### 11.2 DesktopGazeProvider.cs
+```csharp
+using UnityEngine;
+
+namespace AlgorithmicGallery
+{
+    public class DesktopGazeProvider : MonoBehaviour, IGazeProvider
+    {
+        public bool IsAvailable { get; private set; }
+
+        private Camera _camera;
+
+        private void OnEnable()
+        {
+            _camera = GetComponent<Camera>();
+            if (_camera == null)
+            {
+                Debug.LogError("DesktopGazeProvider must be attached to a GameObject with a Camera component.");
+                IsAvailable = false;
+                return;
+            }
+            IsAvailable = true;
+        }
+
+        private void OnDisable()
+        {
+            IsAvailable = false;
+        }
+
+        public Ray GetGazeRay()
+        {
+            return _camera.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0f));
+        }
+    }
+}
+```
+
+### 11.3 VRGazeProvider.cs
+```csharp
+using UnityEngine;
+using UnityEngine.XR;
+
+namespace AlgorithmicGallery
+{
+    public class VRGazeProvider : MonoBehaviour, IGazeProvider
+    {
+        public bool IsAvailable { get; private set; }
+
+        private Camera _camera;
+        private InputDevice _hmdDevice;
+
+        private void OnEnable()
+        {
+            _camera = GetComponent<Camera>();
+            if (_camera == null)
+            {
+                Debug.LogError("VRGazeProvider must be attached to a GameObject with a Camera component.");
+                IsAvailable = false;
+                return;
+            }
+
+            var xrDevices = new System.Collections.Generic.List<InputDevice>();
+            InputDevices.GetDevicesWithCharacteristics(
+                InputDeviceCharacteristics.HeadMounted,
+                xrDevices
+            );
+
+            if (xrDevices.Count > 0)
+            {
+                _hmdDevice = xrDevices[0];
+                IsAvailable = _hmdDevice.isValid;
+            }
+            else
+            {
+                IsAvailable = false;
+            }
+
+            if (!IsAvailable)
+            {
+                Debug.LogWarning("VRGazeProvider: No XR HMD device found. Will use camera forward as fallback.");
+            }
+        }
+
+        private void OnDisable()
+        {
+            IsAvailable = false;
+        }
+
+        public Ray GetGazeRay()
+        {
+            if (_hmdDevice.isValid)
+            {
+                if (_hmdDevice.TryGetFeatureValue(CommonUsages.centerEyePosition, out Vector3 hmdPosition))
+                {
+                    if (_hmdDevice.TryGetFeatureValue(CommonUsages.centerEyeRotation, out Quaternion hmdRotation))
+                    {
+                        return new Ray(hmdPosition, hmdRotation * Vector3.forward);
+                    }
+                }
+            }
+
+            return new Ray(_camera.transform.position, _camera.transform.forward);
+        }
+    }
+}
+```
+
+### 11.4 GazeManager.cs
+```csharp
+using UnityEngine;
+
+namespace AlgorithmicGallery
+{
+    public class GazeManager : MonoBehaviour
+    {
+        [Header("Configuration")]
+        [SerializeField] private float _dwellThreshold = 0.6f;
+        [SerializeField] private float _gazeExitGracePeriod = 0.3f;
+        [SerializeField] private float _maxRayDistance = 50f;
+
+        [Header("References")]
+        [SerializeField] private GalleryManager _galleryManager;
+
+        private IGazeProvider _gazeProvider;
+        private SculptureController _currentGazeTarget;
+        private SculptureController _previousGazeTarget;
+        private float _currentDwellTime;
+        private float _gazeExitTimer;
+        private bool _isWaitingForGazeExit;
+
+        private void Start()
+        {
+            _gazeProvider = GetComponent<VRGazeProvider>();
+            if (_gazeProvider == null || !_gazeProvider.IsAvailable)
+                _gazeProvider = GetComponent<DesktopGazeProvider>();
+
+            if (_gazeProvider == null || !_gazeProvider.IsAvailable)
+            {
+                var desktopProvider = gameObject.AddComponent<DesktopGazeProvider>();
+                _gazeProvider = desktopProvider;
+                Debug.Log("GazeManager: Auto-added DesktopGazeProvider.");
+            }
+
+            if (_galleryManager == null)
+                _galleryManager = FindFirstObjectByType<GalleryManager>();
+
+            _currentGazeTarget = null;
+            _previousGazeTarget = null;
+            _currentDwellTime = 0f;
+            _gazeExitTimer = 0f;
+            _isWaitingForGazeExit = false;
+        }
+
+        private void Update()
+        {
+            if (_gazeProvider == null || !_gazeProvider.IsAvailable) return;
+
+            Ray gazeRay = _gazeProvider.GetGazeRay();
+            SculptureController hitTarget = null;
+
+            if (Physics.Raycast(gazeRay, out RaycastHit hit, _maxRayDistance))
+            {
+                hitTarget = hit.collider.GetComponent<SculptureController>();
+                if (hitTarget == null)
+                    hitTarget = hit.collider.GetComponentInParent<SculptureController>();
+            }
+
+            if (hitTarget == _currentGazeTarget && hitTarget != null)
+            {
+                _isWaitingForGazeExit = false;
+                _currentDwellTime += Time.deltaTime;
+                if (_currentDwellTime >= _dwellThreshold)
+                    _currentGazeTarget.OnGazeDwell(_currentDwellTime);
+                return;
+            }
+
+            if (hitTarget != _currentGazeTarget)
+            {
+                if (_currentGazeTarget != null && !_isWaitingForGazeExit)
+                {
+                    _isWaitingForGazeExit = true;
+                    _previousGazeTarget = _currentGazeTarget;
+                    _gazeExitTimer = 0f;
+                }
+
+                if (hitTarget != null)
+                {
+                    ConfirmGazeExit();
+                    _currentGazeTarget = hitTarget;
+                    _currentDwellTime = 0f;
+                }
+            }
+
+            if (_isWaitingForGazeExit && hitTarget == null)
+            {
+                _gazeExitTimer += Time.deltaTime;
+                if (_gazeExitTimer >= _gazeExitGracePeriod)
+                {
+                    ConfirmGazeExit();
+                    _currentGazeTarget = null;
+                    _currentDwellTime = 0f;
+                }
+            }
+        }
+
+        private void ConfirmGazeExit()
+        {
+            if (!_isWaitingForGazeExit) return;
+
+            if (_previousGazeTarget != null)
+            {
+                _previousGazeTarget.OnGazeExit();
+                if (_galleryManager != null)
+                    _galleryManager.OnSculptureGazeExit(_previousGazeTarget);
+            }
+
+            _previousGazeTarget = null;
+            _isWaitingForGazeExit = false;
+            _gazeExitTimer = 0f;
+        }
+
+        public SculptureController CurrentGazeTarget => _currentGazeTarget;
+        public float CurrentDwellTime => _currentDwellTime;
+    }
+}
+```
+
+### 11.5 SculptureController.cs
+```csharp
+using UnityEngine;
+
+namespace AlgorithmicGallery
+{
+    [RequireComponent(typeof(Collider))]
+    public class SculptureController : MonoBehaviour
+    {
+        private enum SculptureState { Seed, Blooming, FullBloom, Decaying, Dead }
+
+        [Header("Configuration")]
+        [SerializeField] private float _bloomDuration = 2f;
+        [SerializeField] private float _decayDuration = 4f;
+        [SerializeField] private float _breathePulseSpeed = 2f;
+        [SerializeField] private float _breathePulseAmount = 0.05f;
+        [SerializeField] private float _maxEmissionPower = 2f;
+
+        [Header("References")]
+        [SerializeField] private Renderer _renderer;
+
+        public string ModelId { get; set; }
+        public float TotalDwellMs { get; private set; }
+
+        private SculptureState _state;
+        private float _stateTimer;
+        private float _bloomProgress;
+        private MaterialPropertyBlock _propertyBlock;
+        private Vector3 _originalScale;
+        private Renderer[] _allRenderers;
+
+        private void OnEnable()
+        {
+            if (_renderer == null)
+                _renderer = GetComponentInChildren<Renderer>();
+            _allRenderers = GetComponentsInChildren<Renderer>();
+
+            _propertyBlock = new MaterialPropertyBlock();
+            _originalScale = transform.localScale;
+            _state = SculptureState.Seed;
+            _stateTimer = 0f;
+            _bloomProgress = 0f;
+            TotalDwellMs = 0f;
+
+            ApplySeedState();
+        }
+
+        private void Update()
+        {
+            _stateTimer += Time.deltaTime;
+
+            switch (_state)
+            {
+                case SculptureState.Seed: break;
+                case SculptureState.Blooming: UpdateBlooming(); break;
+                case SculptureState.FullBloom: UpdateFullBloom(); break;
+                case SculptureState.Decaying: UpdateDecaying(); break;
+                case SculptureState.Dead: break;
+            }
+        }
+
+        public void OnGazeDwell(float dwellTimeSeconds)
+        {
+            TotalDwellMs = dwellTimeSeconds * 1000f;
+            if (_state == SculptureState.Seed)
+                TransitionToBlooming();
+        }
+
+        public void OnGazeExit()
+        {
+            if (_state == SculptureState.Blooming || _state == SculptureState.FullBloom)
+                TransitionToDecaying();
+        }
+
+        private void TransitionToBlooming() { _state = SculptureState.Blooming; _stateTimer = 0f; _bloomProgress = 0f; }
+        private void TransitionToFullBloom() { _state = SculptureState.FullBloom; _stateTimer = 0f; _bloomProgress = 1f; ApplyBloomState(1f); }
+        private void TransitionToDecaying() { _state = SculptureState.Decaying; _stateTimer = 0f; }
+        private void TransitionToDead()
+        {
+            _state = SculptureState.Dead;
+            if (_renderer != null) _renderer.enabled = false;
+            GetComponent<Collider>().enabled = false;
+        }
+
+        private void ApplyPropertyToAllRenderers()
+        {
+            if (_allRenderers == null) return;
+            foreach (var r in _allRenderers)
+                if (r != null) r.SetPropertyBlock(_propertyBlock);
+        }
+
+        private void ApplySeedState()
+        {
+            _propertyBlock.SetFloat("_Saturation", 0f);
+            _propertyBlock.SetFloat("_EmissionPower", 0f);
+            _propertyBlock.SetFloat("_DissolveAmount", 0f);
+            ApplyPropertyToAllRenderers();
+            transform.localScale = _originalScale * 0.9f;
+        }
+
+        private void UpdateBlooming()
+        {
+            _bloomProgress = Mathf.Clamp01(_stateTimer / _bloomDuration);
+            if (_bloomProgress >= 1f) TransitionToFullBloom();
+            else ApplyBloomState(_bloomProgress);
+        }
+
+        private void ApplyBloomState(float bloomProgress)
+        {
+            _propertyBlock.SetFloat("_Saturation", bloomProgress);
+            _propertyBlock.SetFloat("_EmissionPower", Mathf.Lerp(0f, _maxEmissionPower, bloomProgress));
+            _propertyBlock.SetFloat("_DissolveAmount", 0f);
+            ApplyPropertyToAllRenderers();
+            float targetScale = Mathf.Lerp(0.9f, 1f, bloomProgress);
+            transform.localScale = _originalScale * targetScale;
+        }
+
+        private void UpdateFullBloom()
+        {
+            float breathe = Mathf.Sin(_stateTimer * _breathePulseSpeed) * _breathePulseAmount;
+            transform.localScale = _originalScale * (1f + breathe);
+        }
+
+        private void UpdateDecaying()
+        {
+            float decayProgress = Mathf.Clamp01(_stateTimer / _decayDuration);
+            if (decayProgress >= 1f) TransitionToDead();
+            else ApplyDecayState(decayProgress);
+        }
+
+        private void ApplyDecayState(float decayProgress)
+        {
+            _propertyBlock.SetFloat("_Saturation", 1f - decayProgress);
+            _propertyBlock.SetFloat("_EmissionPower", Mathf.Lerp(_maxEmissionPower, 0f, decayProgress));
+            _propertyBlock.SetFloat("_DissolveAmount", decayProgress);
+            ApplyPropertyToAllRenderers();
+            float decayScale = Mathf.Lerp(1f, 0.5f, decayProgress);
+            transform.localScale = _originalScale * decayScale;
+        }
+    }
+}
+```
+
+### 11.6 SculptureSpawner.cs
+```csharp
+using UnityEngine;
+using GLTFast;
+using System.IO;
+using System.Threading.Tasks;
+
+namespace AlgorithmicGallery
+{
+    public class SculptureSpawner : MonoBehaviour
+    {
+        [Header("Configuration")]
+        [SerializeField] private bool _generateColliders = true;
+
+        public async Task<GameObject> LoadModel(string glbRelativePath, Transform parent = null)
+        {
+            if (string.IsNullOrEmpty(glbRelativePath))
+            {
+                Debug.LogError("SculptureSpawner: Invalid glb path provided.");
+                return null;
+            }
+
+            string fullPath = Path.Combine(Application.streamingAssetsPath, "models", glbRelativePath);
+
+            if (!File.Exists(fullPath))
+            {
+                Debug.LogError($"SculptureSpawner: Model file not found at {fullPath}");
+                return null;
+            }
+
+            GameObject container = new GameObject(Path.GetFileNameWithoutExtension(glbRelativePath));
+            if (parent != null)
+                container.transform.SetParent(parent);
+            container.transform.localPosition = Vector3.zero;
+            container.transform.localRotation = Quaternion.identity;
+
+            GltfImport gltfImport = new GltfImport();
+            bool loadSuccess = await gltfImport.Load(fullPath);
+
+            if (!loadSuccess)
+            {
+                Debug.LogError($"SculptureSpawner: Failed to load glTF model from {fullPath}");
+                Destroy(container);
+                return null;
+            }
+
+            bool instantiateSuccess = await gltfImport.InstantiateMainSceneAsync(container.transform);
+
+            if (!instantiateSuccess)
+            {
+                Debug.LogError($"SculptureSpawner: Failed to instantiate glTF scene");
+                Destroy(container);
+                return null;
+            }
+
+            SculptureController sculptureController = container.AddComponent<SculptureController>();
+
+            BoxCollider collider = container.GetComponent<BoxCollider>();
+            if (collider == null && _generateColliders)
+                collider = container.AddComponent<BoxCollider>();
+
+            if (collider != null)
+            {
+                Renderer renderer = container.GetComponentInChildren<Renderer>();
+                if (renderer != null)
+                {
+                    Bounds bounds = renderer.bounds;
+                    collider.center = bounds.center - container.transform.position;
+                    collider.size = bounds.size;
+                }
+                collider.isTrigger = false;
+            }
+
+            return container;
+        }
+    }
+}
+```
+
+### 11.7 ModelEntry.cs
+```csharp
+using System.Collections.Generic;
+using Newtonsoft.Json;
+
+namespace AlgorithmicGallery.Recommendation
+{
+    public class ModelEntry
+    {
+        [JsonProperty("id")] public string Id { get; set; } = "";
+        [JsonProperty("glb_path")] public string GlbPath { get; set; } = "";
+        [JsonProperty("game")] public string Game { get; set; } = "";
+        [JsonProperty("object_name")] public string ObjectName { get; set; } = "";
+        [JsonProperty("category")] public string Category { get; set; } = "";
+        [JsonProperty("tags")] public ModelTags Tags { get; set; } = new();
+        [JsonProperty("vertex_count")] public int VertexCount { get; set; }
+        [JsonProperty("poly_count")] public int PolyCount { get; set; }
+        [JsonProperty("dimensions")] public ModelDimensions Dimensions { get; set; } = new();
+        [JsonIgnore] public List<string> FlatTags { get; set; } = new();
+    }
+
+    public class ModelTags
+    {
+        [JsonProperty("material_types")] public List<string> MaterialTypes { get; set; } = new();
+        [JsonProperty("dominant_colors")] public List<string> DominantColors { get; set; } = new();
+        [JsonProperty("color_mood")] public string ColorMood { get; set; } = "";
+        [JsonProperty("scale")] public string Scale { get; set; } = "";
+        [JsonProperty("complexity")] public string Complexity { get; set; } = "";
+        [JsonProperty("silhouette")] public string Silhouette { get; set; } = "";
+        [JsonProperty("has_animation")] public bool HasAnimation { get; set; }
+        [JsonProperty("opacity")] public bool Opacity { get; set; }
+        [JsonProperty("emissive")] public bool Emissive { get; set; }
+    }
+
+    public class ModelDimensions
+    {
+        [JsonProperty("x")] public float X { get; set; }
+        [JsonProperty("y")] public float Y { get; set; }
+        [JsonProperty("z")] public float Z { get; set; }
+    }
+}
+```
+
+### 11.8 MetadataIndex.cs
+```csharp
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using Newtonsoft.Json;
+
+namespace AlgorithmicGallery.Recommendation
+{
+    public class MetadataIndex
+    {
+        private List<ModelEntry> _all = new();
+        private Dictionary<string, List<int>> _tagIndex = new();
+        private Dictionary<string, ModelEntry> _modelLookup = new();
+
+        private static readonly Dictionary<string, string[]> TagAdjacency = new()
+        {
+            ["tiny"] = new[] { "small" },
+            ["small"] = new[] { "tiny", "medium" },
+            ["medium"] = new[] { "small", "large" },
+            ["large"] = new[] { "medium", "monumental" },
+            ["monumental"] = new[] { "large" },
+            ["low_poly"] = new[] { "medium_poly" },
+            ["medium_poly"] = new[] { "low_poly", "high_poly" },
+            ["high_poly"] = new[] { "medium_poly" },
+            ["cubic"] = new[] { "wide", "flat" },
+            ["wide"] = new[] { "cubic", "irregular" },
+            ["tall"] = new[] { "irregular" },
+            ["flat"] = new[] { "cubic", "wide" },
+            ["irregular"] = new[] { "tall", "wide" },
+            ["dark"] = new[] { "cool", "neutral" },
+            ["cool"] = new[] { "dark", "neutral" },
+            ["neutral"] = new[] { "cool", "warm" },
+            ["warm"] = new[] { "neutral", "earth" },
+            ["earth"] = new[] { "warm", "neutral" },
+            ["matte"] = new[] { "rough" },
+            ["rough"] = new[] { "matte" },
+            ["glossy"] = new[] { "matte" },
+            ["emissive"] = new[] { "glossy" },
+            ["metallic"] = new[] { "glossy" },
+            ["organic"] = new[] { "rough", "matte" },
+            ["glass"] = new[] { "emissive", "glossy" },
+            ["concrete"] = new[] { "rough", "matte" },
+        };
+
+        public int TotalCount => _all.Count;
+
+        public void LoadFromJsonString(string json)
+        {
+            var root = JsonConvert.DeserializeObject<MetadataRoot>(json)
+                       ?? throw new System.Exception("Failed to deserialize metadata JSON");
+            _all = root.Models;
+            BuildIndex();
+        }
+
+        public List<ModelEntry> GetCandidates(HashSet<string> exclude)
+        {
+            return _all.Where(m => !exclude.Contains(m.Id)).ToList();
+        }
+
+        public ModelEntry GetModelById(string modelId)
+        {
+            if (_modelLookup.TryGetValue(modelId, out var model)) return model;
+            return null;
+        }
+
+        public List<ModelEntry> FilterByAnyTag(List<ModelEntry> candidates, IEnumerable<string> tags)
+        {
+            var tagSet = new HashSet<string>(tags);
+            return candidates.Where(m => m.FlatTags.Any(t => tagSet.Contains(t))).ToList();
+        }
+
+        public List<ModelEntry> FilterByAdjacentTags(List<ModelEntry> candidates, IEnumerable<string> topTags)
+        {
+            var adjacent = new HashSet<string>();
+            foreach (var tag in topTags)
+                if (TagAdjacency.TryGetValue(tag, out var neighbours))
+                    foreach (var n in neighbours)
+                        adjacent.Add(n);
+            foreach (var tag in topTags)
+                adjacent.Remove(tag);
+            return FilterByAnyTag(candidates, adjacent);
+        }
+
+        public List<(ModelEntry model, float score)> ScoreByPreference(
+            List<ModelEntry> candidates, Dictionary<string, float> weights)
+        {
+            return candidates
+                .Select(m => (m, score: m.FlatTags.Sum(t => GetValueOrDefault(weights, t, 0f))))
+                .OrderByDescending(x => x.score)
+                .ToList();
+        }
+
+        public List<(ModelEntry model, float score)> ScoreByPreferenceAscending(
+            List<ModelEntry> candidates, Dictionary<string, float> weights)
+        {
+            return candidates
+                .Select(m => (m, score: m.FlatTags.Sum(t => GetValueOrDefault(weights, t, 0f))))
+                .OrderBy(x => x.score)
+                .ToList();
+        }
+
+        public IEnumerable<string> AllTagValues() => _tagIndex.Keys;
+
+        private void BuildIndex()
+        {
+            _tagIndex.Clear();
+            _modelLookup.Clear();
+            foreach (var (model, idx) in _all.Select((m, i) => (m, i)))
+            {
+                var flat = new List<string>();
+                flat.AddRange(model.Tags.MaterialTypes);
+                if (!string.IsNullOrEmpty(model.Tags.ColorMood)) flat.Add(model.Tags.ColorMood);
+                if (!string.IsNullOrEmpty(model.Tags.Scale)) flat.Add(model.Tags.Scale);
+                if (!string.IsNullOrEmpty(model.Tags.Complexity)) flat.Add(model.Tags.Complexity);
+                if (!string.IsNullOrEmpty(model.Tags.Silhouette)) flat.Add(model.Tags.Silhouette);
+                model.FlatTags = flat;
+                _modelLookup[model.Id] = model;
+                foreach (var tag in flat)
+                {
+                    if (!_tagIndex.ContainsKey(tag))
+                        _tagIndex[tag] = new List<int>();
+                    _tagIndex[tag].Add(idx);
+                }
+            }
+        }
+
+        private static float GetValueOrDefault(Dictionary<string, float> dict, string key, float defaultValue)
+        {
+            if (dict.TryGetValue(key, out float value)) return value;
+            return defaultValue;
+        }
+
+        private class MetadataRoot
+        {
+            [JsonProperty("models")] public List<ModelEntry> Models { get; set; } = new();
+        }
+    }
+}
+```
+
+### 11.9 UserProfile.cs
+```csharp
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using UnityEngine;
+
+namespace AlgorithmicGallery.Recommendation
+{
+    public enum ArcPhase { Fascination, Recognition, Unease }
+
+    public class GazeRecord
+    {
+        public string ModelId { get; set; }
+        public float DwellMs { get; set; }
+        public System.DateTime Timestamp { get; set; }
+
+        public GazeRecord(string modelId, float dwellMs, System.DateTime timestamp)
+        {
+            ModelId = modelId;
+            DwellMs = dwellMs;
+            Timestamp = timestamp;
+        }
+    }
+
+    public class UserProfile
+    {
+        private const float LearningRate = 0.15f;
+        private const int FascinationToRecognitionCount = 12;
+        private const int RecognitionToUneaseCount = 25;
+        private const float FascinationToRecognitionSecs = 180f;
+        private const float RecognitionToUneaseSecs = 360f;
+        private const int DecliningDwellThreshold = 5;
+
+        public Dictionary<string, float> PreferenceWeights { get; } = new();
+        public List<GazeRecord> GazeHistory { get; } = new();
+        public HashSet<string> ModelsShown { get; } = new();
+        public int TotalSculpturesViewed { get; private set; }
+        public float TotalSessionTimeSecs { get; private set; }
+        public ArcPhase CurrentPhase { get; private set; } = ArcPhase.Fascination;
+        public float PhaseProgress { get; private set; }
+        public float AverageDwellMs { get; private set; }
+        public float RecentDwellTrend { get; private set; }
+
+        private readonly Queue<float> _recentDwells = new();
+        private const int TrendWindow = 5;
+
+        public void RecordGaze(string modelId, float dwellMs, IEnumerable<string> tags,
+                               float elapsedSessionSecs, float maxDwellMs = 8000f)
+        {
+            GazeHistory.Add(new GazeRecord(modelId, dwellMs, System.DateTime.UtcNow));
+            ModelsShown.Add(modelId);
+            TotalSculpturesViewed++;
+            TotalSessionTimeSecs = elapsedSessionSecs;
+            if (AverageDwellMs == 0f) AverageDwellMs = dwellMs;
+            else AverageDwellMs = AverageDwellMs * 0.7f + dwellMs * 0.3f;
+            _recentDwells.Enqueue(dwellMs);
+            if (_recentDwells.Count > TrendWindow) _recentDwells.Dequeue();
+            RecentDwellTrend = ComputeTrend(_recentDwells.ToArray());
+            float signal = Mathf.Clamp01(dwellMs / maxDwellMs);
+            foreach (var tag in tags)
+            {
+                if (!PreferenceWeights.TryGetValue(tag, out float current))
+                    current = 0f;
+                PreferenceWeights[tag] = current * (1f - LearningRate) + signal * LearningRate;
+            }
+            UpdatePhase();
+        }
+
+        public List<string> GetTopNTags(int n)
+        {
+            return PreferenceWeights
+                .OrderByDescending(kv => kv.Value)
+                .Take(n)
+                .Select(kv => kv.Key)
+                .ToList();
+        }
+
+        public List<string> GetUnderexploredTags(IEnumerable<string> allTags)
+        {
+            var allList = allTags.ToList();
+            return allList
+                .OrderBy(t => GetValueOrDefault(PreferenceWeights, t, 0f))
+                .Take(Math.Max(1, allList.Count / 3))
+                .ToList();
+        }
+
+        private void UpdatePhase()
+        {
+            if (CurrentPhase == ArcPhase.Fascination)
+            {
+                PhaseProgress = Mathf.Clamp01((float)TotalSculpturesViewed / FascinationToRecognitionCount);
+                bool countTriggered = TotalSculpturesViewed >= FascinationToRecognitionCount;
+                bool timeTriggered = TotalSessionTimeSecs >= FascinationToRecognitionSecs;
+                if (countTriggered || timeTriggered)
+                {
+                    CurrentPhase = ArcPhase.Recognition;
+                    PhaseProgress = 0f;
+                }
+            }
+            else if (CurrentPhase == ArcPhase.Recognition)
+            {
+                int viewedInPhase = TotalSculpturesViewed - FascinationToRecognitionCount;
+                int phaseLen = RecognitionToUneaseCount - FascinationToRecognitionCount;
+                PhaseProgress = Mathf.Clamp01((float)viewedInPhase / phaseLen);
+                bool countTriggered = TotalSculpturesViewed >= RecognitionToUneaseCount;
+                bool timeTriggered = TotalSessionTimeSecs >= RecognitionToUneaseSecs;
+                bool boredTriggered = _recentDwells.Count >= DecliningDwellThreshold
+                                    && RecentDwellTrend < -0.1f;
+                if (countTriggered || timeTriggered || boredTriggered)
+                {
+                    CurrentPhase = ArcPhase.Unease;
+                    PhaseProgress = 0f;
+                }
+            }
+            else
+            {
+                int viewedInPhase = TotalSculpturesViewed - RecognitionToUneaseCount;
+                PhaseProgress = Mathf.Clamp01(viewedInPhase / 15f);
+            }
+        }
+
+        private static float ComputeTrend(float[] values)
+        {
+            if (values.Length < 2) return 0f;
+            int n = values.Length;
+            float sumX = 0, sumY = 0, sumXY = 0, sumX2 = 0;
+            for (int i = 0; i < n; i++)
+            {
+                sumX += i; sumY += values[i]; sumXY += i * values[i]; sumX2 += i * i;
+            }
+            float denom = n * sumX2 - sumX * sumX;
+            if (Math.Abs(denom) < 1e-6f) return 0f;
+            float slope = (n * sumXY - sumX * sumY) / denom;
+            float avg = sumY / n;
+            return avg > 0f ? Mathf.Clamp(slope / avg, -1f, 1f) : 0f;
+        }
+
+        private static float GetValueOrDefault(Dictionary<string, float> dict, string key, float defaultValue)
+        {
+            if (dict.TryGetValue(key, out float value)) return value;
+            return defaultValue;
+        }
+    }
+}
+```
+
+### 11.10 IRecommendationStrategy.cs
+```csharp
+namespace AlgorithmicGallery.Recommendation
+{
+    public interface IRecommendationStrategy
+    {
+        ArcPhase Phase { get; }
+        ModelEntry GetNext(UserProfile profile, MetadataIndex index, System.Random rng);
+    }
+}
+```
+
+### 11.11 RecommendationEngine.cs
+```csharp
+using System;
+using System.Collections.Generic;
+
+namespace AlgorithmicGallery.Recommendation
+{
+    public class RecommendationEngine
+    {
+        private readonly MetadataIndex _index;
+        private readonly System.Random _rng;
+        public UserProfile Profile { get; } = new();
+        private IRecommendationStrategy _strategy;
+        private readonly Dictionary<ArcPhase, IRecommendationStrategy> _strategies;
+        private ModelEntry _lastModel;
+
+        public RecommendationEngine(MetadataIndex index, int seed = -1)
+        {
+            _index = index;
+            _rng = seed >= 0 ? new System.Random(seed) : new System.Random();
+            _strategies = new Dictionary<ArcPhase, IRecommendationStrategy>
+            {
+                [ArcPhase.Fascination] = new ExplorationStrategy(),
+                [ArcPhase.Recognition] = new ExploitationStrategy(),
+                [ArcPhase.Unease] = new DesperationStrategy(),
+            };
+            _strategy = _strategies[ArcPhase.Fascination];
+        }
+
+        public ModelEntry GetNext()
+        {
+            _lastModel = _strategy.GetNext(Profile, _index, _rng);
+            return _lastModel;
+        }
+
+        public void ReportGaze(string modelId, float dwellMs, float elapsedSecs)
+        {
+            var model = _index.GetModelById(modelId);
+            var tags = model?.FlatTags ?? new List<string>();
+            Profile.RecordGaze(modelId, dwellMs, tags, elapsedSecs);
+            SyncStrategy();
+        }
+
+        public ArcPhase CurrentPhase => Profile.CurrentPhase;
+        public float PhaseProgress => Profile.PhaseProgress;
+
+        private void SyncStrategy()
+        {
+            var targetPhase = Profile.CurrentPhase;
+            if (_strategy.Phase != targetPhase)
+                _strategy = _strategies[targetPhase];
+        }
+    }
+}
+```
+
+### 11.12 ExplorationStrategy.cs
+```csharp
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
+namespace AlgorithmicGallery.Recommendation
+{
+    public class ExplorationStrategy : IRecommendationStrategy
+    {
+        public ArcPhase Phase => ArcPhase.Fascination;
+        private const float ExploreRatio = 0.70f;
+        private const int ExploitTagCount = 5;
+        private const int PoolSize = 20;
+
+        public ModelEntry GetNext(UserProfile profile, MetadataIndex index, System.Random rng)
+        {
+            var candidates = index.GetCandidates(profile.ModelsShown);
+            if (candidates.Count == 0) return null;
+            bool explore = (float)rng.NextDouble() < ExploreRatio;
+            if (explore || profile.PreferenceWeights.Count == 0)
+            {
+                var underexplored = profile.GetUnderexploredTags(index.AllTagValues());
+                var filtered = index.FilterByAnyTag(candidates, underexplored);
+                var pool = filtered.Count > 0 ? filtered : candidates;
+                return pool[rng.Next(Math.Min(PoolSize, pool.Count))];
+            }
+            else
+            {
+                var topTags = profile.GetTopNTags(ExploitTagCount);
+                var scored = index.ScoreByPreference(candidates, profile.PreferenceWeights);
+                var pool = scored.Take(PoolSize).Select(x => x.model).ToList();
+                return pool[rng.Next(pool.Count)];
+            }
+        }
+    }
+}
+```
+
+### 11.13 ExploitationStrategy.cs
+```csharp
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
+namespace AlgorithmicGallery.Recommendation
+{
+    public class ExploitationStrategy : IRecommendationStrategy
+    {
+        public ArcPhase Phase => ArcPhase.Recognition;
+        private const float ExploreRatio = 0.30f;
+        private const int ExploitTagCount = 3;
+        private const int PoolSize = 10;
+        private const float AdjacentBonus = 0.3f;
+
+        public ModelEntry GetNext(UserProfile profile, MetadataIndex index, System.Random rng)
+        {
+            var candidates = index.GetCandidates(profile.ModelsShown);
+            if (candidates.Count == 0) return null;
+            bool explore = (float)rng.NextDouble() < ExploreRatio;
+            if (explore)
+            {
+                var topTags = profile.GetTopNTags(ExploitTagCount);
+                var adjacent = index.FilterByAdjacentTags(candidates, topTags);
+                var pool = adjacent.Count > 0 ? adjacent : candidates;
+                return pool[rng.Next(Math.Min(PoolSize, pool.Count))];
+            }
+            else
+            {
+                var topTags = profile.GetTopNTags(ExploitTagCount);
+                var scored = index.ScoreByPreference(candidates, profile.PreferenceWeights);
+                var adjacentCandidates = index.FilterByAdjacentTags(candidates, topTags);
+                var adjacentScored = index.ScoreByPreference(adjacentCandidates, profile.PreferenceWeights)
+                    .Select(x => (x.model, score: x.score + AdjacentBonus));
+                var combined = scored
+                    .Concat(adjacentScored)
+                    .GroupBy(x => x.model.Id)
+                    .Select(g => g.OrderByDescending(x => x.score).First())
+                    .OrderByDescending(x => x.score)
+                    .Take(PoolSize)
+                    .Select(x => x.model)
+                    .ToList();
+                return WeightedRandomByScore(combined, profile.PreferenceWeights, rng);
+            }
+        }
+
+        private static ModelEntry WeightedRandomByScore(List<ModelEntry> pool, Dictionary<string, float> weights, System.Random rng)
+        {
+            if (pool.Count == 0) throw new InvalidOperationException("Empty pool");
+            var scores = pool.Select(m =>
+                Math.Max(0.01f, m.FlatTags.Sum(t => GetValueOrDefault(weights, t, 0f)))).ToArray();
+            float total = scores.Sum();
+            float pick = (float)rng.NextDouble() * total;
+            float acc = 0f;
+            for (int i = 0; i < pool.Count; i++)
+            {
+                acc += scores[i];
+                if (acc >= pick) return pool[i];
+            }
+            return pool[pool.Count - 1];
+        }
+
+        private static float GetValueOrDefault(Dictionary<string, float> dict, string key, float defaultValue)
+        {
+            if (dict.TryGetValue(key, out float value)) return value;
+            return defaultValue;
+        }
+    }
+}
+```
+
+### 11.14 DesperationStrategy.cs
+```csharp
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
+namespace AlgorithmicGallery.Recommendation
+{
+    public class DesperationStrategy : IRecommendationStrategy
+    {
+        public ArcPhase Phase => ArcPhase.Unease;
+        private const float ExploreRatio = 0.15f;
+        private const int ExploitTagCount = 2;
+        private const int PoolSize = 10;
+
+        public ModelEntry GetNext(UserProfile profile, MetadataIndex index, System.Random rng)
+        {
+            var candidates = index.GetCandidates(profile.ModelsShown);
+            if (candidates.Count == 0) return null;
+            bool explore = (float)rng.NextDouble() < ExploreRatio;
+            if (explore)
+            {
+                var scored = index.ScoreByPreferenceAscending(candidates, profile.PreferenceWeights);
+                var pool = scored.Take(PoolSize).Select(x => x.model).ToList();
+                return pool[rng.Next(pool.Count)];
+            }
+            else
+            {
+                var topTags = profile.GetTopNTags(ExploitTagCount);
+                var scored = index.ScoreByPreference(candidates, profile.PreferenceWeights);
+                var pool = scored.Take(PoolSize).Select(x => x.model).ToList();
+                return WeightedRandomByScore(pool, profile.PreferenceWeights, rng);
+            }
+        }
+
+        private static ModelEntry WeightedRandomByScore(List<ModelEntry> pool, Dictionary<string, float> weights, System.Random rng)
+        {
+            if (pool.Count == 0) throw new InvalidOperationException("Empty pool");
+            var scores = pool.Select(m =>
+                Math.Max(0.01f, m.FlatTags.Sum(t => GetValueOrDefault(weights, t, 0f)))).ToArray();
+            float total = scores.Sum();
+            float pick = (float)rng.NextDouble() * total;
+            float acc = 0f;
+            for (int i = 0; i < pool.Count; i++)
+            {
+                acc += scores[i];
+                if (acc >= pick) return pool[i];
+            }
+            return pool[pool.Count - 1];
+        }
+
+        private static float GetValueOrDefault(Dictionary<string, float> dict, string key, float defaultValue)
+        {
+            if (dict.TryGetValue(key, out float value)) return value;
+            return defaultValue;
+        }
+    }
+}
+```
+
+### 11.15 GalleryManager.cs
+```csharp
+using UnityEngine;
+using System.IO;
+using System.Collections.Generic;
+using AlgorithmicGallery.Recommendation;
+
+namespace AlgorithmicGallery
+{
+    public class GalleryManager : MonoBehaviour
+    {
+        [Header("Core Setup")]
+        [SerializeField] private Transform[] _pedestalSlots;
+        [SerializeField] private GazeManager _gazeManager;
+        [SerializeField] private SculptureSpawner _spawner;
+
+        [Header("Configuration")]
+        [SerializeField] private string _metadataJsonPath = "metadata.json";
+
+        [Header("Debug")]
+        [SerializeField] private bool _showDebugInfo = true;
+
+        private RecommendationEngine _engine;
+        private MetadataIndex _metadataIndex;
+        private float _sessionStartTime;
+        private int _sculpturesViewed;
+        private float _averageDwellTime;
+        private List<float> _dwellTimes = new List<float>();
+
+        private Dictionary<Transform, SculptureController> _activeStatues = new Dictionary<Transform, SculptureController>();
+        private Dictionary<Transform, ModelEntry> _activeModels = new Dictionary<Transform, ModelEntry>();
+
+        private void Start()
+        {
+            _sessionStartTime = Time.time;
+            _sculpturesViewed = 0;
+
+            _metadataIndex = new MetadataIndex();
+            LoadMetadata();
+
+            _engine = new RecommendationEngine(_metadataIndex);
+
+            if (_gazeManager == null)
+                _gazeManager = FindFirstObjectByType<GazeManager>();
+
+            if (_spawner == null)
+            {
+                _spawner = GetComponent<SculptureSpawner>();
+                if (_spawner == null)
+                    _spawner = gameObject.AddComponent<SculptureSpawner>();
+            }
+
+            if (_pedestalSlots == null || _pedestalSlots.Length == 0)
+                Debug.LogWarning("GalleryManager: No pedestal slots assigned.");
+
+            foreach (Transform pedestal in _pedestalSlots)
+                SpawnAtPedestal(pedestal);
+        }
+
+        private void Update()
+        {
+            foreach (Transform pedestal in _pedestalSlots)
+            {
+                if (!_activeStatues.ContainsKey(pedestal) || _activeStatues[pedestal] == null)
+                    SpawnAtPedestal(pedestal);
+            }
+
+            if (_dwellTimes.Count > 0)
+            {
+                float sum = 0;
+                foreach (float dwell in _dwellTimes) sum += dwell;
+                _averageDwellTime = sum / _dwellTimes.Count;
+            }
+        }
+
+        private void LoadMetadata()
+        {
+            string metadataPath = Path.Combine(Application.streamingAssetsPath, _metadataJsonPath);
+
+            if (!File.Exists(metadataPath))
+            {
+                Debug.LogError($"GalleryManager: Metadata file not found at {metadataPath}");
+                return;
+            }
+
+            try
+            {
+                string jsonContent = File.ReadAllText(metadataPath);
+                _metadataIndex.LoadFromJsonString(jsonContent);
+                Debug.Log($"GalleryManager: Loaded {_metadataIndex.TotalCount} models from metadata.");
+            }
+            catch (System.Exception ex)
+            {
+                Debug.LogError($"GalleryManager: Failed to load metadata: {ex.Message}");
+            }
+        }
+
+        private void SpawnAtPedestal(Transform pedestal)
+        {
+            if (pedestal == null) return;
+
+            ModelEntry nextModel = _engine.GetNext();
+            if (nextModel == null)
+            {
+                Debug.LogWarning("GalleryManager: RecommendationEngine returned no model.");
+                return;
+            }
+
+            SpawnModelAsync(pedestal, nextModel);
+        }
+
+        private async void SpawnModelAsync(Transform pedestal, ModelEntry modelEntry)
+        {
+            GameObject sculptureGO = await _spawner.LoadModel(modelEntry.GlbPath, pedestal);
+
+            if (sculptureGO == null)
+            {
+                Debug.LogWarning($"GalleryManager: Failed to spawn model {modelEntry.Id}");
+                return;
+            }
+
+            SculptureController controller = sculptureGO.GetComponent<SculptureController>();
+            if (controller != null)
+                controller.ModelId = modelEntry.Id;
+
+            _activeStatues[pedestal] = controller;
+            _activeModels[pedestal] = modelEntry;
+            _sculpturesViewed++;
+
+            Debug.Log($"GalleryManager: Spawned {modelEntry.ObjectName} at pedestal");
+        }
+
+        public void OnSculptureGazeExit(SculptureController sculpture)
+        {
+            if (sculpture == null) return;
+
+            float dwellMs = sculpture.TotalDwellMs;
+            float elapsedSessionSecs = Time.time - _sessionStartTime;
+
+            _engine.ReportGaze(sculpture.ModelId, dwellMs, elapsedSessionSecs);
+            _dwellTimes.Add(dwellMs / 1000f);
+
+            Debug.Log($"GalleryManager: Gaze exit on {sculpture.ModelId}, dwell={dwellMs}ms");
+        }
+
+        // Debug properties
+        public ArcPhase CurrentPhase => _engine.CurrentPhase;
+        public float PhaseProgress => _engine.PhaseProgress;
+        public UserProfile CurrentProfile => _engine.Profile;
+        public int SculpturesViewed => _sculpturesViewed;
+        public float AverageDwellTime => _averageDwellTime;
+        public float SessionElapsedTime => Time.time - _sessionStartTime;
+    }
+}
+```
+
+### 11.16 RecommendationDebugUI.cs
+```csharp
+using UnityEngine;
+using AlgorithmicGallery.Recommendation;
+
+namespace AlgorithmicGallery
+{
+    public class RecommendationDebugUI : MonoBehaviour
+    {
+        [SerializeField] private GalleryManager _galleryManager;
+        [SerializeField] private KeyCode _toggleKey = KeyCode.F1;
+
+        private bool _isVisible = true;
+        private GUIStyle _labelStyle;
+        private GUIStyle _boxStyle;
+
+        private void Start()
+        {
+            if (_galleryManager == null)
+                _galleryManager = FindFirstObjectByType<GalleryManager>();
+            InitializeStyles();
+        }
+
+        private void Update()
+        {
+            if (Input.GetKeyDown(_toggleKey))
+                _isVisible = !_isVisible;
+        }
+
+        private void OnGUI()
+        {
+            if (!_isVisible || _galleryManager == null) return;
+
+            GUILayout.BeginArea(new Rect(10, 10, 400, 600), "Algorithmic Gallery Debug", GUI.skin.box);
+            DrawPhaseInfo();
+            GUILayout.Space(10);
+            DrawStatistics();
+            GUILayout.Space(10);
+            DrawPreferences();
+            GUILayout.FlexibleSpace();
+            GUILayout.Label("Press F1 to toggle debug UI", GUI.skin.label);
+            GUILayout.EndArea();
+        }
+
+        private void DrawPhaseInfo()
+        {
+            ArcPhase phase = _galleryManager.CurrentPhase;
+            float progress = _galleryManager.PhaseProgress;
+
+            GUILayout.Label("CURRENT PHASE", GUI.skin.box);
+            Color phaseColor = GetPhaseColor(phase);
+            GUI.backgroundColor = phaseColor;
+            GUILayout.Label(phase.ToString(), GUI.skin.box);
+            GUI.backgroundColor = Color.white;
+            GUILayout.Label($"Phase Progress: {progress:P0}");
+            DrawProgressBar(progress, 300, 20);
+        }
+
+        private void DrawStatistics()
+        {
+            GUILayout.Label("SESSION STATISTICS", GUI.skin.box);
+            GUILayout.Label($"Sculptures Viewed: {_galleryManager.SculpturesViewed}");
+            GUILayout.Label($"Session Time: {_galleryManager.SessionElapsedTime:F1}s");
+            GUILayout.Label($"Average Dwell: {_galleryManager.AverageDwellTime * 1000f:F0}ms");
+        }
+
+        private void DrawPreferences()
+        {
+            GUILayout.Label("USER PROFILE", GUI.skin.box);
+
+            UserProfile profile = _galleryManager.CurrentProfile;
+            if (profile != null && profile.PreferenceWeights != null)
+            {
+                int count = 0;
+                foreach (var kvp in profile.PreferenceWeights)
+                {
+                    if (count >= 5) break;
+                    GUILayout.BeginHorizontal();
+                    GUILayout.Label($"{kvp.Key}", GUILayout.Width(100));
+                    DrawBar(kvp.Value, 150, 15);
+                    GUILayout.Label($"{kvp.Value:F2}", GUILayout.Width(50));
+                    GUILayout.EndHorizontal();
+                    count++;
+                }
+            }
+            else
+            {
+                GUILayout.Label("(No profile data yet)");
+            }
+        }
+
+        private void DrawProgressBar(float value, float width, float height)
+        {
+            Rect barRect = GUILayoutUtility.GetRect(width, height);
+            GUI.Box(barRect, "");
+            Rect fillRect = new Rect(barRect.x, barRect.y, barRect.width * value, barRect.height);
+            GUI.Box(fillRect, "");
+        }
+
+        private void DrawBar(float value, float width, float height)
+        {
+            Rect barRect = GUILayoutUtility.GetRect(width, height);
+            GUI.Box(barRect, "");
+            Rect fillRect = new Rect(barRect.x, barRect.y, barRect.width * Mathf.Clamp01(value), barRect.height);
+            GUI.Box(fillRect, "");
+        }
+
+        private Color GetPhaseColor(ArcPhase phase)
+        {
+            return phase switch
+            {
+                ArcPhase.Fascination => new Color(0.2f, 0.8f, 1f),
+                ArcPhase.Recognition => new Color(1f, 0.8f, 0.2f),
+                ArcPhase.Unease => new Color(1f, 0.2f, 0.2f),
+                _ => Color.gray
+            };
+        }
+
+        private void InitializeStyles()
+        {
+            _labelStyle = new GUIStyle(GUI.skin.label) { fontSize = 12, alignment = TextAnchor.MiddleLeft };
+            _boxStyle = new GUIStyle(GUI.skin.box) { padding = new RectOffset(5, 5, 5, 5) };
+        }
+    }
+}
+```
+
+---
+
+## 12. Pipeline Commands Reference
+
+### Export Portal models (run on PC with Blender installed):
+```bash
+blender --background --python batch_export.py -- --input "C:/path/to/source_blender_collection/portal/_models" --output "./exports/portal" --game portal
+```
+
+### Tag Portal models (run on PC with Blender installed):
+```bash
+blender --background --python auto_tagger_v2.py -- --input "C:/path/to/source_blender_collection/portal/_models" --output "./tags/portal.json" --game portal
+```
+
+### Build unified metadata:
+```bash
+python build_metadata.py --tags-dir ./tags --output ./metadata.json
+```
+
+### Repeat for other games:
+Replace `portal` with `portal2`, `hl2`, `tf2` in the above commands.
+
+---
+
+## 13. Unity Package Dependencies
+
+Add these to your Unity project via Package Manager:
+
+| Package | ID | Notes |
+|---------|-----|-------|
+| GLTFast | com.atteneder.gltfast | Runtime .glb loading. Check version — API may differ. |
+| Newtonsoft.Json | com.unity.nuget.newtonsoft-json | JSON deserialization for metadata. |
+| XR Interaction Toolkit | com.unity.xr.interaction.toolkit | Only needed for VR/Quest builds. |
+| XR Plugin Management | com.unity.xr.management | Only needed for VR/Quest builds. |
+
+---
+
+## 14. Critical Context for New Agent
+
+1. **The project is an art piece, not a product.** The recommendation engine is intentionally manipulative — that's the point. The visitor should feel increasingly uncomfortable as Phase 3 kicks in.
+
+2. **Source Engine materials are weird.** They use custom node groups (VertexLitGeneric) that don't have standard PBR sockets. The batch exporter rewrites them to Principled BSDF for glTF compatibility. The tagger uses name-based keyword matching because PBR values are unreliable.
+
+3. **GLTFast creates child GameObjects.** When a .glb is loaded, the mesh renderers are children of the container. Always use `GetComponentsInChildren<Renderer>()` and `GetComponentInParent<SculptureController>()`.
+
+4. **The metadata.json is stale.** It was generated with the buggy v1 tagger. Must regenerate with `auto_tagger_v2.py` before the project will work properly.
+
+5. **No shader exists yet.** SculptureController writes `_Saturation`, `_EmissionPower`, `_DissolveAmount` but nothing reads them. A URP Shader Graph is needed, AND materials on GLTFast-loaded models need to be swapped to use it.
+
+6. **Desktop gaze = camera center, not mouse.** This simulates head gaze (like VR) on desktop. The visitor looks at things by pointing the camera at them, not by clicking.
+
+7. **Prototype due April 16, final May 28.** For the prototype, just Portal models + basic gallery room + working interaction loop is sufficient.

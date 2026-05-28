@@ -1,0 +1,2415 @@
+{
+  "meta": {
+    "mode": "dryrun",
+    "min_confidence": 0.42,
+    "max_personal": 8,
+    "max_corporate": 4,
+    "limit": 120,
+    "processed": 120
+  },
+  "summary": {
+    "total_models": 120,
+    "coverage_personal_pct": 100.0,
+    "coverage_corporate_pct": 0.0,
+    "added_personal_total": 27,
+    "added_corporate_total": 0,
+    "top_personal_tags": [
+      [
+        "mundane",
+        63
+      ],
+      [
+        "comforting",
+        55
+      ],
+      [
+        "domestic",
+        55
+      ],
+      [
+        "personal",
+        47
+      ],
+      [
+        "clinical",
+        37
+      ],
+      [
+        "institutional",
+        37
+      ],
+      [
+        "nostalgic",
+        29
+      ],
+      [
+        "abandoned",
+        24
+      ],
+      [
+        "intimate",
+        19
+      ],
+      [
+        "warm",
+        6
+      ],
+      [
+        "devotional",
+        1
+      ],
+      [
+        "ritualistic",
+        1
+      ],
+      [
+        "sacred",
+        1
+      ],
+      [
+        "heavy",
+        1
+      ],
+      [
+        "public",
+        1
+      ],
+      [
+        "retail",
+        1
+      ]
+    ],
+    "top_corporate_tags": []
+  },
+  "results": [
+    {
+      "id": "css_items_car_battery01",
+      "display_name": "Car Battery01",
+      "kept_personal_tags": [
+        "mundane",
+        "personal"
+      ],
+      "added_personal_tags": [],
+      "final_personal_tags": [
+        "mundane",
+        "personal"
+      ],
+      "added_corporate_tags": [],
+      "final_corporate_tags": [],
+      "max_personal_score": 0.0,
+      "max_corporate_score": 0.0
+    },
+    {
+      "id": "css_items_cs_gift",
+      "display_name": "Cs Gift",
+      "kept_personal_tags": [
+        "mundane",
+        "personal"
+      ],
+      "added_personal_tags": [
+        "warm"
+      ],
+      "final_personal_tags": [
+        "mundane",
+        "personal",
+        "warm"
+      ],
+      "added_corporate_tags": [],
+      "final_corporate_tags": [],
+      "max_personal_score": 0.45,
+      "max_corporate_score": 0.0
+    },
+    {
+      "id": "css_props_lab_binderbluelabel",
+      "display_name": "Binderbluelabel",
+      "kept_personal_tags": [
+        "clinical",
+        "institutional"
+      ],
+      "added_personal_tags": [],
+      "final_personal_tags": [
+        "clinical",
+        "institutional"
+      ],
+      "added_corporate_tags": [],
+      "final_corporate_tags": [],
+      "max_personal_score": 0.0,
+      "max_corporate_score": 0.0
+    },
+    {
+      "id": "css_props_lab_bindergraylabel01a",
+      "display_name": "Bindergraylabel01A",
+      "kept_personal_tags": [
+        "clinical",
+        "institutional"
+      ],
+      "added_personal_tags": [],
+      "final_personal_tags": [
+        "clinical",
+        "institutional"
+      ],
+      "added_corporate_tags": [],
+      "final_corporate_tags": [],
+      "max_personal_score": 0.0,
+      "max_corporate_score": 0.0
+    },
+    {
+      "id": "css_props_lab_bindergreenlabel",
+      "display_name": "Bindergreenlabel",
+      "kept_personal_tags": [
+        "clinical",
+        "institutional"
+      ],
+      "added_personal_tags": [],
+      "final_personal_tags": [
+        "clinical",
+        "institutional"
+      ],
+      "added_corporate_tags": [],
+      "final_corporate_tags": [],
+      "max_personal_score": 0.0,
+      "max_corporate_score": 0.0
+    },
+    {
+      "id": "css_props_lab_binderredlabel",
+      "display_name": "Binderredlabel",
+      "kept_personal_tags": [
+        "clinical",
+        "institutional"
+      ],
+      "added_personal_tags": [],
+      "final_personal_tags": [
+        "clinical",
+        "institutional"
+      ],
+      "added_corporate_tags": [],
+      "final_corporate_tags": [],
+      "max_personal_score": 0.0,
+      "max_corporate_score": 0.0
+    },
+    {
+      "id": "css_props_lab_box01a",
+      "display_name": "Box01A",
+      "kept_personal_tags": [
+        "abandoned",
+        "clinical",
+        "institutional",
+        "mundane"
+      ],
+      "added_personal_tags": [],
+      "final_personal_tags": [
+        "abandoned",
+        "clinical",
+        "institutional",
+        "mundane"
+      ],
+      "added_corporate_tags": [],
+      "final_corporate_tags": [],
+      "max_personal_score": 0.0,
+      "max_corporate_score": 0.0
+    },
+    {
+      "id": "css_props_lab_citizenradio",
+      "display_name": "Citizenradio",
+      "kept_personal_tags": [
+        "clinical",
+        "institutional",
+        "intimate",
+        "nostalgic"
+      ],
+      "added_personal_tags": [],
+      "final_personal_tags": [
+        "clinical",
+        "institutional",
+        "intimate",
+        "nostalgic"
+      ],
+      "added_corporate_tags": [],
+      "final_corporate_tags": [],
+      "max_personal_score": 0.0,
+      "max_corporate_score": 0.0
+    },
+    {
+      "id": "css_props_lab_desklamp01",
+      "display_name": "Desklamp01",
+      "kept_personal_tags": [
+        "clinical",
+        "comforting",
+        "domestic",
+        "institutional",
+        "intimate",
+        "mundane"
+      ],
+      "added_personal_tags": [],
+      "final_personal_tags": [
+        "clinical",
+        "comforting",
+        "domestic",
+        "institutional",
+        "intimate",
+        "mundane"
+      ],
+      "added_corporate_tags": [],
+      "final_corporate_tags": [],
+      "max_personal_score": 0.0,
+      "max_corporate_score": 0.0
+    },
+    {
+      "id": "css_props_lab_harddrive02",
+      "display_name": "Harddrive02",
+      "kept_personal_tags": [
+        "clinical",
+        "institutional"
+      ],
+      "added_personal_tags": [],
+      "final_personal_tags": [
+        "clinical",
+        "institutional"
+      ],
+      "added_corporate_tags": [],
+      "final_corporate_tags": [],
+      "max_personal_score": 0.0,
+      "max_corporate_score": 0.0
+    },
+    {
+      "id": "css_props_lab_jar01b",
+      "display_name": "Jar01B",
+      "kept_personal_tags": [
+        "clinical",
+        "institutional"
+      ],
+      "added_personal_tags": [],
+      "final_personal_tags": [
+        "clinical",
+        "institutional"
+      ],
+      "added_corporate_tags": [],
+      "final_corporate_tags": [],
+      "max_personal_score": 0.0,
+      "max_corporate_score": 0.0
+    },
+    {
+      "id": "css_props_lab_lab_flourescentlight001a",
+      "display_name": "Lab Flourescentlight001A",
+      "kept_personal_tags": [
+        "clinical",
+        "institutional"
+      ],
+      "added_personal_tags": [],
+      "final_personal_tags": [
+        "clinical",
+        "institutional"
+      ],
+      "added_corporate_tags": [],
+      "final_corporate_tags": [],
+      "max_personal_score": 0.0,
+      "max_corporate_score": 0.0
+    },
+    {
+      "id": "css_props_lab_lab_flourescentlight002b",
+      "display_name": "Lab Flourescentlight002B",
+      "kept_personal_tags": [
+        "clinical",
+        "institutional"
+      ],
+      "added_personal_tags": [],
+      "final_personal_tags": [
+        "clinical",
+        "institutional"
+      ],
+      "added_corporate_tags": [],
+      "final_corporate_tags": [],
+      "max_personal_score": 0.0,
+      "max_corporate_score": 0.0
+    },
+    {
+      "id": "css_props_lab_monitor02",
+      "display_name": "Monitor02",
+      "kept_personal_tags": [
+        "clinical",
+        "institutional",
+        "mundane",
+        "nostalgic"
+      ],
+      "added_personal_tags": [],
+      "final_personal_tags": [
+        "clinical",
+        "institutional",
+        "mundane",
+        "nostalgic"
+      ],
+      "added_corporate_tags": [],
+      "final_corporate_tags": [],
+      "max_personal_score": 0.0,
+      "max_corporate_score": 0.0
+    },
+    {
+      "id": "css_props_lab_pipesystem01a",
+      "display_name": "Pipesystem01A",
+      "kept_personal_tags": [
+        "clinical",
+        "institutional"
+      ],
+      "added_personal_tags": [],
+      "final_personal_tags": [
+        "clinical",
+        "institutional"
+      ],
+      "added_corporate_tags": [],
+      "final_corporate_tags": [],
+      "max_personal_score": 0.0,
+      "max_corporate_score": 0.0
+    },
+    {
+      "id": "css_props_lab_pipesystem01b",
+      "display_name": "Pipesystem01B",
+      "kept_personal_tags": [
+        "clinical",
+        "institutional"
+      ],
+      "added_personal_tags": [],
+      "final_personal_tags": [
+        "clinical",
+        "institutional"
+      ],
+      "added_corporate_tags": [],
+      "final_corporate_tags": [],
+      "max_personal_score": 0.0,
+      "max_corporate_score": 0.0
+    },
+    {
+      "id": "css_props_lab_pipesystem02a",
+      "display_name": "Pipesystem02A",
+      "kept_personal_tags": [
+        "clinical",
+        "institutional"
+      ],
+      "added_personal_tags": [],
+      "final_personal_tags": [
+        "clinical",
+        "institutional"
+      ],
+      "added_corporate_tags": [],
+      "final_corporate_tags": [],
+      "max_personal_score": 0.0,
+      "max_corporate_score": 0.0
+    },
+    {
+      "id": "css_props_lab_pipesystem02b",
+      "display_name": "Pipesystem02B",
+      "kept_personal_tags": [
+        "clinical",
+        "institutional"
+      ],
+      "added_personal_tags": [],
+      "final_personal_tags": [
+        "clinical",
+        "institutional"
+      ],
+      "added_corporate_tags": [],
+      "final_corporate_tags": [],
+      "max_personal_score": 0.0,
+      "max_corporate_score": 0.0
+    },
+    {
+      "id": "css_props_lab_pipesystem02c",
+      "display_name": "Pipesystem02C",
+      "kept_personal_tags": [
+        "clinical",
+        "institutional"
+      ],
+      "added_personal_tags": [],
+      "final_personal_tags": [
+        "clinical",
+        "institutional"
+      ],
+      "added_corporate_tags": [],
+      "final_corporate_tags": [],
+      "max_personal_score": 0.0,
+      "max_corporate_score": 0.0
+    },
+    {
+      "id": "css_props_lab_pipesystem02d",
+      "display_name": "Pipesystem02D",
+      "kept_personal_tags": [
+        "clinical",
+        "institutional"
+      ],
+      "added_personal_tags": [],
+      "final_personal_tags": [
+        "clinical",
+        "institutional"
+      ],
+      "added_corporate_tags": [],
+      "final_corporate_tags": [],
+      "max_personal_score": 0.0,
+      "max_corporate_score": 0.0
+    },
+    {
+      "id": "css_props_lab_pipesystem02e",
+      "display_name": "Pipesystem02E",
+      "kept_personal_tags": [
+        "clinical",
+        "institutional"
+      ],
+      "added_personal_tags": [],
+      "final_personal_tags": [
+        "clinical",
+        "institutional"
+      ],
+      "added_corporate_tags": [],
+      "final_corporate_tags": [],
+      "max_personal_score": 0.0,
+      "max_corporate_score": 0.0
+    },
+    {
+      "id": "css_props_lab_pipesystem03b",
+      "display_name": "Pipesystem03B",
+      "kept_personal_tags": [
+        "clinical",
+        "institutional"
+      ],
+      "added_personal_tags": [],
+      "final_personal_tags": [
+        "clinical",
+        "institutional"
+      ],
+      "added_corporate_tags": [],
+      "final_corporate_tags": [],
+      "max_personal_score": 0.0,
+      "max_corporate_score": 0.0
+    },
+    {
+      "id": "css_props_lab_pipesystem03c",
+      "display_name": "Pipesystem03C",
+      "kept_personal_tags": [
+        "clinical",
+        "institutional"
+      ],
+      "added_personal_tags": [],
+      "final_personal_tags": [
+        "clinical",
+        "institutional"
+      ],
+      "added_corporate_tags": [],
+      "final_corporate_tags": [],
+      "max_personal_score": 0.0,
+      "max_corporate_score": 0.0
+    },
+    {
+      "id": "css_props_lab_powerbox01a",
+      "display_name": "Powerbox01A",
+      "kept_personal_tags": [
+        "abandoned",
+        "clinical",
+        "institutional",
+        "mundane"
+      ],
+      "added_personal_tags": [],
+      "final_personal_tags": [
+        "abandoned",
+        "clinical",
+        "institutional",
+        "mundane"
+      ],
+      "added_corporate_tags": [],
+      "final_corporate_tags": [],
+      "max_personal_score": 0.0,
+      "max_corporate_score": 0.0
+    },
+    {
+      "id": "css_props_lab_powerbox02a",
+      "display_name": "Powerbox02A",
+      "kept_personal_tags": [
+        "abandoned",
+        "clinical",
+        "institutional",
+        "mundane"
+      ],
+      "added_personal_tags": [],
+      "final_personal_tags": [
+        "abandoned",
+        "clinical",
+        "institutional",
+        "mundane"
+      ],
+      "added_corporate_tags": [],
+      "final_corporate_tags": [],
+      "max_personal_score": 0.0,
+      "max_corporate_score": 0.0
+    },
+    {
+      "id": "css_props_lab_powerbox02b",
+      "display_name": "Powerbox02B",
+      "kept_personal_tags": [
+        "abandoned",
+        "clinical",
+        "institutional",
+        "mundane"
+      ],
+      "added_personal_tags": [],
+      "final_personal_tags": [
+        "abandoned",
+        "clinical",
+        "institutional",
+        "mundane"
+      ],
+      "added_corporate_tags": [],
+      "final_corporate_tags": [],
+      "max_personal_score": 0.0,
+      "max_corporate_score": 0.0
+    },
+    {
+      "id": "css_props_lab_powerbox02c",
+      "display_name": "Powerbox02C",
+      "kept_personal_tags": [
+        "abandoned",
+        "clinical",
+        "institutional",
+        "mundane"
+      ],
+      "added_personal_tags": [],
+      "final_personal_tags": [
+        "abandoned",
+        "clinical",
+        "institutional",
+        "mundane"
+      ],
+      "added_corporate_tags": [],
+      "final_corporate_tags": [],
+      "max_personal_score": 0.0,
+      "max_corporate_score": 0.0
+    },
+    {
+      "id": "css_props_lab_powerbox02d",
+      "display_name": "Powerbox02D",
+      "kept_personal_tags": [
+        "abandoned",
+        "clinical",
+        "institutional",
+        "mundane"
+      ],
+      "added_personal_tags": [],
+      "final_personal_tags": [
+        "abandoned",
+        "clinical",
+        "institutional",
+        "mundane"
+      ],
+      "added_corporate_tags": [],
+      "final_corporate_tags": [],
+      "max_personal_score": 0.0,
+      "max_corporate_score": 0.0
+    },
+    {
+      "id": "css_props_lab_powerbox03a",
+      "display_name": "Powerbox03A",
+      "kept_personal_tags": [
+        "abandoned",
+        "clinical",
+        "institutional",
+        "mundane"
+      ],
+      "added_personal_tags": [],
+      "final_personal_tags": [
+        "abandoned",
+        "clinical",
+        "institutional",
+        "mundane"
+      ],
+      "added_corporate_tags": [],
+      "final_corporate_tags": [],
+      "max_personal_score": 0.0,
+      "max_corporate_score": 0.0
+    },
+    {
+      "id": "css_props_lab_reciever_cart",
+      "display_name": "Reciever Cart",
+      "kept_personal_tags": [
+        "clinical",
+        "institutional"
+      ],
+      "added_personal_tags": [],
+      "final_personal_tags": [
+        "clinical",
+        "institutional"
+      ],
+      "added_corporate_tags": [],
+      "final_corporate_tags": [],
+      "max_personal_score": 0.0,
+      "max_corporate_score": 0.0
+    },
+    {
+      "id": "dod_items_dod_gift",
+      "display_name": "Dod Gift",
+      "kept_personal_tags": [
+        "mundane",
+        "personal"
+      ],
+      "added_personal_tags": [],
+      "final_personal_tags": [
+        "mundane",
+        "personal"
+      ],
+      "added_corporate_tags": [],
+      "final_corporate_tags": [],
+      "max_personal_score": 0.0,
+      "max_corporate_score": 0.0
+    },
+    {
+      "id": "dod_props_furniture_bookcase_large",
+      "display_name": "Bookcase Large",
+      "kept_personal_tags": [
+        "comforting",
+        "domestic",
+        "nostalgic"
+      ],
+      "added_personal_tags": [],
+      "final_personal_tags": [
+        "comforting",
+        "domestic",
+        "nostalgic"
+      ],
+      "added_corporate_tags": [],
+      "final_corporate_tags": [],
+      "max_personal_score": 0.0,
+      "max_corporate_score": 0.0
+    },
+    {
+      "id": "dod_props_furniture_bookcase_small",
+      "display_name": "Bookcase Small",
+      "kept_personal_tags": [
+        "comforting",
+        "domestic",
+        "nostalgic"
+      ],
+      "added_personal_tags": [],
+      "final_personal_tags": [
+        "comforting",
+        "domestic",
+        "nostalgic"
+      ],
+      "added_corporate_tags": [],
+      "final_corporate_tags": [],
+      "max_personal_score": 0.0,
+      "max_corporate_score": 0.0
+    },
+    {
+      "id": "dod_props_furniture_cabinet_large",
+      "display_name": "Cabinet Large",
+      "kept_personal_tags": [
+        "comforting",
+        "domestic",
+        "mundane"
+      ],
+      "added_personal_tags": [],
+      "final_personal_tags": [
+        "comforting",
+        "domestic",
+        "mundane"
+      ],
+      "added_corporate_tags": [],
+      "final_corporate_tags": [],
+      "max_personal_score": 0.0,
+      "max_corporate_score": 0.0
+    },
+    {
+      "id": "dod_props_furniture_cafe_barstool1",
+      "display_name": "Cafe Barstool1",
+      "kept_personal_tags": [
+        "comforting",
+        "domestic"
+      ],
+      "added_personal_tags": [],
+      "final_personal_tags": [
+        "comforting",
+        "domestic"
+      ],
+      "added_corporate_tags": [],
+      "final_corporate_tags": [],
+      "max_personal_score": 0.0,
+      "max_corporate_score": 0.0
+    },
+    {
+      "id": "dod_props_furniture_ceiling_lantern1_off",
+      "display_name": "Ceiling Lantern1 Off",
+      "kept_personal_tags": [
+        "comforting",
+        "domestic",
+        "intimate"
+      ],
+      "added_personal_tags": [],
+      "final_personal_tags": [
+        "comforting",
+        "domestic",
+        "intimate"
+      ],
+      "added_corporate_tags": [],
+      "final_corporate_tags": [],
+      "max_personal_score": 0.0,
+      "max_corporate_score": 0.0
+    },
+    {
+      "id": "dod_props_furniture_ceiling_lantern1_on",
+      "display_name": "Ceiling Lantern1 On",
+      "kept_personal_tags": [
+        "comforting",
+        "domestic",
+        "intimate"
+      ],
+      "added_personal_tags": [],
+      "final_personal_tags": [
+        "comforting",
+        "domestic",
+        "intimate"
+      ],
+      "added_corporate_tags": [],
+      "final_corporate_tags": [],
+      "max_personal_score": 0.0,
+      "max_corporate_score": 0.0
+    },
+    {
+      "id": "dod_props_furniture_chair1",
+      "display_name": "Chair1",
+      "kept_personal_tags": [
+        "comforting",
+        "domestic",
+        "mundane"
+      ],
+      "added_personal_tags": [],
+      "final_personal_tags": [
+        "comforting",
+        "domestic",
+        "mundane"
+      ],
+      "added_corporate_tags": [],
+      "final_corporate_tags": [],
+      "max_personal_score": 0.0,
+      "max_corporate_score": 0.0
+    },
+    {
+      "id": "dod_props_furniture_chair2",
+      "display_name": "Chair2",
+      "kept_personal_tags": [
+        "comforting",
+        "domestic",
+        "mundane"
+      ],
+      "added_personal_tags": [],
+      "final_personal_tags": [
+        "comforting",
+        "domestic",
+        "mundane"
+      ],
+      "added_corporate_tags": [],
+      "final_corporate_tags": [],
+      "max_personal_score": 0.0,
+      "max_corporate_score": 0.0
+    },
+    {
+      "id": "dod_props_furniture_chairantique",
+      "display_name": "Chairantique",
+      "kept_personal_tags": [
+        "comforting",
+        "domestic",
+        "mundane",
+        "nostalgic"
+      ],
+      "added_personal_tags": [],
+      "final_personal_tags": [
+        "comforting",
+        "domestic",
+        "mundane",
+        "nostalgic"
+      ],
+      "added_corporate_tags": [],
+      "final_corporate_tags": [],
+      "max_personal_score": 0.0,
+      "max_corporate_score": 0.0
+    },
+    {
+      "id": "dod_props_furniture_chairantique_damage_01",
+      "display_name": "Chairantique Damage 01",
+      "kept_personal_tags": [
+        "comforting",
+        "domestic",
+        "mundane",
+        "nostalgic"
+      ],
+      "added_personal_tags": [],
+      "final_personal_tags": [
+        "comforting",
+        "domestic",
+        "mundane",
+        "nostalgic"
+      ],
+      "added_corporate_tags": [],
+      "final_corporate_tags": [],
+      "max_personal_score": 0.0,
+      "max_corporate_score": 0.0
+    },
+    {
+      "id": "dod_props_furniture_chairantique_damage_02",
+      "display_name": "Chairantique Damage 02",
+      "kept_personal_tags": [
+        "comforting",
+        "domestic",
+        "mundane",
+        "nostalgic"
+      ],
+      "added_personal_tags": [],
+      "final_personal_tags": [
+        "comforting",
+        "domestic",
+        "mundane",
+        "nostalgic"
+      ],
+      "added_corporate_tags": [],
+      "final_corporate_tags": [],
+      "max_personal_score": 0.0,
+      "max_corporate_score": 0.0
+    },
+    {
+      "id": "dod_props_furniture_church_pew",
+      "display_name": "Church Pew",
+      "kept_personal_tags": [
+        "comforting",
+        "domestic"
+      ],
+      "added_personal_tags": [
+        "devotional",
+        "ritualistic",
+        "sacred"
+      ],
+      "final_personal_tags": [
+        "comforting",
+        "devotional",
+        "domestic",
+        "ritualistic",
+        "sacred"
+      ],
+      "added_corporate_tags": [],
+      "final_corporate_tags": [],
+      "max_personal_score": 0.55,
+      "max_corporate_score": 0.0
+    },
+    {
+      "id": "dod_props_furniture_couch1",
+      "display_name": "Couch1",
+      "kept_personal_tags": [
+        "comforting",
+        "domestic",
+        "intimate"
+      ],
+      "added_personal_tags": [],
+      "final_personal_tags": [
+        "comforting",
+        "domestic",
+        "intimate"
+      ],
+      "added_corporate_tags": [],
+      "final_corporate_tags": [],
+      "max_personal_score": 0.0,
+      "max_corporate_score": 0.0
+    },
+    {
+      "id": "dod_props_furniture_couch2",
+      "display_name": "Couch2",
+      "kept_personal_tags": [
+        "comforting",
+        "domestic",
+        "intimate"
+      ],
+      "added_personal_tags": [],
+      "final_personal_tags": [
+        "comforting",
+        "domestic",
+        "intimate"
+      ],
+      "added_corporate_tags": [],
+      "final_corporate_tags": [],
+      "max_personal_score": 0.0,
+      "max_corporate_score": 0.0
+    },
+    {
+      "id": "dod_props_furniture_cupboard1",
+      "display_name": "Cupboard1",
+      "kept_personal_tags": [
+        "comforting",
+        "domestic"
+      ],
+      "added_personal_tags": [],
+      "final_personal_tags": [
+        "comforting",
+        "domestic"
+      ],
+      "added_corporate_tags": [],
+      "final_corporate_tags": [],
+      "max_personal_score": 0.0,
+      "max_corporate_score": 0.0
+    },
+    {
+      "id": "dod_props_furniture_desk1",
+      "display_name": "Desk1",
+      "kept_personal_tags": [
+        "comforting",
+        "domestic",
+        "mundane"
+      ],
+      "added_personal_tags": [],
+      "final_personal_tags": [
+        "comforting",
+        "domestic",
+        "mundane"
+      ],
+      "added_corporate_tags": [],
+      "final_corporate_tags": [],
+      "max_personal_score": 0.0,
+      "max_corporate_score": 0.0
+    },
+    {
+      "id": "dod_props_furniture_drawer1",
+      "display_name": "Drawer1",
+      "kept_personal_tags": [
+        "comforting",
+        "domestic",
+        "mundane"
+      ],
+      "added_personal_tags": [],
+      "final_personal_tags": [
+        "comforting",
+        "domestic",
+        "mundane"
+      ],
+      "added_corporate_tags": [],
+      "final_corporate_tags": [],
+      "max_personal_score": 0.0,
+      "max_corporate_score": 0.0
+    },
+    {
+      "id": "dod_props_furniture_drawer2",
+      "display_name": "Drawer2",
+      "kept_personal_tags": [
+        "comforting",
+        "domestic",
+        "mundane"
+      ],
+      "added_personal_tags": [],
+      "final_personal_tags": [
+        "comforting",
+        "domestic",
+        "mundane"
+      ],
+      "added_corporate_tags": [],
+      "final_corporate_tags": [],
+      "max_personal_score": 0.0,
+      "max_corporate_score": 0.0
+    },
+    {
+      "id": "dod_props_furniture_drawer3",
+      "display_name": "Drawer3",
+      "kept_personal_tags": [
+        "comforting",
+        "domestic",
+        "mundane"
+      ],
+      "added_personal_tags": [],
+      "final_personal_tags": [
+        "comforting",
+        "domestic",
+        "mundane"
+      ],
+      "added_corporate_tags": [],
+      "final_corporate_tags": [],
+      "max_personal_score": 0.0,
+      "max_corporate_score": 0.0
+    },
+    {
+      "id": "dod_props_furniture_drawer4",
+      "display_name": "Drawer4",
+      "kept_personal_tags": [
+        "comforting",
+        "domestic",
+        "mundane"
+      ],
+      "added_personal_tags": [],
+      "final_personal_tags": [
+        "comforting",
+        "domestic",
+        "mundane"
+      ],
+      "added_corporate_tags": [],
+      "final_corporate_tags": [],
+      "max_personal_score": 0.0,
+      "max_corporate_score": 0.0
+    },
+    {
+      "id": "dod_props_furniture_dresser1",
+      "display_name": "Dresser1",
+      "kept_personal_tags": [
+        "comforting",
+        "domestic",
+        "mundane"
+      ],
+      "added_personal_tags": [],
+      "final_personal_tags": [
+        "comforting",
+        "domestic",
+        "mundane"
+      ],
+      "added_corporate_tags": [],
+      "final_corporate_tags": [],
+      "max_personal_score": 0.0,
+      "max_corporate_score": 0.0
+    },
+    {
+      "id": "dod_props_furniture_fireplace2",
+      "display_name": "Fireplace2",
+      "kept_personal_tags": [
+        "comforting",
+        "domestic",
+        "nostalgic"
+      ],
+      "added_personal_tags": [],
+      "final_personal_tags": [
+        "comforting",
+        "domestic",
+        "nostalgic"
+      ],
+      "added_corporate_tags": [],
+      "final_corporate_tags": [],
+      "max_personal_score": 0.0,
+      "max_corporate_score": 0.0
+    },
+    {
+      "id": "dod_props_furniture_heavy_table",
+      "display_name": "Heavy Table",
+      "kept_personal_tags": [
+        "comforting",
+        "domestic",
+        "mundane"
+      ],
+      "added_personal_tags": [
+        "heavy"
+      ],
+      "final_personal_tags": [
+        "comforting",
+        "domestic",
+        "heavy",
+        "mundane"
+      ],
+      "added_corporate_tags": [],
+      "final_corporate_tags": [],
+      "max_personal_score": 0.45,
+      "max_corporate_score": 0.0
+    },
+    {
+      "id": "dod_props_furniture_inn_chandelier1",
+      "display_name": "Inn Chandelier1",
+      "kept_personal_tags": [
+        "comforting",
+        "domestic"
+      ],
+      "added_personal_tags": [],
+      "final_personal_tags": [
+        "comforting",
+        "domestic"
+      ],
+      "added_corporate_tags": [],
+      "final_corporate_tags": [],
+      "max_personal_score": 0.0,
+      "max_corporate_score": 0.0
+    },
+    {
+      "id": "dod_props_furniture_inn_frontdesk1",
+      "display_name": "Inn Frontdesk1",
+      "kept_personal_tags": [
+        "comforting",
+        "domestic",
+        "mundane"
+      ],
+      "added_personal_tags": [],
+      "final_personal_tags": [
+        "comforting",
+        "domestic",
+        "mundane"
+      ],
+      "added_corporate_tags": [],
+      "final_corporate_tags": [],
+      "max_personal_score": 0.0,
+      "max_corporate_score": 0.0
+    },
+    {
+      "id": "dod_props_furniture_kitchen_chair",
+      "display_name": "Kitchen Chair",
+      "kept_personal_tags": [
+        "comforting",
+        "domestic",
+        "mundane"
+      ],
+      "added_personal_tags": [
+        "intimate",
+        "nostalgic",
+        "personal"
+      ],
+      "final_personal_tags": [
+        "comforting",
+        "domestic",
+        "intimate",
+        "mundane",
+        "nostalgic",
+        "personal"
+      ],
+      "added_corporate_tags": [],
+      "final_corporate_tags": [],
+      "max_personal_score": 0.55,
+      "max_corporate_score": 0.0
+    },
+    {
+      "id": "dod_props_furniture_kitchen_countertop1",
+      "display_name": "Kitchen Countertop1",
+      "kept_personal_tags": [
+        "comforting",
+        "domestic",
+        "mundane",
+        "public",
+        "retail"
+      ],
+      "added_personal_tags": [
+        "intimate",
+        "nostalgic",
+        "personal"
+      ],
+      "final_personal_tags": [
+        "comforting",
+        "domestic",
+        "intimate",
+        "mundane",
+        "nostalgic",
+        "personal",
+        "public",
+        "retail"
+      ],
+      "added_corporate_tags": [],
+      "final_corporate_tags": [],
+      "max_personal_score": 0.55,
+      "max_corporate_score": 0.0
+    },
+    {
+      "id": "dod_props_furniture_kitchen_oven1",
+      "display_name": "Kitchen Oven1",
+      "kept_personal_tags": [
+        "comforting",
+        "domestic",
+        "mundane"
+      ],
+      "added_personal_tags": [
+        "intimate",
+        "nostalgic",
+        "personal"
+      ],
+      "final_personal_tags": [
+        "comforting",
+        "domestic",
+        "intimate",
+        "mundane",
+        "nostalgic",
+        "personal"
+      ],
+      "added_corporate_tags": [],
+      "final_corporate_tags": [],
+      "max_personal_score": 0.55,
+      "max_corporate_score": 0.0
+    },
+    {
+      "id": "dod_props_furniture_kitchen_shelf1",
+      "display_name": "Kitchen Shelf1",
+      "kept_personal_tags": [
+        "comforting",
+        "domestic",
+        "mundane",
+        "nostalgic"
+      ],
+      "added_personal_tags": [
+        "intimate",
+        "personal"
+      ],
+      "final_personal_tags": [
+        "comforting",
+        "domestic",
+        "intimate",
+        "mundane",
+        "nostalgic",
+        "personal"
+      ],
+      "added_corporate_tags": [],
+      "final_corporate_tags": [],
+      "max_personal_score": 0.55,
+      "max_corporate_score": 0.0
+    },
+    {
+      "id": "dod_props_furniture_kitchen_table",
+      "display_name": "Kitchen Table",
+      "kept_personal_tags": [
+        "comforting",
+        "domestic",
+        "mundane"
+      ],
+      "added_personal_tags": [
+        "intimate",
+        "nostalgic",
+        "personal",
+        "warm"
+      ],
+      "final_personal_tags": [
+        "comforting",
+        "domestic",
+        "intimate",
+        "mundane",
+        "nostalgic",
+        "personal",
+        "warm"
+      ],
+      "added_corporate_tags": [],
+      "final_corporate_tags": [],
+      "max_personal_score": 0.55,
+      "max_corporate_score": 0.0
+    },
+    {
+      "id": "dod_props_furniture_kitchen_vent1",
+      "display_name": "Kitchen Vent1",
+      "kept_personal_tags": [
+        "comforting",
+        "domestic",
+        "mundane"
+      ],
+      "added_personal_tags": [
+        "intimate",
+        "nostalgic",
+        "personal"
+      ],
+      "final_personal_tags": [
+        "comforting",
+        "domestic",
+        "intimate",
+        "mundane",
+        "nostalgic",
+        "personal"
+      ],
+      "added_corporate_tags": [],
+      "final_corporate_tags": [],
+      "max_personal_score": 0.55,
+      "max_corporate_score": 0.0
+    },
+    {
+      "id": "dod_props_furniture_lamp1",
+      "display_name": "Lamp1",
+      "kept_personal_tags": [
+        "comforting",
+        "domestic",
+        "intimate"
+      ],
+      "added_personal_tags": [],
+      "final_personal_tags": [
+        "comforting",
+        "domestic",
+        "intimate"
+      ],
+      "added_corporate_tags": [],
+      "final_corporate_tags": [],
+      "max_personal_score": 0.0,
+      "max_corporate_score": 0.0
+    },
+    {
+      "id": "dod_props_furniture_lights_overhead",
+      "display_name": "Lights Overhead",
+      "kept_personal_tags": [
+        "comforting",
+        "domestic"
+      ],
+      "added_personal_tags": [],
+      "final_personal_tags": [
+        "comforting",
+        "domestic"
+      ],
+      "added_corporate_tags": [],
+      "final_corporate_tags": [],
+      "max_personal_score": 0.0,
+      "max_corporate_score": 0.0
+    },
+    {
+      "id": "dod_props_furniture_nightstand_large",
+      "display_name": "Nightstand Large",
+      "kept_personal_tags": [
+        "comforting",
+        "domestic",
+        "intimate"
+      ],
+      "added_personal_tags": [],
+      "final_personal_tags": [
+        "comforting",
+        "domestic",
+        "intimate"
+      ],
+      "added_corporate_tags": [],
+      "final_corporate_tags": [],
+      "max_personal_score": 0.0,
+      "max_corporate_score": 0.0
+    },
+    {
+      "id": "dod_props_furniture_nightstand_small",
+      "display_name": "Nightstand Small",
+      "kept_personal_tags": [
+        "comforting",
+        "domestic",
+        "intimate"
+      ],
+      "added_personal_tags": [],
+      "final_personal_tags": [
+        "comforting",
+        "domestic",
+        "intimate"
+      ],
+      "added_corporate_tags": [],
+      "final_corporate_tags": [],
+      "max_personal_score": 0.0,
+      "max_corporate_score": 0.0
+    },
+    {
+      "id": "dod_props_furniture_piano",
+      "display_name": "Piano",
+      "kept_personal_tags": [
+        "comforting",
+        "domestic",
+        "intimate",
+        "nostalgic"
+      ],
+      "added_personal_tags": [],
+      "final_personal_tags": [
+        "comforting",
+        "domestic",
+        "intimate",
+        "nostalgic"
+      ],
+      "added_corporate_tags": [],
+      "final_corporate_tags": [],
+      "max_personal_score": 0.0,
+      "max_corporate_score": 0.0
+    },
+    {
+      "id": "dod_props_furniture_piano_bench",
+      "display_name": "Piano Bench",
+      "kept_personal_tags": [
+        "comforting",
+        "domestic",
+        "intimate",
+        "nostalgic"
+      ],
+      "added_personal_tags": [],
+      "final_personal_tags": [
+        "comforting",
+        "domestic",
+        "intimate",
+        "nostalgic"
+      ],
+      "added_corporate_tags": [],
+      "final_corporate_tags": [],
+      "max_personal_score": 0.0,
+      "max_corporate_score": 0.0
+    },
+    {
+      "id": "dod_props_furniture_picture_frame1",
+      "display_name": "Picture Frame1",
+      "kept_personal_tags": [
+        "comforting",
+        "domestic",
+        "nostalgic",
+        "personal"
+      ],
+      "added_personal_tags": [],
+      "final_personal_tags": [
+        "comforting",
+        "domestic",
+        "nostalgic",
+        "personal"
+      ],
+      "added_corporate_tags": [],
+      "final_corporate_tags": [],
+      "max_personal_score": 0.0,
+      "max_corporate_score": 0.0
+    },
+    {
+      "id": "dod_props_furniture_picture_frame10",
+      "display_name": "Picture Frame10",
+      "kept_personal_tags": [
+        "comforting",
+        "domestic",
+        "nostalgic",
+        "personal"
+      ],
+      "added_personal_tags": [],
+      "final_personal_tags": [
+        "comforting",
+        "domestic",
+        "nostalgic",
+        "personal"
+      ],
+      "added_corporate_tags": [],
+      "final_corporate_tags": [],
+      "max_personal_score": 0.0,
+      "max_corporate_score": 0.0
+    },
+    {
+      "id": "dod_props_furniture_picture_frame11",
+      "display_name": "Picture Frame11",
+      "kept_personal_tags": [
+        "comforting",
+        "domestic",
+        "nostalgic",
+        "personal"
+      ],
+      "added_personal_tags": [],
+      "final_personal_tags": [
+        "comforting",
+        "domestic",
+        "nostalgic",
+        "personal"
+      ],
+      "added_corporate_tags": [],
+      "final_corporate_tags": [],
+      "max_personal_score": 0.0,
+      "max_corporate_score": 0.0
+    },
+    {
+      "id": "dod_props_furniture_picture_frame12",
+      "display_name": "Picture Frame12",
+      "kept_personal_tags": [
+        "comforting",
+        "domestic",
+        "nostalgic",
+        "personal"
+      ],
+      "added_personal_tags": [],
+      "final_personal_tags": [
+        "comforting",
+        "domestic",
+        "nostalgic",
+        "personal"
+      ],
+      "added_corporate_tags": [],
+      "final_corporate_tags": [],
+      "max_personal_score": 0.0,
+      "max_corporate_score": 0.0
+    },
+    {
+      "id": "dod_props_furniture_picture_frame2",
+      "display_name": "Picture Frame2",
+      "kept_personal_tags": [
+        "comforting",
+        "domestic",
+        "nostalgic",
+        "personal"
+      ],
+      "added_personal_tags": [],
+      "final_personal_tags": [
+        "comforting",
+        "domestic",
+        "nostalgic",
+        "personal"
+      ],
+      "added_corporate_tags": [],
+      "final_corporate_tags": [],
+      "max_personal_score": 0.0,
+      "max_corporate_score": 0.0
+    },
+    {
+      "id": "dod_props_furniture_picture_frame3",
+      "display_name": "Picture Frame3",
+      "kept_personal_tags": [
+        "comforting",
+        "domestic",
+        "nostalgic",
+        "personal"
+      ],
+      "added_personal_tags": [],
+      "final_personal_tags": [
+        "comforting",
+        "domestic",
+        "nostalgic",
+        "personal"
+      ],
+      "added_corporate_tags": [],
+      "final_corporate_tags": [],
+      "max_personal_score": 0.0,
+      "max_corporate_score": 0.0
+    },
+    {
+      "id": "dod_props_furniture_picture_frame4",
+      "display_name": "Picture Frame4",
+      "kept_personal_tags": [
+        "comforting",
+        "domestic",
+        "nostalgic",
+        "personal"
+      ],
+      "added_personal_tags": [],
+      "final_personal_tags": [
+        "comforting",
+        "domestic",
+        "nostalgic",
+        "personal"
+      ],
+      "added_corporate_tags": [],
+      "final_corporate_tags": [],
+      "max_personal_score": 0.0,
+      "max_corporate_score": 0.0
+    },
+    {
+      "id": "dod_props_furniture_picture_frame5",
+      "display_name": "Picture Frame5",
+      "kept_personal_tags": [
+        "comforting",
+        "domestic",
+        "nostalgic",
+        "personal"
+      ],
+      "added_personal_tags": [],
+      "final_personal_tags": [
+        "comforting",
+        "domestic",
+        "nostalgic",
+        "personal"
+      ],
+      "added_corporate_tags": [],
+      "final_corporate_tags": [],
+      "max_personal_score": 0.0,
+      "max_corporate_score": 0.0
+    },
+    {
+      "id": "dod_props_furniture_picture_frame6",
+      "display_name": "Picture Frame6",
+      "kept_personal_tags": [
+        "comforting",
+        "domestic",
+        "nostalgic",
+        "personal"
+      ],
+      "added_personal_tags": [],
+      "final_personal_tags": [
+        "comforting",
+        "domestic",
+        "nostalgic",
+        "personal"
+      ],
+      "added_corporate_tags": [],
+      "final_corporate_tags": [],
+      "max_personal_score": 0.0,
+      "max_corporate_score": 0.0
+    },
+    {
+      "id": "dod_props_furniture_picture_frame7",
+      "display_name": "Picture Frame7",
+      "kept_personal_tags": [
+        "comforting",
+        "domestic",
+        "nostalgic",
+        "personal"
+      ],
+      "added_personal_tags": [],
+      "final_personal_tags": [
+        "comforting",
+        "domestic",
+        "nostalgic",
+        "personal"
+      ],
+      "added_corporate_tags": [],
+      "final_corporate_tags": [],
+      "max_personal_score": 0.0,
+      "max_corporate_score": 0.0
+    },
+    {
+      "id": "dod_props_furniture_picture_frame8",
+      "display_name": "Picture Frame8",
+      "kept_personal_tags": [
+        "comforting",
+        "domestic",
+        "nostalgic",
+        "personal"
+      ],
+      "added_personal_tags": [],
+      "final_personal_tags": [
+        "comforting",
+        "domestic",
+        "nostalgic",
+        "personal"
+      ],
+      "added_corporate_tags": [],
+      "final_corporate_tags": [],
+      "max_personal_score": 0.0,
+      "max_corporate_score": 0.0
+    },
+    {
+      "id": "dod_props_furniture_picture_frame9",
+      "display_name": "Picture Frame9",
+      "kept_personal_tags": [
+        "comforting",
+        "domestic",
+        "nostalgic",
+        "personal"
+      ],
+      "added_personal_tags": [],
+      "final_personal_tags": [
+        "comforting",
+        "domestic",
+        "nostalgic",
+        "personal"
+      ],
+      "added_corporate_tags": [],
+      "final_corporate_tags": [],
+      "max_personal_score": 0.0,
+      "max_corporate_score": 0.0
+    },
+    {
+      "id": "dod_props_furniture_shelf1",
+      "display_name": "Shelf1",
+      "kept_personal_tags": [
+        "comforting",
+        "domestic",
+        "nostalgic"
+      ],
+      "added_personal_tags": [],
+      "final_personal_tags": [
+        "comforting",
+        "domestic",
+        "nostalgic"
+      ],
+      "added_corporate_tags": [],
+      "final_corporate_tags": [],
+      "max_personal_score": 0.0,
+      "max_corporate_score": 0.0
+    },
+    {
+      "id": "dod_props_furniture_sink1",
+      "display_name": "Sink1",
+      "kept_personal_tags": [
+        "comforting",
+        "domestic",
+        "intimate",
+        "mundane"
+      ],
+      "added_personal_tags": [],
+      "final_personal_tags": [
+        "comforting",
+        "domestic",
+        "intimate",
+        "mundane"
+      ],
+      "added_corporate_tags": [],
+      "final_corporate_tags": [],
+      "max_personal_score": 0.0,
+      "max_corporate_score": 0.0
+    },
+    {
+      "id": "dod_props_furniture_table1",
+      "display_name": "Table1",
+      "kept_personal_tags": [
+        "comforting",
+        "domestic",
+        "mundane"
+      ],
+      "added_personal_tags": [],
+      "final_personal_tags": [
+        "comforting",
+        "domestic",
+        "mundane"
+      ],
+      "added_corporate_tags": [],
+      "final_corporate_tags": [],
+      "max_personal_score": 0.0,
+      "max_corporate_score": 0.0
+    },
+    {
+      "id": "dod_props_furniture_table2",
+      "display_name": "Table2",
+      "kept_personal_tags": [
+        "comforting",
+        "domestic",
+        "mundane"
+      ],
+      "added_personal_tags": [],
+      "final_personal_tags": [
+        "comforting",
+        "domestic",
+        "mundane"
+      ],
+      "added_corporate_tags": [],
+      "final_corporate_tags": [],
+      "max_personal_score": 0.0,
+      "max_corporate_score": 0.0
+    },
+    {
+      "id": "dod_props_furniture_toilet1",
+      "display_name": "Toilet1",
+      "kept_personal_tags": [
+        "comforting",
+        "domestic",
+        "intimate",
+        "mundane"
+      ],
+      "added_personal_tags": [],
+      "final_personal_tags": [
+        "comforting",
+        "domestic",
+        "intimate",
+        "mundane"
+      ],
+      "added_corporate_tags": [],
+      "final_corporate_tags": [],
+      "max_personal_score": 0.0,
+      "max_corporate_score": 0.0
+    },
+    {
+      "id": "dod_props_lab_lockerdoorleft",
+      "display_name": "Lockerdoorleft",
+      "kept_personal_tags": [
+        "clinical",
+        "institutional"
+      ],
+      "added_personal_tags": [],
+      "final_personal_tags": [
+        "clinical",
+        "institutional"
+      ],
+      "added_corporate_tags": [],
+      "final_corporate_tags": [],
+      "max_personal_score": 0.0,
+      "max_corporate_score": 0.0
+    },
+    {
+      "id": "dod_props_lab_lockerdoorright",
+      "display_name": "Lockerdoorright",
+      "kept_personal_tags": [
+        "clinical",
+        "institutional"
+      ],
+      "added_personal_tags": [],
+      "final_personal_tags": [
+        "clinical",
+        "institutional"
+      ],
+      "added_corporate_tags": [],
+      "final_corporate_tags": [],
+      "max_personal_score": 0.0,
+      "max_corporate_score": 0.0
+    },
+    {
+      "id": "dod_props_lab_lockers",
+      "display_name": "Lockers",
+      "kept_personal_tags": [
+        "clinical",
+        "institutional"
+      ],
+      "added_personal_tags": [],
+      "final_personal_tags": [
+        "clinical",
+        "institutional"
+      ],
+      "added_corporate_tags": [],
+      "final_corporate_tags": [],
+      "max_personal_score": 0.0,
+      "max_corporate_score": 0.0
+    },
+    {
+      "id": "hl2_items_357ammo",
+      "display_name": "357Ammo",
+      "kept_personal_tags": [
+        "mundane",
+        "personal"
+      ],
+      "added_personal_tags": [
+        "warm"
+      ],
+      "final_personal_tags": [
+        "mundane",
+        "personal",
+        "warm"
+      ],
+      "added_corporate_tags": [],
+      "final_corporate_tags": [],
+      "max_personal_score": 0.45,
+      "max_corporate_score": 0.0
+    },
+    {
+      "id": "hl2_items_357ammobox",
+      "display_name": "357Ammobox",
+      "kept_personal_tags": [
+        "abandoned",
+        "mundane",
+        "personal"
+      ],
+      "added_personal_tags": [
+        "warm"
+      ],
+      "final_personal_tags": [
+        "abandoned",
+        "mundane",
+        "personal",
+        "warm"
+      ],
+      "added_corporate_tags": [],
+      "final_corporate_tags": [],
+      "max_personal_score": 0.45,
+      "max_corporate_score": 0.0
+    },
+    {
+      "id": "hl2_items_ammocrate_ar2",
+      "display_name": "Ammocrate Ar2",
+      "kept_personal_tags": [
+        "abandoned",
+        "mundane",
+        "personal"
+      ],
+      "added_personal_tags": [],
+      "final_personal_tags": [
+        "abandoned",
+        "mundane",
+        "personal"
+      ],
+      "added_corporate_tags": [],
+      "final_corporate_tags": [],
+      "max_personal_score": 0.0,
+      "max_corporate_score": 0.0
+    },
+    {
+      "id": "hl2_items_ammocrate_buckshot",
+      "display_name": "Ammocrate Buckshot",
+      "kept_personal_tags": [
+        "abandoned",
+        "mundane",
+        "personal"
+      ],
+      "added_personal_tags": [],
+      "final_personal_tags": [
+        "abandoned",
+        "mundane",
+        "personal"
+      ],
+      "added_corporate_tags": [],
+      "final_corporate_tags": [],
+      "max_personal_score": 0.0,
+      "max_corporate_score": 0.0
+    },
+    {
+      "id": "hl2_items_ammocrate_grenade",
+      "display_name": "Ammocrate Grenade",
+      "kept_personal_tags": [
+        "abandoned",
+        "mundane",
+        "personal"
+      ],
+      "added_personal_tags": [],
+      "final_personal_tags": [
+        "abandoned",
+        "mundane",
+        "personal"
+      ],
+      "added_corporate_tags": [],
+      "final_corporate_tags": [],
+      "max_personal_score": 0.0,
+      "max_corporate_score": 0.0
+    },
+    {
+      "id": "hl2_items_ammocrate_pistol",
+      "display_name": "Ammocrate Pistol",
+      "kept_personal_tags": [
+        "abandoned",
+        "mundane",
+        "personal"
+      ],
+      "added_personal_tags": [],
+      "final_personal_tags": [
+        "abandoned",
+        "mundane",
+        "personal"
+      ],
+      "added_corporate_tags": [],
+      "final_corporate_tags": [],
+      "max_personal_score": 0.0,
+      "max_corporate_score": 0.0
+    },
+    {
+      "id": "hl2_items_ammocrate_rockets",
+      "display_name": "Ammocrate Rockets",
+      "kept_personal_tags": [
+        "abandoned",
+        "mundane",
+        "personal"
+      ],
+      "added_personal_tags": [],
+      "final_personal_tags": [
+        "abandoned",
+        "mundane",
+        "personal"
+      ],
+      "added_corporate_tags": [],
+      "final_corporate_tags": [],
+      "max_personal_score": 0.0,
+      "max_corporate_score": 0.0
+    },
+    {
+      "id": "hl2_items_ammocrate_smg1",
+      "display_name": "Ammocrate Smg1",
+      "kept_personal_tags": [
+        "abandoned",
+        "mundane",
+        "personal"
+      ],
+      "added_personal_tags": [],
+      "final_personal_tags": [
+        "abandoned",
+        "mundane",
+        "personal"
+      ],
+      "added_corporate_tags": [],
+      "final_corporate_tags": [],
+      "max_personal_score": 0.0,
+      "max_corporate_score": 0.0
+    },
+    {
+      "id": "hl2_items_ammocrate_smg2",
+      "display_name": "Ammocrate Smg2",
+      "kept_personal_tags": [
+        "abandoned",
+        "mundane",
+        "personal"
+      ],
+      "added_personal_tags": [],
+      "final_personal_tags": [
+        "abandoned",
+        "mundane",
+        "personal"
+      ],
+      "added_corporate_tags": [],
+      "final_corporate_tags": [],
+      "max_personal_score": 0.0,
+      "max_corporate_score": 0.0
+    },
+    {
+      "id": "hl2_items_ar2_grenade",
+      "display_name": "Ar2 Grenade",
+      "kept_personal_tags": [
+        "mundane",
+        "personal"
+      ],
+      "added_personal_tags": [],
+      "final_personal_tags": [
+        "mundane",
+        "personal"
+      ],
+      "added_corporate_tags": [],
+      "final_corporate_tags": [],
+      "max_personal_score": 0.0,
+      "max_corporate_score": 0.0
+    },
+    {
+      "id": "hl2_items_battery",
+      "display_name": "Battery",
+      "kept_personal_tags": [
+        "mundane",
+        "personal"
+      ],
+      "added_personal_tags": [],
+      "final_personal_tags": [
+        "mundane",
+        "personal"
+      ],
+      "added_corporate_tags": [],
+      "final_corporate_tags": [],
+      "max_personal_score": 0.0,
+      "max_corporate_score": 0.0
+    },
+    {
+      "id": "hl2_items_boxbuckshot",
+      "display_name": "Boxbuckshot",
+      "kept_personal_tags": [
+        "abandoned",
+        "mundane",
+        "personal"
+      ],
+      "added_personal_tags": [
+        "warm"
+      ],
+      "final_personal_tags": [
+        "abandoned",
+        "mundane",
+        "personal",
+        "warm"
+      ],
+      "added_corporate_tags": [],
+      "final_corporate_tags": [],
+      "max_personal_score": 0.45,
+      "max_corporate_score": 0.0
+    },
+    {
+      "id": "hl2_items_boxflares",
+      "display_name": "Boxflares",
+      "kept_personal_tags": [
+        "abandoned",
+        "mundane",
+        "personal"
+      ],
+      "added_personal_tags": [],
+      "final_personal_tags": [
+        "abandoned",
+        "mundane",
+        "personal"
+      ],
+      "added_corporate_tags": [],
+      "final_corporate_tags": [],
+      "max_personal_score": 0.0,
+      "max_corporate_score": 0.0
+    },
+    {
+      "id": "hl2_items_boxmrounds",
+      "display_name": "Boxmrounds",
+      "kept_personal_tags": [
+        "abandoned",
+        "mundane",
+        "personal"
+      ],
+      "added_personal_tags": [],
+      "final_personal_tags": [
+        "abandoned",
+        "mundane",
+        "personal"
+      ],
+      "added_corporate_tags": [],
+      "final_corporate_tags": [],
+      "max_personal_score": 0.0,
+      "max_corporate_score": 0.0
+    },
+    {
+      "id": "hl2_items_boxsniperrounds",
+      "display_name": "Boxsniperrounds",
+      "kept_personal_tags": [
+        "abandoned",
+        "mundane",
+        "personal"
+      ],
+      "added_personal_tags": [],
+      "final_personal_tags": [
+        "abandoned",
+        "mundane",
+        "personal"
+      ],
+      "added_corporate_tags": [],
+      "final_corporate_tags": [],
+      "max_personal_score": 0.0,
+      "max_corporate_score": 0.0
+    },
+    {
+      "id": "hl2_items_boxsrounds",
+      "display_name": "Boxsrounds",
+      "kept_personal_tags": [
+        "abandoned",
+        "mundane",
+        "personal"
+      ],
+      "added_personal_tags": [],
+      "final_personal_tags": [
+        "abandoned",
+        "mundane",
+        "personal"
+      ],
+      "added_corporate_tags": [],
+      "final_corporate_tags": [],
+      "max_personal_score": 0.0,
+      "max_corporate_score": 0.0
+    },
+    {
+      "id": "hl2_items_combine_rifle_ammo01",
+      "display_name": "Combine Rifle Ammo01",
+      "kept_personal_tags": [
+        "mundane",
+        "personal"
+      ],
+      "added_personal_tags": [],
+      "final_personal_tags": [
+        "mundane",
+        "personal"
+      ],
+      "added_corporate_tags": [],
+      "final_corporate_tags": [],
+      "max_personal_score": 0.0,
+      "max_corporate_score": 0.0
+    },
+    {
+      "id": "hl2_items_combine_rifle_cartridge01",
+      "display_name": "Combine Rifle Cartridge01",
+      "kept_personal_tags": [
+        "mundane",
+        "personal"
+      ],
+      "added_personal_tags": [],
+      "final_personal_tags": [
+        "mundane",
+        "personal"
+      ],
+      "added_corporate_tags": [],
+      "final_corporate_tags": [],
+      "max_personal_score": 0.0,
+      "max_corporate_score": 0.0
+    },
+    {
+      "id": "hl2_items_crossbowrounds",
+      "display_name": "Crossbowrounds",
+      "kept_personal_tags": [
+        "mundane",
+        "personal"
+      ],
+      "added_personal_tags": [],
+      "final_personal_tags": [
+        "mundane",
+        "personal"
+      ],
+      "added_corporate_tags": [],
+      "final_corporate_tags": [],
+      "max_personal_score": 0.0,
+      "max_corporate_score": 0.0
+    },
+    {
+      "id": "hl2_items_flare",
+      "display_name": "Flare",
+      "kept_personal_tags": [
+        "mundane",
+        "personal"
+      ],
+      "added_personal_tags": [],
+      "final_personal_tags": [
+        "mundane",
+        "personal"
+      ],
+      "added_corporate_tags": [],
+      "final_corporate_tags": [],
+      "max_personal_score": 0.0,
+      "max_corporate_score": 0.0
+    },
+    {
+      "id": "hl2_items_grenadeammo",
+      "display_name": "Grenadeammo",
+      "kept_personal_tags": [
+        "mundane",
+        "personal"
+      ],
+      "added_personal_tags": [],
+      "final_personal_tags": [
+        "mundane",
+        "personal"
+      ],
+      "added_corporate_tags": [],
+      "final_corporate_tags": [],
+      "max_personal_score": 0.0,
+      "max_corporate_score": 0.0
+    },
+    {
+      "id": "hl2_items_healthkit",
+      "display_name": "Healthkit",
+      "kept_personal_tags": [
+        "mundane",
+        "personal"
+      ],
+      "added_personal_tags": [],
+      "final_personal_tags": [
+        "mundane",
+        "personal"
+      ],
+      "added_corporate_tags": [],
+      "final_corporate_tags": [],
+      "max_personal_score": 0.0,
+      "max_corporate_score": 0.0
+    },
+    {
+      "id": "hl2_items_hevsuit",
+      "display_name": "Hevsuit",
+      "kept_personal_tags": [
+        "mundane",
+        "personal"
+      ],
+      "added_personal_tags": [
+        "warm"
+      ],
+      "final_personal_tags": [
+        "mundane",
+        "personal",
+        "warm"
+      ],
+      "added_corporate_tags": [],
+      "final_corporate_tags": [],
+      "max_personal_score": 0.45,
+      "max_corporate_score": 0.0
+    },
+    {
+      "id": "hl2_items_item_beacon_crate",
+      "display_name": "Item Beacon Crate",
+      "kept_personal_tags": [
+        "abandoned",
+        "mundane",
+        "personal"
+      ],
+      "added_personal_tags": [],
+      "final_personal_tags": [
+        "abandoned",
+        "mundane",
+        "personal"
+      ],
+      "added_corporate_tags": [],
+      "final_corporate_tags": [],
+      "max_personal_score": 0.0,
+      "max_corporate_score": 0.0
+    },
+    {
+      "id": "hl2_items_item_item_crate",
+      "display_name": "Item Item Crate",
+      "kept_personal_tags": [
+        "abandoned",
+        "mundane",
+        "personal"
+      ],
+      "added_personal_tags": [],
+      "final_personal_tags": [
+        "abandoned",
+        "mundane",
+        "personal"
+      ],
+      "added_corporate_tags": [],
+      "final_corporate_tags": [],
+      "max_personal_score": 0.0,
+      "max_corporate_score": 0.0
+    },
+    {
+      "id": "hl2_items_item_item_crate_dynamic",
+      "display_name": "Item Item Crate Dynamic",
+      "kept_personal_tags": [
+        "abandoned",
+        "mundane",
+        "personal"
+      ],
+      "added_personal_tags": [],
+      "final_personal_tags": [
+        "abandoned",
+        "mundane",
+        "personal"
+      ],
+      "added_corporate_tags": [],
+      "final_corporate_tags": [],
+      "max_personal_score": 0.0,
+      "max_corporate_score": 0.0
+    },
+    {
+      "id": "hl2_props_lab_bewaredog",
+      "display_name": "Bewaredog",
+      "kept_personal_tags": [
+        "clinical",
+        "institutional"
+      ],
+      "added_personal_tags": [],
+      "final_personal_tags": [
+        "clinical",
+        "institutional"
+      ],
+      "added_corporate_tags": [],
+      "final_corporate_tags": [],
+      "max_personal_score": 0.0,
+      "max_corporate_score": 0.0
+    },
+    {
+      "id": "hl2_props_lab_bigrock",
+      "display_name": "Bigrock",
+      "kept_personal_tags": [
+        "clinical",
+        "institutional"
+      ],
+      "added_personal_tags": [],
+      "final_personal_tags": [
+        "clinical",
+        "institutional"
+      ],
+      "added_corporate_tags": [],
+      "final_corporate_tags": [],
+      "max_personal_score": 0.0,
+      "max_corporate_score": 0.0
+    },
+    {
+      "id": "hl2_props_lab_binderblue",
+      "display_name": "Binderblue",
+      "kept_personal_tags": [
+        "clinical",
+        "institutional"
+      ],
+      "added_personal_tags": [],
+      "final_personal_tags": [
+        "clinical",
+        "institutional"
+      ],
+      "added_corporate_tags": [],
+      "final_corporate_tags": [],
+      "max_personal_score": 0.0,
+      "max_corporate_score": 0.0
+    },
+    {
+      "id": "hl2_props_lab_bindergraylabel01b",
+      "display_name": "Bindergraylabel01B",
+      "kept_personal_tags": [
+        "clinical",
+        "institutional"
+      ],
+      "added_personal_tags": [],
+      "final_personal_tags": [
+        "clinical",
+        "institutional"
+      ],
+      "added_corporate_tags": [],
+      "final_corporate_tags": [],
+      "max_personal_score": 0.0,
+      "max_corporate_score": 0.0
+    },
+    {
+      "id": "hl2_props_lab_bindergreen",
+      "display_name": "Bindergreen",
+      "kept_personal_tags": [
+        "clinical",
+        "institutional"
+      ],
+      "added_personal_tags": [],
+      "final_personal_tags": [
+        "clinical",
+        "institutional"
+      ],
+      "added_corporate_tags": [],
+      "final_corporate_tags": [],
+      "max_personal_score": 0.0,
+      "max_corporate_score": 0.0
+    },
+    {
+      "id": "hl2_props_lab_box01b",
+      "display_name": "Box01B",
+      "kept_personal_tags": [
+        "abandoned",
+        "clinical",
+        "institutional",
+        "mundane"
+      ],
+      "added_personal_tags": [],
+      "final_personal_tags": [
+        "abandoned",
+        "clinical",
+        "institutional",
+        "mundane"
+      ],
+      "added_corporate_tags": [],
+      "final_corporate_tags": [],
+      "max_personal_score": 0.0,
+      "max_corporate_score": 0.0
+    }
+  ]
+}

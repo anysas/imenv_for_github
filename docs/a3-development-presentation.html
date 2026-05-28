@@ -1,0 +1,783 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>A3 Development Presentation · Algorithmic Gallery v2</title>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,500;0,600;1,400;1,600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../colors_and_type.css">
+  <style>
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    /* Explicit stack (matches preview): deck-stage :host also sets Plex so inheritance is correct */
+    section {
+      width: 100%;
+      height: 100%;
+      font-family: 'IBM Plex Mono', 'Courier New', monospace;
+      position: relative;
+      overflow: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    deck-stage section code {
+      font-family: Menlo, 'Courier New', monospace;
+      font-size: 0.92em;
+    }
+
+    .w {
+      background: #f5f5f0;
+      color: var(--color-fg);
+    }
+
+    .p {
+      background: #ffffff;
+      color: var(--color-fg);
+    }
+
+    .k {
+      background: #0a0a0a;
+      color: #e8e8e0;
+    }
+
+    .slide {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      padding: 72px 88px 66px;
+      height: 100%;
+      z-index: 10;
+    }
+
+    .slide.spread {
+      justify-content: space-between;
+    }
+
+    .slide.center {
+      justify-content: center;
+    }
+
+    .label {
+      font-size: 13px;
+      font-weight: var(--weight-semibold);
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: #999;
+      margin-bottom: 20px;
+    }
+
+    .k .label {
+      color: #555;
+    }
+
+    .display {
+      font-size: 88px;
+      font-weight: var(--weight-semibold);
+      letter-spacing: -0.025em;
+      line-height: 0.95;
+    }
+
+    .headline {
+      font-size: 54px;
+      font-weight: var(--weight-semibold);
+      letter-spacing: -0.02em;
+      line-height: 1.08;
+      max-width: 1520px;
+    }
+
+    .subhead {
+      font-size: 24px;
+      font-style: italic;
+      color: #888;
+      margin-top: 18px;
+      line-height: 1.5;
+    }
+
+    .k .subhead {
+      color: #666;
+    }
+
+    .rule {
+      border: none;
+      border-top: 1px solid #e0e0d8;
+      margin: 26px 0 24px;
+    }
+
+    .k .rule {
+      border-top-color: #2a2a2a;
+    }
+
+    .layout-2 {
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 64px;
+      flex: 1;
+      min-height: 0;
+    }
+
+    .layout-2-equal {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 56px;
+      flex: 1;
+      min-height: 0;
+    }
+
+    .layout-3 {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 48px;
+      flex: 1;
+      min-height: 0;
+    }
+
+    .card {
+      border-top: 1px solid #e0e0d8;
+      border-left: 0;
+      border-right: 0;
+      border-bottom: 0;
+      background: transparent;
+      padding: 12px 0 0;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .k .card {
+      border-color: #2a2a2a;
+      background: transparent;
+    }
+
+    .card h3 {
+      font-size: 24px;
+      margin-bottom: 6px;
+      line-height: 1.25;
+      letter-spacing: -0.01em;
+      color: #1a1a1a;
+    }
+
+    .k .card h3 {
+      color: #e8e8e0;
+    }
+
+    .body {
+      font-size: 24px;
+      line-height: 1.6;
+      color: #555;
+    }
+
+    .body-sm {
+      font-size: 20px;
+      line-height: 1.65;
+      color: #666;
+    }
+
+    .k .body,
+    .k .body-sm {
+      color: #aaa;
+    }
+
+    .bullets {
+      list-style: none;
+      display: grid;
+      gap: 14px;
+    }
+
+    .bullets li {
+      font-size: 24px;
+      line-height: 1.55;
+      color: #555;
+      display: grid;
+      grid-template-columns: 22px 1fr;
+      gap: 16px;
+      align-items: baseline;
+    }
+
+    .bullets li::before {
+      content: ">";
+      color: #888;
+    }
+
+    .k .bullets li {
+      color: #aaa;
+    }
+
+    .k .bullets li::before {
+      color: #555;
+    }
+
+    .meta-list {
+      list-style: none;
+      display: grid;
+      gap: 8px;
+      margin-top: 14px;
+    }
+
+    .meta-list li {
+      font-size: 17px;
+      line-height: 1.55;
+      color: #666;
+    }
+
+    .k .meta-list li {
+      color: #888;
+    }
+
+    .timeline {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      border-top: 1px solid #e0e0d8;
+      border-bottom: 1px solid #e0e0d8;
+      margin-top: 24px;
+    }
+
+    .timeline-step {
+      padding: 18px 18px;
+      border-right: 1px solid #e0e0d8;
+    }
+
+    .timeline-step:last-child {
+      border-right: none;
+    }
+
+    .timeline-tag {
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #888;
+      margin-bottom: 8px;
+      font-family: var(--font-code);
+    }
+
+    .timeline-title {
+      font-size: 28px;
+      font-weight: var(--weight-semibold);
+      margin-bottom: 8px;
+    }
+
+    .flow {
+      border: 1px solid #e0e0d8;
+      padding: 20px;
+      display: grid;
+      grid-template-columns: repeat(13, minmax(0, 1fr));
+      align-items: center;
+      gap: 8px;
+      margin-top: 18px;
+      background: #fafaf7;
+    }
+
+    .node {
+      border: 1px solid #e0e0d8;
+      padding: 10px 8px;
+      text-align: center;
+      font-size: 13px;
+      line-height: 1.4;
+      color: #444;
+      min-height: 58px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .arrow {
+      text-align: center;
+      color: #888;
+      font-size: 18px;
+    }
+
+    .matrix {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 14px;
+    }
+
+    .matrix th,
+    .matrix td {
+      border: 1px solid #e0e0d8;
+      padding: 10px 12px;
+      text-align: left;
+      vertical-align: top;
+      font-size: 15px;
+      line-height: 1.5;
+    }
+
+    .matrix th {
+      font-size: 12px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #888;
+      font-weight: var(--weight-semibold);
+      background: #f5f5f0;
+    }
+
+    .roadmap {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr auto 1fr;
+      gap: 14px;
+      align-items: center;
+      margin-top: 22px;
+    }
+
+    .road-step {
+      border-top: 1px solid #e0e0d8;
+      border-left: 0;
+      border-right: 0;
+      border-bottom: 0;
+      padding: 14px 0 0;
+      min-height: 110px;
+      background: transparent;
+    }
+
+    .road-arrow {
+      color: #888;
+      font-size: 22px;
+    }
+
+    .critique {
+      margin-top: 26px;
+      display: grid;
+      gap: 14px;
+    }
+
+    .critique p {
+      font-size: 17px;
+      line-height: 1.52;
+      color: #444;
+      border-left: 3px solid #1a1a1a;
+      padding-left: 16px;
+      font-style: italic;
+    }
+
+    .footer {
+      position: absolute;
+      bottom: 42px;
+      left: 88px;
+      right: 88px;
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      z-index: 20;
+      border-top: 1px solid #e0e0d8;
+      padding-top: 10px;
+    }
+
+    .meta {
+      font-size: 14px;
+      color: #888;
+      letter-spacing: 0.04em;
+    }
+
+    .k .meta {
+      color: #555;
+    }
+
+    .bullets-wide {
+      max-width: 980px;
+    }
+
+    .subhead-offset {
+      margin-top: 20px;
+    }
+
+    .mt-10 {
+      margin-top: 10px;
+    }
+
+    .k .timeline,
+    .k .timeline-step,
+    .k .node,
+    .k .matrix th,
+    .k .matrix td,
+    .k .road-step,
+    .k .footer {
+      border-color: #2a2a2a;
+    }
+
+    .k .timeline-tag,
+    .k .arrow {
+      color: #666;
+    }
+
+    .k .timeline-title {
+      color: #e8e8e0;
+    }
+
+    .k .node,
+    .k .matrix td,
+    .k .critique p {
+      color: #aaa;
+    }
+
+    .k .matrix th {
+      color: #888;
+      background: #141414;
+    }
+
+    .k .road-step {
+      background: transparent;
+    }
+
+    .k .critique p {
+      border-left-color: #555;
+    }
+
+    .k code {
+      background: #1c1c1c;
+      color: #e8e8e0;
+    }
+
+    .k .flow {
+      background: #141414;
+      border-color: #2a2a2a;
+    }
+
+    .k .node {
+      border-color: #2a2a2a;
+      color: #aaa;
+    }
+
+    .k .arrow {
+      color: #666;
+    }
+  </style>
+</head>
+<body>
+  <deck-stage>
+    <section class="k" data-screen-label="01 Project Frame">
+      <div class="slide center">
+        <div class="label">Slide 1 · Project Frame</div>
+        <div class="display">Algorithmic<br>Gallery v2</div>
+        <div class="subhead">turns AI assistance into spatial misinterpretation</div>
+        <hr class="rule">
+        <ul class="bullets bullets-wide">
+          <li>Immersive Environments A3+4 project context</li>
+          <li>Working title: Project Evil Minecraft</li>
+          <li>Core thesis: "The force is misinterpretation."</li>
+        </ul>
+      </div>
+      <div class="footer">
+        <span class="meta">A3 Development Presentation</span>
+        <span class="meta">1 / 10</span>
+      </div>
+    </section>
+
+    <section class="w" data-screen-label="02 Problem + Intent">
+      <div class="slide spread">
+        <div>
+          <div class="label">Slide 2 · Problem + Intent</div>
+          <div class="headline">The project critiques how platforms convert personal creativity into optimized output.</div>
+          <hr class="rule">
+        </div>
+        <div class="layout-2">
+          <div>
+            <ul class="bullets">
+              <li>AI generation vs human creativity</li>
+              <li>Loss of agency through "helpful" automation</li>
+              <li>Corporate/platform values replacing personal language</li>
+            </ul>
+          </div>
+          <div class="card">
+            <h3>Evidence to cite</h3>
+            <ul class="meta-list">
+              <li>Rationale names agency loss, platform filtering, and corporate pressure.</li>
+              <li>May direction confirms semantic flattening is intentional critique.</li>
+              <li>Scoring spec uses platform terms: appeal, engagement, market fit.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div class="footer">
+        <span class="meta">Misinterpretation is the force</span>
+        <span class="meta">2 / 10</span>
+      </div>
+    </section>
+
+    <section class="p" data-screen-label="03 A3 Pivot">
+      <div class="slide spread">
+        <div>
+          <div class="label">Slide 3 · The A3 Pivot</div>
+          <div class="headline">A3 development pivoted from passive recommendation to active takeover.</div>
+        </div>
+        <div class="layout-2-equal">
+          <div class="card">
+            <h3>Pivot window</h3>
+            <p class="body">2026-04-25 to 2026-04-28</p>
+            <hr class="rule">
+            <p class="body-sm">Shift: "observe + recommend" → "build + be overridden".</p>
+            <p class="body-sm mt-10">New v2 stack introduced to support escalation.</p>
+          </div>
+          <div class="card">
+            <h3>v2 Core stack</h3>
+            <ul class="meta-list">
+              <li><code>SandboxManager</code></li>
+              <li><code>AssistantSystem</code></li>
+              <li><code>HotbarController</code></li>
+              <li><code>PropPlacer</code></li>
+              <li><code>StyleProfile</code></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div class="footer">
+        <span class="meta">Major pivot to v2 corruption sandbox</span>
+        <span class="meta">3 / 10</span>
+      </div>
+    </section>
+
+    <section class="w" data-screen-label="04 Experience Loop">
+      <div class="slide spread">
+        <div>
+          <div class="label">Slide 4 · Experience Loop (2 Minutes)</div>
+          <div class="headline">The player loop stages agency, profiling, takeover, and afterimage.</div>
+        </div>
+        <div>
+          <ul class="bullets">
+            <li>Hallway onboarding → prompt → sandbox build</li>
+            <li>Assistant escalates during ~90s active session</li>
+            <li>Session persistence returns creation to hallway context</li>
+          </ul>
+          <div class="flow">
+            <div class="node">Hallway</div><div class="arrow">→</div>
+            <div class="node">Prompt Input</div><div class="arrow">→</div>
+            <div class="node">Prompt Squish</div><div class="arrow">→</div>
+            <div class="node">Sandbox Build</div>
+            <div class="arrow">→</div><div class="node">Assistant Takeover</div>
+            <div class="arrow">→</div><div class="node">Persist Diorama</div>
+            <div class="arrow">→</div><div class="node">Hallway Return</div>
+          </div>
+        </div>
+      </div>
+      <div class="footer">
+        <span class="meta">Loop design from hallway to artifact return</span>
+        <span class="meta">4 / 10</span>
+      </div>
+    </section>
+
+    <section class="k" data-screen-label="05 Escalation Architecture">
+      <div class="slide spread">
+        <div>
+          <div class="label">Slide 5 · System Escalation Architecture</div>
+          <div class="headline">A single influence curve coordinates behavior, UI pressure, and visual corruption.</div>
+        </div>
+        <div>
+          <ul class="bullets">
+            <li>5-slot hotbar + placement profiling build a live style model</li>
+            <li>Assistant runs 3 phases: Helping, Suggesting, Overriding</li>
+            <li>PSX glitch intensity binds to assistant influence</li>
+          </ul>
+          <div class="timeline">
+            <div class="timeline-step">
+              <div class="timeline-tag">0-30s</div>
+              <div class="timeline-title">Helping</div>
+              <div class="body-sm">Intervals around 6s</div>
+            </div>
+            <div class="timeline-step">
+              <div class="timeline-tag">30-60s</div>
+              <div class="timeline-title">Suggesting</div>
+              <div class="body-sm">Intervals around 3s</div>
+            </div>
+            <div class="timeline-step">
+              <div class="timeline-tag">60-90s</div>
+              <div class="timeline-title">Overriding</div>
+              <div class="body-sm">Intervals around 1.5s</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="footer">
+        <span class="meta">Hotbar → Profile → Assistant → PSX</span>
+        <span class="meta">5 / 10</span>
+      </div>
+    </section>
+
+    <section class="p" data-screen-label="06 Collaboration Model">
+      <div class="slide spread">
+        <div>
+          <div class="label">Slide 6 · Collaboration Model (Alyssa + Ezra)</div>
+          <div class="headline">The project advances through explicit role coupling between spatial design and behavior systems.</div>
+        </div>
+        <table class="matrix">
+          <thead>
+            <tr>
+              <th>Track</th>
+              <th>Ownership</th>
+              <th>Focus</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Together</td>
+              <td>Shared</td>
+              <td>Concept direction, scene strategy, systems design framing</td>
+            </tr>
+            <tr>
+              <td>Alyssa Lead</td>
+              <td>Spatial / UX</td>
+              <td>Environment, UI/UX, hallway + sandbox composition</td>
+            </tr>
+            <tr>
+              <td>Ezra Lead</td>
+              <td>Behavior / Integration</td>
+              <td>Assistant logic, profiling systems, integration + performance</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="footer">
+        <span class="meta">Coupled pipeline: space and system as one layer</span>
+        <span class="meta">6 / 10</span>
+      </div>
+    </section>
+
+    <section class="w" data-screen-label="07 Built Progress">
+      <div class="slide spread">
+        <div>
+          <div class="label">Slide 7 · What Was Built (Proof of Progress)</div>
+          <div class="headline">Most v2 core systems were functioning by late April, with measurable expansion by early May.</div>
+        </div>
+        <div class="layout-3">
+          <div class="card">
+            <h3>Apr 25/26</h3>
+            <p class="body-sm">Core loop runtime-working: hotbar, style tracking, 90s arc, PSX pass, bootstrap.</p>
+          </div>
+          <div class="card">
+            <h3>Apr 26+</h3>
+            <p class="body-sm">Pipeline additions: session export, prop budget, thumbnail tooling, audio escalation.</p>
+          </div>
+          <div class="card">
+            <h3>May 06</h3>
+            <p class="body-sm"><strong>90</strong> scripts · <strong>7</strong> scenes · <strong>6245</strong> curated props.</p>
+          </div>
+        </div>
+      </div>
+      <div class="footer">
+        <span class="meta">Operational stack + scaled content manifest</span>
+        <span class="meta">7 / 10</span>
+      </div>
+    </section>
+
+    <section class="k" data-screen-label="08 May Evolution">
+      <div class="slide spread">
+        <div>
+          <div class="label">Slide 8 · May Evolution (Refinement, Not Drift)</div>
+          <div class="headline">Early May reframed presentation and UX to make the critique legible during play.</div>
+        </div>
+        <div class="layout-2-equal">
+          <div class="card">
+            <h3>Then (April)</h3>
+            <ul class="meta-list">
+              <li>End card carried most of the interpretation burden.</li>
+              <li>Feedback and lockout readability less explicit in flow.</li>
+            </ul>
+          </div>
+          <div class="card">
+            <h3>Now (May)</h3>
+            <ul class="meta-list">
+              <li>Prompt squish + scoring wall become the primary reveal sequence.</li>
+              <li>Force readability and hallway profiling cues prioritized.</li>
+            </ul>
+          </div>
+        </div>
+        <p class="subhead subhead-offset">"Misreading is intentional."</p>
+      </div>
+      <div class="footer">
+        <span class="meta">Refinement for clarity, not concept drift</span>
+        <span class="meta">8 / 10</span>
+      </div>
+    </section>
+
+    <section class="p" data-screen-label="09 Risks + Gaps">
+      <div class="slide spread">
+        <div>
+          <div class="label">Slide 9 · Current Risks and Gaps</div>
+          <div class="headline">Remaining work is less about basic functionality and more about readability, meaning, and polish.</div>
+        </div>
+        <table class="matrix">
+          <thead>
+            <tr>
+              <th>Risk Type</th>
+              <th>High Impact</th>
+              <th>Current Gaps</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Concept</td>
+              <td>Player-creation connection and agency-loss legibility</td>
+              <td>Curation quality, meaning density, hallway framing maturity</td>
+            </tr>
+            <tr>
+              <td>Implementation</td>
+              <td>Scoring-wall realization and transition polish</td>
+              <td>Renderer registration, gallery return flow, control friction</td>
+            </tr>
+            <tr>
+              <td>Production</td>
+              <td>Tuning burden and delivery readiness</td>
+              <td>Windows build stability and end-stage validation</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="footer">
+        <span class="meta">Prioritize clarity + coherence before scale</span>
+        <span class="meta">9 / 10</span>
+      </div>
+    </section>
+
+    <section class="w" data-screen-label="10 Next Steps + Critique">
+      <div class="slide spread">
+        <div>
+          <div class="label">Slide 10 · Next Steps + Critique Questions</div>
+          <div class="headline">Next iteration should lock readability of the critique before expanding scope.</div>
+          <div class="roadmap">
+            <div class="road-step">
+              <div class="timeline-tag">Step 1</div>
+              <div class="body-sm">Readability</div>
+              <ul class="meta-list">
+                <li>Scoring wall</li>
+                <li>Prompt squish</li>
+                <li>Force feedback/lockout clarity</li>
+              </ul>
+            </div>
+            <div class="road-arrow">→</div>
+            <div class="road-step">
+              <div class="timeline-tag">Step 2</div>
+              <div class="body-sm">Playtest / Tune</div>
+              <ul class="meta-list">
+                <li>Hallway framing polish</li>
+                <li>Playtest tuning</li>
+              </ul>
+            </div>
+            <div class="road-arrow">→</div>
+            <div class="road-step">
+              <div class="timeline-tag">Step 3</div>
+              <div class="body-sm">Build / Deliver</div>
+              <ul class="meta-list">
+                <li>Windows build</li>
+                <li>Final integration pass</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <div class="critique">
+          <p>1. "At what exact moment did it feel like the system took authorship away from the player?"</p>
+          <p>2. "Does the scoring wall read as critique of platform logic, or just a game score UI?"</p>
+          <p>3. "Do the prompt squish and hallway framing make the misinterpretation feel intentional, not accidental?"</p>
+        </div>
+      </div>
+      <div class="footer">
+        <span class="meta">Target duration: ~7:05 total</span>
+        <span class="meta">10 / 10</span>
+      </div>
+    </section>
+  </deck-stage>
+  <script src="deck-stage.js"></script>
+</body>
+</html>

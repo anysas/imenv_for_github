@@ -25,7 +25,7 @@ namespace AlgorithmicGallery.Corruption
 
         [Header("Colors")]
         [SerializeField] private Color _slotColor = new Color(0.08f, 0.08f, 0.10f, 0.85f);
-        [SerializeField] private Color _activeSlotColor = new Color(1f, 0.55f, 0.20f, 0.95f);
+        [SerializeField] private Color _activeSlotColor = new Color(0.38f, 0.48f, 0.58f, 0.95f);
         [SerializeField] private Color _slotBorderColor = new Color(1f, 1f, 1f, 0.4f);
         [SerializeField] private Color _labelColor = new Color(0.95f, 0.95f, 0.95f, 1f);
 
@@ -90,7 +90,7 @@ namespace AlgorithmicGallery.Corruption
             HandleActiveSlotChanged(_hotbar.ActiveSlot);
             TryAssignCanvasCamera();
 
-            _sandboxManager = FindFirstObjectByType<SandboxManager>();
+            ResolveSandboxManager();
             if (_sandboxManager != null)
             {
                 _sandboxManager.OnSandboxEntered.AddListener(HandleSandboxEntered);
@@ -111,6 +111,31 @@ namespace AlgorithmicGallery.Corruption
                 _propPlacer.OnPropPlaced += HandlePropPlaced;
             }
 
+            RefreshPlacementsRemainingText();
+            StartCoroutine(RefreshPlacementsAfterSandboxReady());
+        }
+
+        private IEnumerator RefreshPlacementsAfterSandboxReady()
+        {
+            for (int i = 0; i < 5; i++)
+            {
+                yield return null;
+                ResolveSandboxManager();
+                RefreshPlacementsRemainingText();
+            }
+        }
+
+        private void ResolveSandboxManager()
+        {
+            _sandboxManager = GetComponentInParent<SandboxManager>();
+            if (_sandboxManager == null)
+                _sandboxManager = FindFirstObjectByType<SandboxManager>();
+        }
+
+        /// <summary>Called after SandboxManager initializes the hotbar cap.</summary>
+        public void RefreshPlacementsHud()
+        {
+            ResolveSandboxManager();
             RefreshPlacementsRemainingText();
         }
 
@@ -290,10 +315,22 @@ namespace AlgorithmicGallery.Corruption
         {
             if (_placementsRemainingText == null)
                 return;
+
+            int left = ResolvePlacementsLeft();
+            _placementsRemainingText.text = left >= 0
+                ? $"Placements left: {left}"
+                : "Placements left: —";
+        }
+
+        private int ResolvePlacementsLeft()
+        {
+            if (_hotbar != null && _hotbar.MaxSessionPlacements < int.MaxValue)
+                return _hotbar.GetPlacementsLeft();
+
             if (_sandboxManager != null)
-                _placementsRemainingText.text = $"Placements left: {_sandboxManager.GetPlacementsLeft()}";
-            else
-                _placementsRemainingText.text = "Placements left: —";
+                return _sandboxManager.GetPlacementsLeft();
+
+            return -1;
         }
 
         private void BuildSlot(RectTransform parent, int index, float totalWidth)

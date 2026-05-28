@@ -80,10 +80,23 @@ namespace AlgorithmicGallery
             if (name.IndexOf("glTF", System.StringComparison.OrdinalIgnoreCase) >= 0)
                 return true;
 
+            if (IsPsxShader(shader))
+                return false;
+
             if (name.IndexOf("Shader Graphs", System.StringComparison.OrdinalIgnoreCase) >= 0)
                 return true;
 
             return shader != template.shader;
+        }
+
+        public static bool IsPsxShader(Shader shader)
+        {
+            if (shader == null)
+                return false;
+
+            string name = shader.name;
+            return name.IndexOf("URP_PSX", System.StringComparison.OrdinalIgnoreCase) >= 0
+                || name.IndexOf("PSX", System.StringComparison.OrdinalIgnoreCase) >= 0;
         }
 
         public static Material CreateUrpLitMaterial(Material source, Material template)

@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.Rendering;
+using AlgorithmicGallery.Corruption;
 using AlgorithmicGallery.Recommendation;
 
 namespace AlgorithmicGallery
@@ -861,7 +862,7 @@ namespace AlgorithmicGallery
             float y = wb.min.y + _haloYOffset;
             int seg = _attentionHalo.positionCount;
 
-            Color warm = new Color(1f, 0.55f, 0.2f, 1f);
+            Color warm = InstitutionalUiPalette.Accent;
             Color cool = new Color(0.35f, 0.75f, 1f, 1f);
             float warmMix = Mathf.Clamp01(gazeContribution * visualGrowth);
             float coolMix = Mathf.Clamp01(proximityFactor);

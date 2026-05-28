@@ -1,0 +1,121 @@
+id,display_name,kept_personal,added_personal,final_personal,added_corporate,final_corporate,max_personal_score,max_corporate_score
+css_items_car_battery01,Car Battery01,mundane personal,,mundane personal,broad_appeal,broad_appeal,0.0000,0.5500
+css_items_cs_gift,Cs Gift,mundane personal,warm,mundane personal warm,broad_appeal,broad_appeal,0.4500,0.5500
+css_props_lab_binderbluelabel,Binderbluelabel,clinical institutional,,clinical institutional,trend_aligned,trend_aligned,0.0000,0.5500
+css_props_lab_bindergraylabel01a,Bindergraylabel01A,clinical institutional,,clinical institutional,trend_aligned,trend_aligned,0.0000,0.5500
+css_props_lab_bindergreenlabel,Bindergreenlabel,clinical institutional,,clinical institutional,trend_aligned,trend_aligned,0.0000,0.5500
+css_props_lab_binderredlabel,Binderredlabel,clinical institutional,,clinical institutional,trend_aligned,trend_aligned,0.0000,0.5500
+css_props_lab_box01a,Box01A,abandoned clinical institutional mundane,,abandoned clinical institutional mundane,trend_aligned,trend_aligned,0.0000,0.5500
+css_props_lab_citizenradio,Citizenradio,clinical institutional intimate nostalgic,,clinical institutional intimate nostalgic,trend_aligned,trend_aligned,0.0000,0.5500
+css_props_lab_desklamp01,Desklamp01,clinical comforting domestic institutional intimate mundane,,clinical comforting domestic institutional intimate mundane,trend_aligned,trend_aligned,0.0000,0.5500
+css_props_lab_harddrive02,Harddrive02,clinical institutional,,clinical institutional,trend_aligned,trend_aligned,0.0000,0.5500
+css_props_lab_jar01b,Jar01B,clinical institutional,,clinical institutional,trend_aligned,trend_aligned,0.0000,0.5500
+css_props_lab_lab_flourescentlight001a,Lab Flourescentlight001A,clinical institutional,,clinical institutional,trend_aligned,trend_aligned,0.0000,0.5500
+css_props_lab_lab_flourescentlight002b,Lab Flourescentlight002B,clinical institutional,,clinical institutional,trend_aligned,trend_aligned,0.0000,0.5500
+css_props_lab_monitor02,Monitor02,clinical institutional mundane nostalgic,,clinical institutional mundane nostalgic,trend_aligned,trend_aligned,0.0000,0.5500
+css_props_lab_pipesystem01a,Pipesystem01A,clinical institutional,,clinical institutional,trend_aligned,trend_aligned,0.0000,0.5500
+css_props_lab_pipesystem01b,Pipesystem01B,clinical institutional,,clinical institutional,trend_aligned,trend_aligned,0.0000,0.5500
+css_props_lab_pipesystem02a,Pipesystem02A,clinical institutional,,clinical institutional,trend_aligned,trend_aligned,0.0000,0.5500
+css_props_lab_pipesystem02b,Pipesystem02B,clinical institutional,,clinical institutional,trend_aligned,trend_aligned,0.0000,0.5500
+css_props_lab_pipesystem02c,Pipesystem02C,clinical institutional,,clinical institutional,trend_aligned,trend_aligned,0.0000,0.5500
+css_props_lab_pipesystem02d,Pipesystem02D,clinical institutional,,clinical institutional,trend_aligned,trend_aligned,0.0000,0.5500
+css_props_lab_pipesystem02e,Pipesystem02E,clinical institutional,,clinical institutional,trend_aligned,trend_aligned,0.0000,0.5500
+css_props_lab_pipesystem03b,Pipesystem03B,clinical institutional,,clinical institutional,trend_aligned,trend_aligned,0.0000,0.5500
+css_props_lab_pipesystem03c,Pipesystem03C,clinical institutional,,clinical institutional,trend_aligned,trend_aligned,0.0000,0.5500
+css_props_lab_powerbox01a,Powerbox01A,abandoned clinical institutional mundane,,abandoned clinical institutional mundane,trend_aligned,trend_aligned,0.0000,0.5500
+css_props_lab_powerbox02a,Powerbox02A,abandoned clinical institutional mundane,,abandoned clinical institutional mundane,trend_aligned,trend_aligned,0.0000,0.5500
+css_props_lab_powerbox02b,Powerbox02B,abandoned clinical institutional mundane,,abandoned clinical institutional mundane,trend_aligned,trend_aligned,0.0000,0.5500
+css_props_lab_powerbox02c,Powerbox02C,abandoned clinical institutional mundane,,abandoned clinical institutional mundane,trend_aligned,trend_aligned,0.0000,0.5500
+css_props_lab_powerbox02d,Powerbox02D,abandoned clinical institutional mundane,,abandoned clinical institutional mundane,trend_aligned,trend_aligned,0.0000,0.5500
+css_props_lab_powerbox03a,Powerbox03A,abandoned clinical institutional mundane,,abandoned clinical institutional mundane,trend_aligned,trend_aligned,0.0000,0.5500
+css_props_lab_reciever_cart,Reciever Cart,clinical institutional,,clinical institutional,trend_aligned,trend_aligned,0.0000,0.5500
+dod_items_dod_gift,Dod Gift,mundane personal,,mundane personal,broad_appeal,broad_appeal,0.0000,0.5500
+dod_props_furniture_bookcase_large,Bookcase Large,comforting domestic nostalgic,,comforting domestic nostalgic,broad_appeal,broad_appeal,0.0000,0.5500
+dod_props_furniture_bookcase_small,Bookcase Small,comforting domestic nostalgic,,comforting domestic nostalgic,broad_appeal,broad_appeal,0.0000,0.5500
+dod_props_furniture_cabinet_large,Cabinet Large,comforting domestic mundane,,comforting domestic mundane,broad_appeal,broad_appeal,0.0000,0.5500
+dod_props_furniture_cafe_barstool1,Cafe Barstool1,comforting domestic,,comforting domestic,broad_appeal,broad_appeal,0.0000,0.5500
+dod_props_furniture_ceiling_lantern1_off,Ceiling Lantern1 Off,comforting domestic intimate,,comforting domestic intimate,broad_appeal,broad_appeal,0.0000,0.5500
+dod_props_furniture_ceiling_lantern1_on,Ceiling Lantern1 On,comforting domestic intimate,,comforting domestic intimate,broad_appeal,broad_appeal,0.0000,0.5500
+dod_props_furniture_chair1,Chair1,comforting domestic mundane,,comforting domestic mundane,broad_appeal,broad_appeal,0.0000,0.5500
+dod_props_furniture_chair2,Chair2,comforting domestic mundane,,comforting domestic mundane,broad_appeal,broad_appeal,0.0000,0.5500
+dod_props_furniture_chairantique,Chairantique,comforting domestic mundane nostalgic,,comforting domestic mundane nostalgic,broad_appeal,broad_appeal,0.0000,0.5500
+dod_props_furniture_chairantique_damage_01,Chairantique Damage 01,comforting domestic mundane nostalgic,,comforting domestic mundane nostalgic,broad_appeal,broad_appeal,0.0000,0.5500
+dod_props_furniture_chairantique_damage_02,Chairantique Damage 02,comforting domestic mundane nostalgic,,comforting domestic mundane nostalgic,broad_appeal,broad_appeal,0.0000,0.5500
+dod_props_furniture_church_pew,Church Pew,comforting domestic,devotional ritualistic sacred,comforting devotional domestic ritualistic sacred,broad_appeal,broad_appeal,0.5500,0.5500
+dod_props_furniture_couch1,Couch1,comforting domestic intimate,,comforting domestic intimate,broad_appeal,broad_appeal,0.0000,0.5500
+dod_props_furniture_couch2,Couch2,comforting domestic intimate,,comforting domestic intimate,broad_appeal,broad_appeal,0.0000,0.5500
+dod_props_furniture_cupboard1,Cupboard1,comforting domestic,,comforting domestic,broad_appeal,broad_appeal,0.0000,0.5500
+dod_props_furniture_desk1,Desk1,comforting domestic mundane,,comforting domestic mundane,broad_appeal,broad_appeal,0.0000,0.5500
+dod_props_furniture_drawer1,Drawer1,comforting domestic mundane,,comforting domestic mundane,broad_appeal,broad_appeal,0.0000,0.5500
+dod_props_furniture_drawer2,Drawer2,comforting domestic mundane,,comforting domestic mundane,broad_appeal,broad_appeal,0.0000,0.5500
+dod_props_furniture_drawer3,Drawer3,comforting domestic mundane,,comforting domestic mundane,broad_appeal,broad_appeal,0.0000,0.5500
+dod_props_furniture_drawer4,Drawer4,comforting domestic mundane,,comforting domestic mundane,broad_appeal,broad_appeal,0.0000,0.5500
+dod_props_furniture_dresser1,Dresser1,comforting domestic mundane,,comforting domestic mundane,broad_appeal,broad_appeal,0.0000,0.5500
+dod_props_furniture_fireplace2,Fireplace2,comforting domestic nostalgic,,comforting domestic nostalgic,broad_appeal,broad_appeal,0.0000,0.5500
+dod_props_furniture_heavy_table,Heavy Table,comforting domestic mundane,heavy,comforting domestic heavy mundane,broad_appeal,broad_appeal,0.4500,0.5500
+dod_props_furniture_inn_chandelier1,Inn Chandelier1,comforting domestic,,comforting domestic,broad_appeal,broad_appeal,0.0000,0.5500
+dod_props_furniture_inn_frontdesk1,Inn Frontdesk1,comforting domestic mundane,,comforting domestic mundane,broad_appeal,broad_appeal,0.0000,0.5500
+dod_props_furniture_kitchen_chair,Kitchen Chair,comforting domestic mundane,intimate nostalgic personal,comforting domestic intimate mundane nostalgic personal,broad_appeal,broad_appeal,0.5500,0.5500
+dod_props_furniture_kitchen_countertop1,Kitchen Countertop1,comforting domestic mundane public retail,intimate nostalgic personal,comforting domestic intimate mundane nostalgic personal public retail,broad_appeal,broad_appeal,0.5500,0.5500
+dod_props_furniture_kitchen_oven1,Kitchen Oven1,comforting domestic mundane,intimate nostalgic personal,comforting domestic intimate mundane nostalgic personal,broad_appeal,broad_appeal,0.5500,0.5500
+dod_props_furniture_kitchen_shelf1,Kitchen Shelf1,comforting domestic mundane nostalgic,intimate personal,comforting domestic intimate mundane nostalgic personal,broad_appeal,broad_appeal,0.5500,0.5500
+dod_props_furniture_kitchen_table,Kitchen Table,comforting domestic mundane,intimate nostalgic personal warm,comforting domestic intimate mundane nostalgic personal warm,broad_appeal,broad_appeal,0.5500,0.5500
+dod_props_furniture_kitchen_vent1,Kitchen Vent1,comforting domestic mundane,intimate nostalgic personal,comforting domestic intimate mundane nostalgic personal,broad_appeal,broad_appeal,0.5500,0.5500
+dod_props_furniture_lamp1,Lamp1,comforting domestic intimate,,comforting domestic intimate,broad_appeal,broad_appeal,0.0000,0.5500
+dod_props_furniture_lights_overhead,Lights Overhead,comforting domestic,,comforting domestic,broad_appeal,broad_appeal,0.0000,0.5500
+dod_props_furniture_nightstand_large,Nightstand Large,comforting domestic intimate,,comforting domestic intimate,broad_appeal,broad_appeal,0.0000,0.5500
+dod_props_furniture_nightstand_small,Nightstand Small,comforting domestic intimate,,comforting domestic intimate,broad_appeal,broad_appeal,0.0000,0.5500
+dod_props_furniture_piano,Piano,comforting domestic intimate nostalgic,,comforting domestic intimate nostalgic,broad_appeal,broad_appeal,0.0000,0.5500
+dod_props_furniture_piano_bench,Piano Bench,comforting domestic intimate nostalgic,,comforting domestic intimate nostalgic,broad_appeal,broad_appeal,0.0000,0.5500
+dod_props_furniture_picture_frame1,Picture Frame1,comforting domestic nostalgic personal,,comforting domestic nostalgic personal,broad_appeal,broad_appeal,0.0000,0.5500
+dod_props_furniture_picture_frame10,Picture Frame10,comforting domestic nostalgic personal,,comforting domestic nostalgic personal,broad_appeal,broad_appeal,0.0000,0.5500
+dod_props_furniture_picture_frame11,Picture Frame11,comforting domestic nostalgic personal,,comforting domestic nostalgic personal,broad_appeal,broad_appeal,0.0000,0.5500
+dod_props_furniture_picture_frame12,Picture Frame12,comforting domestic nostalgic personal,,comforting domestic nostalgic personal,broad_appeal,broad_appeal,0.0000,0.5500
+dod_props_furniture_picture_frame2,Picture Frame2,comforting domestic nostalgic personal,,comforting domestic nostalgic personal,broad_appeal,broad_appeal,0.0000,0.5500
+dod_props_furniture_picture_frame3,Picture Frame3,comforting domestic nostalgic personal,,comforting domestic nostalgic personal,broad_appeal,broad_appeal,0.0000,0.5500
+dod_props_furniture_picture_frame4,Picture Frame4,comforting domestic nostalgic personal,,comforting domestic nostalgic personal,broad_appeal,broad_appeal,0.0000,0.5500
+dod_props_furniture_picture_frame5,Picture Frame5,comforting domestic nostalgic personal,,comforting domestic nostalgic personal,broad_appeal,broad_appeal,0.0000,0.5500
+dod_props_furniture_picture_frame6,Picture Frame6,comforting domestic nostalgic personal,,comforting domestic nostalgic personal,broad_appeal,broad_appeal,0.0000,0.5500
+dod_props_furniture_picture_frame7,Picture Frame7,comforting domestic nostalgic personal,,comforting domestic nostalgic personal,broad_appeal,broad_appeal,0.0000,0.5500
+dod_props_furniture_picture_frame8,Picture Frame8,comforting domestic nostalgic personal,,comforting domestic nostalgic personal,broad_appeal,broad_appeal,0.0000,0.5500
+dod_props_furniture_picture_frame9,Picture Frame9,comforting domestic nostalgic personal,,comforting domestic nostalgic personal,broad_appeal,broad_appeal,0.0000,0.5500
+dod_props_furniture_shelf1,Shelf1,comforting domestic nostalgic,,comforting domestic nostalgic,broad_appeal,broad_appeal,0.0000,0.5500
+dod_props_furniture_sink1,Sink1,comforting domestic intimate mundane,,comforting domestic intimate mundane,broad_appeal,broad_appeal,0.0000,0.5500
+dod_props_furniture_table1,Table1,comforting domestic mundane,,comforting domestic mundane,broad_appeal,broad_appeal,0.0000,0.5500
+dod_props_furniture_table2,Table2,comforting domestic mundane,,comforting domestic mundane,broad_appeal,broad_appeal,0.0000,0.5500
+dod_props_furniture_toilet1,Toilet1,comforting domestic intimate mundane,,comforting domestic intimate mundane,broad_appeal,broad_appeal,0.0000,0.5500
+dod_props_lab_lockerdoorleft,Lockerdoorleft,clinical institutional,,clinical institutional,trend_aligned,trend_aligned,0.0000,0.5500
+dod_props_lab_lockerdoorright,Lockerdoorright,clinical institutional,,clinical institutional,trend_aligned,trend_aligned,0.0000,0.5500
+dod_props_lab_lockers,Lockers,clinical institutional,,clinical institutional,trend_aligned,trend_aligned,0.0000,0.5500
+hl2_items_357ammo,357Ammo,mundane personal,warm,mundane personal warm,broad_appeal,broad_appeal,0.4500,0.5500
+hl2_items_357ammobox,357Ammobox,abandoned mundane personal,warm,abandoned mundane personal warm,broad_appeal,broad_appeal,0.4500,0.5500
+hl2_items_ammocrate_ar2,Ammocrate Ar2,abandoned mundane personal,,abandoned mundane personal,broad_appeal,broad_appeal,0.0000,0.5500
+hl2_items_ammocrate_buckshot,Ammocrate Buckshot,abandoned mundane personal,,abandoned mundane personal,broad_appeal,broad_appeal,0.0000,0.5500
+hl2_items_ammocrate_grenade,Ammocrate Grenade,abandoned mundane personal,,abandoned mundane personal,broad_appeal,broad_appeal,0.0000,0.5500
+hl2_items_ammocrate_pistol,Ammocrate Pistol,abandoned mundane personal,,abandoned mundane personal,broad_appeal,broad_appeal,0.0000,0.5500
+hl2_items_ammocrate_rockets,Ammocrate Rockets,abandoned mundane personal,,abandoned mundane personal,broad_appeal,broad_appeal,0.0000,0.5500
+hl2_items_ammocrate_smg1,Ammocrate Smg1,abandoned mundane personal,,abandoned mundane personal,broad_appeal,broad_appeal,0.0000,0.5500
+hl2_items_ammocrate_smg2,Ammocrate Smg2,abandoned mundane personal,,abandoned mundane personal,broad_appeal,broad_appeal,0.0000,0.5500
+hl2_items_ar2_grenade,Ar2 Grenade,mundane personal,,mundane personal,broad_appeal,broad_appeal,0.0000,0.5500
+hl2_items_battery,Battery,mundane personal,,mundane personal,broad_appeal,broad_appeal,0.0000,0.5500
+hl2_items_boxbuckshot,Boxbuckshot,abandoned mundane personal,warm,abandoned mundane personal warm,broad_appeal,broad_appeal,0.4500,0.5500
+hl2_items_boxflares,Boxflares,abandoned mundane personal,,abandoned mundane personal,broad_appeal,broad_appeal,0.0000,0.5500
+hl2_items_boxmrounds,Boxmrounds,abandoned mundane personal,,abandoned mundane personal,broad_appeal,broad_appeal,0.0000,0.5500
+hl2_items_boxsniperrounds,Boxsniperrounds,abandoned mundane personal,,abandoned mundane personal,broad_appeal,broad_appeal,0.0000,0.5500
+hl2_items_boxsrounds,Boxsrounds,abandoned mundane personal,,abandoned mundane personal,broad_appeal,broad_appeal,0.0000,0.5500
+hl2_items_combine_rifle_ammo01,Combine Rifle Ammo01,mundane personal,,mundane personal,broad_appeal,broad_appeal,0.0000,0.5500
+hl2_items_combine_rifle_cartridge01,Combine Rifle Cartridge01,mundane personal,,mundane personal,broad_appeal,broad_appeal,0.0000,0.5500
+hl2_items_crossbowrounds,Crossbowrounds,mundane personal,,mundane personal,broad_appeal,broad_appeal,0.0000,0.5500
+hl2_items_flare,Flare,mundane personal,,mundane personal,broad_appeal,broad_appeal,0.0000,0.5500
+hl2_items_grenadeammo,Grenadeammo,mundane personal,,mundane personal,broad_appeal,broad_appeal,0.0000,0.5500
+hl2_items_healthkit,Healthkit,mundane personal,,mundane personal,broad_appeal,broad_appeal,0.0000,0.5500
+hl2_items_hevsuit,Hevsuit,mundane personal,warm,mundane personal warm,broad_appeal,broad_appeal,0.4500,0.5500
+hl2_items_item_beacon_crate,Item Beacon Crate,abandoned mundane personal,,abandoned mundane personal,broad_appeal,broad_appeal,0.0000,0.5500
+hl2_items_item_item_crate,Item Item Crate,abandoned mundane personal,,abandoned mundane personal,broad_appeal,broad_appeal,0.0000,0.5500
+hl2_items_item_item_crate_dynamic,Item Item Crate Dynamic,abandoned mundane personal,,abandoned mundane personal,broad_appeal,broad_appeal,0.0000,0.5500
+hl2_props_lab_bewaredog,Bewaredog,clinical institutional,,clinical institutional,trend_aligned,trend_aligned,0.0000,0.5500
+hl2_props_lab_bigrock,Bigrock,clinical institutional,,clinical institutional,trend_aligned,trend_aligned,0.0000,0.5500
+hl2_props_lab_binderblue,Binderblue,clinical institutional,,clinical institutional,trend_aligned,trend_aligned,0.0000,0.5500
+hl2_props_lab_bindergraylabel01b,Bindergraylabel01B,clinical institutional,,clinical institutional,trend_aligned,trend_aligned,0.0000,0.5500
+hl2_props_lab_bindergreen,Bindergreen,clinical institutional,,clinical institutional,trend_aligned,trend_aligned,0.0000,0.5500
+hl2_props_lab_box01b,Box01B,abandoned clinical institutional mundane,,abandoned clinical institutional mundane,trend_aligned,trend_aligned,0.0000,0.5500

@@ -1,23 +1,25 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!114 &11400000
+---
+!u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
+  m_CorrespondingSourceObject: { fileID: 0 }
+  m_PrefabInstance: { fileID: 0 }
+  m_PrefabAsset: { fileID: 0 }
+  m_GameObject: { fileID: 0 }
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bf2edee5c58d82540a51f03df9d42094, type: 3}
+  m_Script:
+    { fileID: 11500000, guid: bf2edee5c58d82540a51f03df9d42094, type: 3 }
   m_Name: Mobile_RPAsset
-  m_EditorClassIdentifier: 
+  m_EditorClassIdentifier:
   k_AssetVersion: 12
   k_AssetPreviousVersion: 12
   m_RendererType: 1
-  m_RendererData: {fileID: 0}
+  m_RendererData: { fileID: 0 }
   m_RendererDataList:
-  - {fileID: 11400000, guid: 65bc7dbf4170f435aa868c779acfb082, type: 2}
+    - { fileID: 11400000, guid: 65bc7dbf4170f435aa868c779acfb082, type: 2 }
   m_DefaultRendererIndex: 0
   m_RequireDepthTexture: 0
   m_RequireOpaqueTexture: 0
@@ -45,7 +47,7 @@ MonoBehaviour:
   m_MainLightShadowsSupported: 1
   m_MainLightShadowmapResolution: 1024
   m_AdditionalLightsRenderingMode: 1
-  m_AdditionalLightsPerObjectLimit: 4
+  m_AdditionalLightsPerObjectLimit: 8
   m_AdditionalLightShadowsSupported: 0
   m_AdditionalLightsShadowmapResolution: 2048
   m_AdditionalLightsShadowResolutionTierLow: 256
@@ -57,8 +59,8 @@ MonoBehaviour:
   m_ShadowDistance: 50
   m_ShadowCascadeCount: 1
   m_Cascade2Split: 0.25
-  m_Cascade3Split: {x: 0.1, y: 0.3}
-  m_Cascade4Split: {x: 0.067, y: 0.2, z: 0.467}
+  m_Cascade3Split: { x: 0.1, y: 0.3 }
+  m_Cascade4Split: { x: 0.067, y: 0.2, z: 0.467 }
   m_CascadeBorder: 0.2
   m_ShadowDepthBias: 1
   m_ShadowNormalBias: 1
@@ -92,14 +94,15 @@ MonoBehaviour:
   m_MaxPixelLights: 0
   m_ShadowAtlasResolution: 256
   m_VolumeFrameworkUpdateMode: 0
-  m_VolumeProfile: {fileID: 11400000, guid: 7bbe35cdf5d69e14abbb03eccedaa5bd, type: 2}
+  m_VolumeProfile:
+    { fileID: 11400000, guid: 10fc4df2da32a41aaa32d77bc913491c, type: 2 }
   apvScenesData:
     obsoleteSceneBounds:
       m_Keys: []
       m_Values: []
     obsoleteHasProbeVolumes:
       m_Keys: []
-      m_Values: 
+      m_Values:
   m_PrefilteringModeMainLightShadows: 3
   m_PrefilteringModeAdditionalLight: 4
   m_PrefilteringModeAdditionalLightShadows: 0
@@ -139,5 +142,7 @@ MonoBehaviour:
   m_ShaderVariantLogLevel: 0
   m_ShadowCascades: 0
   m_Textures:
-    blueNoise64LTex: {fileID: 2800000, guid: e3d24661c1e055f45a7560c033dbb837, type: 3}
-    bayerMatrixTex: {fileID: 2800000, guid: f9ee4ed84c1d10c49aabb9b210b0fc44, type: 3}
+    blueNoise64LTex:
+      { fileID: 2800000, guid: e3d24661c1e055f45a7560c033dbb837, type: 3 }
+    bayerMatrixTex:
+      { fileID: 2800000, guid: f9ee4ed84c1d10c49aabb9b210b0fc44, type: 3 }

@@ -15,69 +15,69 @@ MonoBehaviour:
   active: 1
   scanlinesWeight:
     m_OverrideState: 1
-    m_Value: 1.6
+    m_Value: 0.2
   noiseWeight:
     m_OverrideState: 1
-    m_Value: 1.86
+    m_Value: -0.21
   screenBendX:
     m_OverrideState: 1
-    m_Value: 7.8
+    m_Value: 1000.37
   screenBendY:
     m_OverrideState: 1
-    m_Value: 3.34
+    m_Value: 929.9
   vignetteAmount:
-    m_OverrideState: 0
-    m_Value: -0.32
+    m_OverrideState: 1
+    m_Value: -0
   vignetteSize:
-    m_OverrideState: 0
-    m_Value: 2.32
+    m_OverrideState: 1
+    m_Value: 2
   vignetteRounding:
-    m_OverrideState: 0
-    m_Value: 5.26
+    m_OverrideState: 1
+    m_Value: 2
   vignetteSmoothing:
-    m_OverrideState: 0
-    m_Value: -0.17
+    m_OverrideState: 1
+    m_Value: 1
   scanlinesDensity:
     m_OverrideState: 1
-    m_Value: 39.63
+    m_Value: 227.8
   scanlinesSpeed:
     m_OverrideState: 1
-    m_Value: 1.7
+    m_Value: 200
   noiseAmount:
     m_OverrideState: 1
-    m_Value: 298
+    m_Value: 250
   chromaticRed:
-    m_OverrideState: 0
-    m_Value: {x: 0, y: 0.001}
+    m_OverrideState: 1
+    m_Value: {x: 0.002, y: -0.002}
   chromaticGreen:
-    m_OverrideState: 0
-    m_Value: {x: 0.001, y: 0.001}
+    m_OverrideState: 1
+    m_Value: {x: -0.002, y: 0.002}
   chromaticBlue:
-    m_OverrideState: 0
-    m_Value: {x: 0, y: 0.001}
+    m_OverrideState: 1
+    m_Value: {x: 0, y: 0}
   grilleOpacity:
-    m_OverrideState: 0
-    m_Value: 0.74
+    m_OverrideState: 1
+    m_Value: -0.39
   grilleCounterOpacity:
-    m_OverrideState: 0
-    m_Value: 0.03
+    m_OverrideState: 1
+    m_Value: 0.79
   grilleResolution:
-    m_OverrideState: 0
-    m_Value: 38.5
+    m_OverrideState: 1
+    m_Value: 360
   grilleCounterResolution:
-    m_OverrideState: 0
-    m_Value: 489.2
+    m_OverrideState: 1
+    m_Value: 540
   grilleUvRotation:
-    m_OverrideState: 0
-    m_Value: -28.11
+    m_OverrideState: 1
+    m_Value: 1.618034
   grilleBrightness:
-    m_OverrideState: 0
-    m_Value: 10.75
+    m_OverrideState: 1
+    m_Value: 73.2
   grilleUvMidPoint:
-    m_OverrideState: 0
-    m_Value: -12
+    m_OverrideState: 1
+    m_Value: 0.5
   grilleShift:
-    m_OverrideState: 0
+    m_OverrideState: 1
     m_Value: {x: 1, y: 1, z: 1}
 --- !u!114 &-2649047749314681680
 MonoBehaviour:
@@ -93,14 +93,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   active: 1
   widthPixelation:
-    m_OverrideState: 0
-    m_Value: 746.2
+    m_OverrideState: 1
+    m_Value: 1712
   heightPixelation:
-    m_OverrideState: 0
-    m_Value: 252.2
+    m_OverrideState: 1
+    m_Value: 1107.9
   colorPrecision:
     m_OverrideState: 1
-    m_Value: 205.93
+    m_Value: 230.28
 --- !u!114 &-758010384845797820
 MonoBehaviour:
   m_ObjectHideFlags: 3
@@ -119,13 +119,13 @@ MonoBehaviour:
     m_Value: 1
   ditherThreshold:
     m_OverrideState: 1
-    m_Value: 2.86
+    m_Value: 4.63
   ditherStrength:
     m_OverrideState: 0
     m_Value: 1.37
   ditherScale:
     m_OverrideState: 1
-    m_Value: 0.03
+    m_Value: 2.37
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -155,19 +155,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 32eb3b8fb939d9b41b04b5621e6d36dd, type: 3}
   m_Name: Fog
   m_EditorClassIdentifier: 
-  active: 1
+  active: 0
   fogDensity:
-    m_OverrideState: 0
-    m_Value: 4.6
+    m_OverrideState: 1
+    m_Value: 10
   fogDistance:
-    m_OverrideState: 0
-    m_Value: 32.76
+    m_OverrideState: 1
+    m_Value: 4.7
   fogColor:
     m_OverrideState: 0
-    m_Value: {r: 0, g: 0, b: 0, a: 0}
+    m_Value: {r: 0.07075471, g: 0.07075471, b: 0.07075471, a: 0}
   ambientColor:
     m_OverrideState: 0
-    m_Value: {r: 0.28773582, g: 0.9663925, b: 1, a: 0}
+    m_Value: {r: 0, g: 0, b: 0, a: 0}
   fogNear:
     m_OverrideState: 0
     m_Value: 0
@@ -181,8 +181,8 @@ MonoBehaviour:
     m_OverrideState: 0
     m_Value: 458
   noiseScale:
-    m_OverrideState: 0
-    m_Value: -99
+    m_OverrideState: 1
+    m_Value: -0.63
   noiseStrength:
-    m_OverrideState: 0
-    m_Value: 0.029
+    m_OverrideState: 1
+    m_Value: 0.05

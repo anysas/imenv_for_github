@@ -1,0 +1,990 @@
+{
+  "meta": {
+    "mode": "dryrun",
+    "min_confidence": 0.42,
+    "max_personal": 8,
+    "max_corporate": 4,
+    "limit": 5,
+    "processed": 5,
+    "balance_mode": "soft_uniform",
+    "balance_floor_ratio": 0.25,
+    "balance_cap_ratio": 2.5,
+    "balance_strength": 0.02,
+    "balance_pass_b": false,
+    "review_confidence": 0.55,
+    "deficit_personal_tags": [
+      "ambiguous",
+      "anxious",
+      "aspirational",
+      "authentic",
+      "cathartic",
+      "celebratory",
+      "chaotic",
+      "communal",
+      "contemplative",
+      "cozy",
+      "curious",
+      "defiant",
+      "devotional",
+      "dreamlike",
+      "eerie",
+      "exploratory",
+      "fragile",
+      "grieving",
+      "grounded",
+      "handcrafted",
+      "haunted",
+      "heavy",
+      "hopeful",
+      "improvised",
+      "isolated",
+      "joyful",
+      "liminal",
+      "lonely",
+      "oppressive",
+      "organic",
+      "playful",
+      "proud",
+      "raw",
+      "rebellious",
+      "reflective",
+      "resilient",
+      "restorative",
+      "ritualistic",
+      "romantic",
+      "sacred",
+      "serene",
+      "solitary",
+      "surreal",
+      "tender",
+      "tense",
+      "threatening",
+      "tranquil",
+      "uncanny",
+      "vulnerable",
+      "warm",
+      "whimsical"
+    ],
+    "deficit_corporate_tags": [
+      "brand_safe",
+      "campaign_ready",
+      "discoverable",
+      "engaging",
+      "monetizable",
+      "premium_feel",
+      "recommendation_fit",
+      "replayable",
+      "retention_friendly",
+      "shareable",
+      "sticky"
+    ]
+  },
+  "summary": {
+    "total_models": 5,
+    "coverage_personal_pct": 100.0,
+    "coverage_corporate_pct": 100.0,
+    "added_personal_total": 0,
+    "added_corporate_total": 0,
+    "top_personal_tags": [
+      [
+        "mundane",
+        3
+      ],
+      [
+        "personal",
+        3
+      ],
+      [
+        "abandoned",
+        1
+      ],
+      [
+        "decayed",
+        1
+      ],
+      [
+        "melancholy",
+        1
+      ],
+      [
+        "institutional",
+        1
+      ],
+      [
+        "threatening",
+        1
+      ]
+    ],
+    "top_corporate_tags": [
+      [
+        "broad_appeal",
+        3
+      ],
+      [
+        "niche_depth",
+        1
+      ],
+      [
+        "trend_aligned",
+        1
+      ]
+    ],
+    "full_personal_tag_counts": {
+      "abandoned": 1,
+      "decayed": 1,
+      "institutional": 1,
+      "melancholy": 1,
+      "mundane": 3,
+      "personal": 3,
+      "threatening": 1
+    },
+    "full_corporate_tag_counts": {
+      "broad_appeal": 3,
+      "niche_depth": 1,
+      "trend_aligned": 1
+    }
+  },
+  "results": [
+    {
+      "id": "css_items_car_battery01",
+      "display_name": "Car Battery01",
+      "kept_personal_tags": [
+        "mundane",
+        "personal"
+      ],
+      "kept_corporate_tags": [
+        "broad_appeal"
+      ],
+      "pass_b_applied": false,
+      "added_personal_tags": [],
+      "final_personal_tags": [
+        "mundane",
+        "personal"
+      ],
+      "added_corporate_tags": [],
+      "final_corporate_tags": [
+        "broad_appeal"
+      ],
+      "max_personal_score": 0.0,
+      "max_corporate_score": 0.55,
+      "balance_trace_personal": {
+        "dynamic_floor": 0,
+        "dynamic_cap": 1,
+        "strength": 0.02,
+        "natural_picked": [],
+        "balanced_picked": [],
+        "balance_changed_pick": false
+      },
+      "balance_trace_corporate": {
+        "dynamic_floor": 0,
+        "dynamic_cap": 1,
+        "strength": 0.02,
+        "natural_picked": [
+          "broad_appeal"
+        ],
+        "balanced_picked": [
+          "broad_appeal"
+        ],
+        "balance_changed_pick": false
+      },
+      "natural_personal_picks": [],
+      "natural_corporate_picks": [
+        "broad_appeal"
+      ],
+      "balanced_personal_picks": [],
+      "balanced_corporate_picks": [
+        "broad_appeal"
+      ],
+      "review_reasons": [
+        "low_confidence_personal"
+      ]
+    },
+    {
+      "id": "css_props_building_details_courtyard_template001c_bars",
+      "display_name": "Courtyard Template001C Bars",
+      "kept_personal_tags": [
+        "mundane",
+        "personal"
+      ],
+      "kept_corporate_tags": [
+        "broad_appeal"
+      ],
+      "pass_b_applied": false,
+      "added_personal_tags": [],
+      "final_personal_tags": [
+        "mundane",
+        "personal"
+      ],
+      "added_corporate_tags": [],
+      "final_corporate_tags": [
+        "broad_appeal"
+      ],
+      "max_personal_score": 0.0,
+      "max_corporate_score": 0.55,
+      "balance_trace_personal": {
+        "dynamic_floor": 0,
+        "dynamic_cap": 1,
+        "strength": 0.02,
+        "natural_picked": [],
+        "balanced_picked": [],
+        "balance_changed_pick": false
+      },
+      "balance_trace_corporate": {
+        "dynamic_floor": 0,
+        "dynamic_cap": 2,
+        "strength": 0.02,
+        "natural_picked": [
+          "broad_appeal"
+        ],
+        "balanced_picked": [
+          "broad_appeal"
+        ],
+        "balance_changed_pick": false
+      },
+      "natural_personal_picks": [],
+      "natural_corporate_picks": [
+        "broad_appeal"
+      ],
+      "balanced_personal_picks": [],
+      "balanced_corporate_picks": [
+        "broad_appeal"
+      ],
+      "review_reasons": [
+        "low_confidence_personal"
+      ]
+    },
+    {
+      "id": "css_props_building_details_courtyard_template002c_bars",
+      "display_name": "Courtyard Template002C Bars",
+      "kept_personal_tags": [
+        "mundane",
+        "personal"
+      ],
+      "kept_corporate_tags": [
+        "broad_appeal"
+      ],
+      "pass_b_applied": false,
+      "added_personal_tags": [],
+      "final_personal_tags": [
+        "mundane",
+        "personal"
+      ],
+      "added_corporate_tags": [],
+      "final_corporate_tags": [
+        "broad_appeal"
+      ],
+      "max_personal_score": 0.0,
+      "max_corporate_score": 0.55,
+      "balance_trace_personal": {
+        "dynamic_floor": 0,
+        "dynamic_cap": 1,
+        "strength": 0.02,
+        "natural_picked": [],
+        "balanced_picked": [],
+        "balance_changed_pick": false
+      },
+      "balance_trace_corporate": {
+        "dynamic_floor": 0,
+        "dynamic_cap": 2,
+        "strength": 0.02,
+        "natural_picked": [
+          "broad_appeal"
+        ],
+        "balanced_picked": [
+          "broad_appeal"
+        ],
+        "balance_changed_pick": false
+      },
+      "natural_personal_picks": [],
+      "natural_corporate_picks": [
+        "broad_appeal"
+      ],
+      "balanced_personal_picks": [],
+      "balanced_corporate_picks": [
+        "broad_appeal"
+      ],
+      "review_reasons": [
+        "low_confidence_personal"
+      ]
+    },
+    {
+      "id": "css_props_canal_winch02",
+      "display_name": "Winch",
+      "kept_personal_tags": [
+        "abandoned",
+        "decayed",
+        "melancholy"
+      ],
+      "kept_corporate_tags": [
+        "niche_depth"
+      ],
+      "pass_b_applied": false,
+      "added_personal_tags": [],
+      "final_personal_tags": [
+        "abandoned",
+        "decayed",
+        "melancholy"
+      ],
+      "added_corporate_tags": [],
+      "final_corporate_tags": [
+        "niche_depth"
+      ],
+      "max_personal_score": 0.0,
+      "max_corporate_score": 0.55,
+      "balance_trace_personal": {
+        "dynamic_floor": 0,
+        "dynamic_cap": 2,
+        "strength": 0.02,
+        "natural_picked": [],
+        "balanced_picked": [],
+        "balance_changed_pick": false
+      },
+      "balance_trace_corporate": {
+        "dynamic_floor": 0,
+        "dynamic_cap": 3,
+        "strength": 0.02,
+        "natural_picked": [
+          "niche_depth"
+        ],
+        "balanced_picked": [
+          "niche_depth"
+        ],
+        "balance_changed_pick": false
+      },
+      "natural_personal_picks": [],
+      "natural_corporate_picks": [
+        "niche_depth"
+      ],
+      "balanced_personal_picks": [],
+      "balanced_corporate_picks": [
+        "niche_depth"
+      ],
+      "review_reasons": [
+        "low_confidence_personal"
+      ]
+    },
+    {
+      "id": "css_props_combine_breenbust",
+      "display_name": "Breenbust",
+      "kept_personal_tags": [
+        "institutional",
+        "threatening"
+      ],
+      "kept_corporate_tags": [
+        "trend_aligned"
+      ],
+      "pass_b_applied": false,
+      "added_personal_tags": [],
+      "final_personal_tags": [
+        "institutional",
+        "threatening"
+      ],
+      "added_corporate_tags": [],
+      "final_corporate_tags": [
+        "trend_aligned"
+      ],
+      "max_personal_score": 0.0,
+      "max_corporate_score": 0.55,
+      "balance_trace_personal": {
+        "dynamic_floor": 0,
+        "dynamic_cap": 2,
+        "strength": 0.02,
+        "natural_picked": [],
+        "balanced_picked": [],
+        "balance_changed_pick": false
+      },
+      "balance_trace_corporate": {
+        "dynamic_floor": 0,
+        "dynamic_cap": 4,
+        "strength": 0.02,
+        "natural_picked": [
+          "trend_aligned"
+        ],
+        "balanced_picked": [
+          "trend_aligned"
+        ],
+        "balance_changed_pick": false
+      },
+      "natural_personal_picks": [],
+      "natural_corporate_picks": [
+        "trend_aligned"
+      ],
+      "balanced_personal_picks": [],
+      "balanced_corporate_picks": [
+        "trend_aligned"
+      ],
+      "review_reasons": [
+        "low_confidence_personal"
+      ]
+    }
+  ],
+  "tag_gates": {
+    "personal": {
+      "target_per_tag": 197.625,
+      "floor": 49,
+      "cap": 495,
+      "tags_below_floor": [
+        "ambiguous",
+        "anxious",
+        "aspirational",
+        "authentic",
+        "cathartic",
+        "celebratory",
+        "chaotic",
+        "communal",
+        "contemplative",
+        "cozy",
+        "curious",
+        "defiant",
+        "devotional",
+        "dreamlike",
+        "eerie",
+        "exploratory",
+        "fragile",
+        "grieving",
+        "grounded",
+        "handcrafted",
+        "haunted",
+        "heavy",
+        "hopeful",
+        "improvised",
+        "isolated",
+        "joyful",
+        "liminal",
+        "lonely",
+        "oppressive",
+        "organic",
+        "playful",
+        "proud",
+        "raw",
+        "rebellious",
+        "reflective",
+        "resilient",
+        "restorative",
+        "ritualistic",
+        "romantic",
+        "sacred",
+        "serene",
+        "solitary",
+        "surreal",
+        "tender",
+        "tense",
+        "threatening",
+        "tranquil",
+        "uncanny",
+        "vulnerable",
+        "warm",
+        "whimsical"
+      ],
+      "tags_above_cap": [
+        "mundane",
+        "personal"
+      ],
+      "per_tag": {
+        "abandoned": {
+          "count": 270,
+          "target": 197.62,
+          "floor": 49,
+          "cap": 495
+        },
+        "ambiguous": {
+          "count": 0,
+          "target": 197.62,
+          "floor": 49,
+          "cap": 495
+        },
+        "anxious": {
+          "count": 0,
+          "target": 197.62,
+          "floor": 49,
+          "cap": 495
+        },
+        "aspirational": {
+          "count": 0,
+          "target": 197.62,
+          "floor": 49,
+          "cap": 495
+        },
+        "authentic": {
+          "count": 0,
+          "target": 197.62,
+          "floor": 49,
+          "cap": 495
+        },
+        "bureaucratic": {
+          "count": 81,
+          "target": 197.62,
+          "floor": 49,
+          "cap": 495
+        },
+        "cathartic": {
+          "count": 0,
+          "target": 197.62,
+          "floor": 49,
+          "cap": 495
+        },
+        "celebratory": {
+          "count": 0,
+          "target": 197.62,
+          "floor": 49,
+          "cap": 495
+        },
+        "chaotic": {
+          "count": 0,
+          "target": 197.62,
+          "floor": 49,
+          "cap": 495
+        },
+        "clinical": {
+          "count": 83,
+          "target": 197.62,
+          "floor": 49,
+          "cap": 495
+        },
+        "comforting": {
+          "count": 148,
+          "target": 197.62,
+          "floor": 49,
+          "cap": 495
+        },
+        "communal": {
+          "count": 0,
+          "target": 197.62,
+          "floor": 49,
+          "cap": 495
+        },
+        "contemplative": {
+          "count": 0,
+          "target": 197.62,
+          "floor": 49,
+          "cap": 495
+        },
+        "cozy": {
+          "count": 0,
+          "target": 197.62,
+          "floor": 49,
+          "cap": 495
+        },
+        "curious": {
+          "count": 0,
+          "target": 197.62,
+          "floor": 49,
+          "cap": 495
+        },
+        "decayed": {
+          "count": 78,
+          "target": 197.62,
+          "floor": 49,
+          "cap": 495
+        },
+        "defiant": {
+          "count": 0,
+          "target": 197.62,
+          "floor": 49,
+          "cap": 495
+        },
+        "devotional": {
+          "count": 3,
+          "target": 197.62,
+          "floor": 49,
+          "cap": 495
+        },
+        "domestic": {
+          "count": 288,
+          "target": 197.62,
+          "floor": 49,
+          "cap": 495
+        },
+        "dreamlike": {
+          "count": 0,
+          "target": 197.62,
+          "floor": 49,
+          "cap": 495
+        },
+        "eerie": {
+          "count": 0,
+          "target": 197.62,
+          "floor": 49,
+          "cap": 495
+        },
+        "exploratory": {
+          "count": 0,
+          "target": 197.62,
+          "floor": 49,
+          "cap": 495
+        },
+        "fragile": {
+          "count": 0,
+          "target": 197.62,
+          "floor": 49,
+          "cap": 495
+        },
+        "grieving": {
+          "count": 0,
+          "target": 197.62,
+          "floor": 49,
+          "cap": 495
+        },
+        "grounded": {
+          "count": 0,
+          "target": 197.62,
+          "floor": 49,
+          "cap": 495
+        },
+        "handcrafted": {
+          "count": 0,
+          "target": 197.62,
+          "floor": 49,
+          "cap": 495
+        },
+        "haunted": {
+          "count": 0,
+          "target": 197.62,
+          "floor": 49,
+          "cap": 495
+        },
+        "heavy": {
+          "count": 2,
+          "target": 197.62,
+          "floor": 49,
+          "cap": 495
+        },
+        "hopeful": {
+          "count": 0,
+          "target": 197.62,
+          "floor": 49,
+          "cap": 495
+        },
+        "improvised": {
+          "count": 0,
+          "target": 197.62,
+          "floor": 49,
+          "cap": 495
+        },
+        "institutional": {
+          "count": 393,
+          "target": 197.62,
+          "floor": 49,
+          "cap": 495
+        },
+        "intimate": {
+          "count": 210,
+          "target": 197.62,
+          "floor": 49,
+          "cap": 495
+        },
+        "isolated": {
+          "count": 0,
+          "target": 197.62,
+          "floor": 49,
+          "cap": 495
+        },
+        "joyful": {
+          "count": 0,
+          "target": 197.62,
+          "floor": 49,
+          "cap": 495
+        },
+        "liminal": {
+          "count": 44,
+          "target": 197.62,
+          "floor": 49,
+          "cap": 495
+        },
+        "lonely": {
+          "count": 0,
+          "target": 197.62,
+          "floor": 49,
+          "cap": 495
+        },
+        "melancholy": {
+          "count": 71,
+          "target": 197.62,
+          "floor": 49,
+          "cap": 495
+        },
+        "mundane": {
+          "count": 1337,
+          "target": 197.62,
+          "floor": 49,
+          "cap": 495
+        },
+        "nostalgic": {
+          "count": 292,
+          "target": 197.62,
+          "floor": 49,
+          "cap": 495
+        },
+        "oppressive": {
+          "count": 0,
+          "target": 197.62,
+          "floor": 49,
+          "cap": 495
+        },
+        "organic": {
+          "count": 0,
+          "target": 197.62,
+          "floor": 49,
+          "cap": 495
+        },
+        "personal": {
+          "count": 664,
+          "target": 197.62,
+          "floor": 49,
+          "cap": 495
+        },
+        "playful": {
+          "count": 0,
+          "target": 197.62,
+          "floor": 49,
+          "cap": 495
+        },
+        "proud": {
+          "count": 0,
+          "target": 197.62,
+          "floor": 49,
+          "cap": 495
+        },
+        "public": {
+          "count": 336,
+          "target": 197.62,
+          "floor": 49,
+          "cap": 495
+        },
+        "raw": {
+          "count": 0,
+          "target": 197.62,
+          "floor": 49,
+          "cap": 495
+        },
+        "rebellious": {
+          "count": 0,
+          "target": 197.62,
+          "floor": 49,
+          "cap": 495
+        },
+        "reflective": {
+          "count": 0,
+          "target": 197.62,
+          "floor": 49,
+          "cap": 495
+        },
+        "resilient": {
+          "count": 0,
+          "target": 197.62,
+          "floor": 49,
+          "cap": 495
+        },
+        "restorative": {
+          "count": 0,
+          "target": 197.62,
+          "floor": 49,
+          "cap": 495
+        },
+        "ritualistic": {
+          "count": 3,
+          "target": 197.62,
+          "floor": 49,
+          "cap": 495
+        },
+        "romantic": {
+          "count": 0,
+          "target": 197.62,
+          "floor": 49,
+          "cap": 495
+        },
+        "sacred": {
+          "count": 14,
+          "target": 197.62,
+          "floor": 49,
+          "cap": 495
+        },
+        "serene": {
+          "count": 0,
+          "target": 197.62,
+          "floor": 49,
+          "cap": 495
+        },
+        "solitary": {
+          "count": 0,
+          "target": 197.62,
+          "floor": 49,
+          "cap": 495
+        },
+        "surreal": {
+          "count": 0,
+          "target": 197.62,
+          "floor": 49,
+          "cap": 495
+        },
+        "tender": {
+          "count": 0,
+          "target": 197.62,
+          "floor": 49,
+          "cap": 495
+        },
+        "tense": {
+          "count": 0,
+          "target": 197.62,
+          "floor": 49,
+          "cap": 495
+        },
+        "threatening": {
+          "count": 26,
+          "target": 197.62,
+          "floor": 49,
+          "cap": 495
+        },
+        "tranquil": {
+          "count": 0,
+          "target": 197.62,
+          "floor": 49,
+          "cap": 495
+        },
+        "uncanny": {
+          "count": 0,
+          "target": 197.62,
+          "floor": 49,
+          "cap": 495
+        },
+        "vulnerable": {
+          "count": 0,
+          "target": 197.62,
+          "floor": 49,
+          "cap": 495
+        },
+        "warm": {
+          "count": 26,
+          "target": 197.62,
+          "floor": 49,
+          "cap": 495
+        },
+        "whimsical": {
+          "count": 0,
+          "target": 197.62,
+          "floor": 49,
+          "cap": 495
+        }
+      }
+    },
+    "corporate": {
+      "target_per_tag": 395.25,
+      "floor": 98,
+      "cap": 989,
+      "tags_below_floor": [
+        "brand_safe",
+        "campaign_ready",
+        "discoverable",
+        "engaging",
+        "monetizable",
+        "premium_feel",
+        "recommendation_fit",
+        "replayable",
+        "retention_friendly",
+        "shareable",
+        "sticky"
+      ],
+      "tags_above_cap": [
+        "broad_appeal"
+      ],
+      "per_tag": {
+        "brand_safe": {
+          "count": 9,
+          "target": 395.25,
+          "floor": 98,
+          "cap": 989
+        },
+        "broad_appeal": {
+          "count": 1063,
+          "target": 395.25,
+          "floor": 98,
+          "cap": 989
+        },
+        "campaign_ready": {
+          "count": 2,
+          "target": 395.25,
+          "floor": 98,
+          "cap": 989
+        },
+        "conversion_ready": {
+          "count": 131,
+          "target": 395.25,
+          "floor": 98,
+          "cap": 989
+        },
+        "discoverable": {
+          "count": 67,
+          "target": 395.25,
+          "floor": 98,
+          "cap": 989
+        },
+        "engaging": {
+          "count": 2,
+          "target": 395.25,
+          "floor": 98,
+          "cap": 989
+        },
+        "marketable": {
+          "count": 199,
+          "target": 395.25,
+          "floor": 98,
+          "cap": 989
+        },
+        "monetizable": {
+          "count": 0,
+          "target": 395.25,
+          "floor": 98,
+          "cap": 989
+        },
+        "niche_depth": {
+          "count": 219,
+          "target": 395.25,
+          "floor": 98,
+          "cap": 989
+        },
+        "premium_feel": {
+          "count": 0,
+          "target": 395.25,
+          "floor": 98,
+          "cap": 989
+        },
+        "recommendation_fit": {
+          "count": 0,
+          "target": 395.25,
+          "floor": 98,
+          "cap": 989
+        },
+        "replayable": {
+          "count": 0,
+          "target": 395.25,
+          "floor": 98,
+          "cap": 989
+        },
+        "retention_friendly": {
+          "count": 0,
+          "target": 395.25,
+          "floor": 98,
+          "cap": 989
+        },
+        "shareable": {
+          "count": 0,
+          "target": 395.25,
+          "floor": 98,
+          "cap": 989
+        },
+        "sticky": {
+          "count": 0,
+          "target": 395.25,
+          "floor": 98,
+          "cap": 989
+        },
+        "trend_aligned": {
+          "count": 100,
+          "target": 395.25,
+          "floor": 98,
+          "cap": 989
+        }
+      }
+    }
+  }
+}

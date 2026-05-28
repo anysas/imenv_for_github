@@ -1,0 +1,37 @@
+{
+  "generated_at": "2026-05-19T13:05:57",
+  "source": "/Users/ezrajohnston/Desktop/unity/Immersive Environments/Assets/StreamingAssets/curated-props.game-ready.json",
+  "counts": {
+    "source_total": 1581,
+    "personal": 1282,
+    "corporate": 299,
+    "unknown": 0
+  },
+  "groups_in_source": {
+    "item": 823,
+    "workshop": 219,
+    "lab": 82,
+    "retail": 131,
+    "furniture": 59,
+    "domestic": 181,
+    "office": 67,
+    "tech": 19
+  },
+  "personal_groups": [
+    "domestic",
+    "furniture",
+    "item",
+    "workshop"
+  ],
+  "corporate_groups": [
+    "lab",
+    "office",
+    "retail",
+    "tech"
+  ],
+  "unknown_sample_ids": [],
+  "outputs": {
+    "personal": "/Users/ezrajohnston/Desktop/unity/Immersive Environments/Assets/StreamingAssets/curated-props.personal.json",
+    "corporate": "/Users/ezrajohnston/Desktop/unity/Immersive Environments/Assets/StreamingAssets/curated-props.corporate.json"
+  }
+}

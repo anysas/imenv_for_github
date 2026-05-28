@@ -42,8 +42,8 @@ namespace AlgorithmicGallery.Corruption
         [SerializeField] private Vector2 _defaultFloorSize = new Vector2(10f, 10f);
 
         [Header("Session (placement cap)")]
-        [Tooltip("Sandbox ends when total placements (player + assistant) reach this count.")]
-        [SerializeField] private int _maxTotalPlacements = 35;
+        [Tooltip("Sandbox ends when player placements reach this count.")]
+        [SerializeField] private int _maxTotalPlacements = 20;
         [SerializeField] private float _endGracePeriod = 0f;
         [SerializeField] private float _hotbarFadeOutDuration = 0.35f;
         [SerializeField] private CanvasGroup _endFadeCanvasGroup;
@@ -52,8 +52,6 @@ namespace AlgorithmicGallery.Corruption
         [Header("Events")]
         public UnityEvent OnSandboxEntered;
         public UnityEvent OnSessionComplete;
-        [Tooltip("Fires after placed props are moved onto mainPedestal (after grid slides settle).")]
-        public UnityEvent OnMainPedestalExhibitBuilt;
         public UnityEvent OnPromptCommitted;
         public UnityEvent OnHallwayUnlocked;
         public UnityEvent OnPromptSquishStarted;
@@ -120,8 +118,10 @@ namespace AlgorithmicGallery.Corruption
 
         void Start()
         {
-            if (_autoBootstrap)
-                EnsureGameplaySfx();
+            // Always guarantee baseline SFX objects exist, even when auto-bootstrap is off.
+            EnsureGameplaySfx();
+            EnsureTerminalOpenSfx();
+            EnsurePlacedPropSterilization();
 
             StyleProfile = new StyleProfile();
             Manifest = CuratedPropManifest.LoadFromStreamingFolder(_randomObjectsFolder);
@@ -141,11 +141,17 @@ namespace AlgorithmicGallery.Corruption
                 OpeningState = PromptState.AwaitingPrompt;
 
             if (_hotbarController != null)
+            {
                 _hotbarController.Initialize(
                     Manifest,
                     StyleProfile,
                     simpleRandomPicks: true,
                     maxSessionPlacements: _maxTotalPlacements);
+
+                var hotbarUi = _hotbarController.GetComponent<HotbarUI>();
+                if (hotbarUi != null)
+                    hotbarUi.RefreshPlacementsHud();
+            }
 
             if (_propPlacer != null)
             {
@@ -269,6 +275,16 @@ namespace AlgorithmicGallery.Corruption
                 overlaySetup.AddComponent<SystemPropCleanOverlaySetup>();
             }
 
+            var roomShrink = FindFirstObjectByType<SandboxRoomShrinkController>();
+            if (roomShrink == null)
+            {
+                var shrinkGo = new GameObject("SandboxRoomShrinkController");
+                shrinkGo.transform.SetParent(transform);
+                roomShrink = shrinkGo.AddComponent<SandboxRoomShrinkController>();
+                Debug.Log("[SandboxManager] Auto-created SandboxRoomShrinkController");
+            }
+            roomShrink.Initialize();
+
             // Prop budget
             if (PropBudget.Instance == null)
             {
@@ -324,6 +340,7 @@ namespace AlgorithmicGallery.Corruption
                 sfx.AddComponent<AudioSource>();
                 sfx.AddComponent<SandboxSfx>();
             }
+            EnsureTerminalOpenSfx();
 
             // Ambient audio escalation — volume/pitch follow assistant influence
             if (FindFirstObjectByType<AudioEscalation>() == null)
@@ -355,13 +372,7 @@ namespace AlgorithmicGallery.Corruption
 
             EnsureGameplaySfx();
             EnsureMainPedestalExhibit();
-
-            if (FindFirstObjectByType<PlacedPropSterilizationController>() == null)
-            {
-                var sterilization = new GameObject("PlacedPropSterilization");
-                sterilization.transform.SetParent(transform);
-                sterilization.AddComponent<PlacedPropSterilizationController>();
-            }
+            EnsurePlacedPropSterilization();
 
             // Prompt-driven mood lighting — shifts directional light color/intensity per prompt
             if (FindFirstObjectByType<PromptMoodLighting>() == null)
@@ -645,7 +656,7 @@ namespace AlgorithmicGallery.Corruption
 
             _assistantSystem?.StopSession();
 
-            // Fire completion immediately for UI/VFX; hallway door reopen waits for OnMainPedestalExhibitBuilt.
+            // Fire completion immediately so the hallway door opens the moment placements run out.
             OnSessionComplete?.Invoke();
             GameplayEventDebugLog.Push("Sandbox", "OnSessionComplete");
             Debug.Log("[SandboxManager] Session complete.");
@@ -736,12 +747,56 @@ namespace AlgorithmicGallery.Corruption
 
         public void EnsureMainPedestalExhibit()
         {
-            if (FindFirstObjectByType<SandboxMainPedestalExhibit>() != null)
+            if (FindFirstObjectByType<SandboxMainPedestalExhibit>() == null)
+            {
+                var exhibitObject = new GameObject("SandboxMainPedestalExhibit");
+                exhibitObject.transform.SetParent(transform, false);
+                exhibitObject.AddComponent<SandboxMainPedestalExhibit>();
+            }
+
+            if (FindFirstObjectByType<DioramaTransferVfxController>() == null)
+            {
+                var transferObject = new GameObject("DioramaTransferVfxController");
+                transferObject.transform.SetParent(transform, false);
+                transferObject.AddComponent<DioramaTransferVfxController>();
+            }
+        }
+
+        public void EnsureTerminalOpenSfx()
+        {
+            if (FindFirstObjectByType<TerminalOpenSfx>() != null)
                 return;
 
-            var exhibitObject = new GameObject("SandboxMainPedestalExhibit");
-            exhibitObject.transform.SetParent(transform, false);
-            exhibitObject.AddComponent<SandboxMainPedestalExhibit>();
+            var terminalSfxObject = new GameObject("TerminalOpenSfx");
+            terminalSfxObject.transform.SetParent(transform, false);
+            terminalSfxObject.AddComponent<AudioSource>();
+            terminalSfxObject.AddComponent<TerminalOpenSfx>();
+        }
+
+        /// <summary>
+        /// Ensures placed props slowly drain toward sterile white over the sandbox session.
+        /// </summary>
+        public void EnsurePlacedPropSterilization()
+        {
+            if (PropBudget.Instance == null)
+            {
+                var budgetObject = new GameObject("PropBudget");
+                budgetObject.transform.SetParent(transform, false);
+                budgetObject.AddComponent<PropBudget>();
+            }
+
+            var controller = PlacedPropSterilizationController.Instance;
+            if (controller == null)
+                controller = FindFirstObjectByType<PlacedPropSterilizationController>();
+            if (controller == null)
+            {
+                var sterilization = new GameObject("PlacedPropSterilization");
+                sterilization.transform.SetParent(transform, false);
+                controller = sterilization.AddComponent<PlacedPropSterilizationController>();
+            }
+
+            if (controller != null)
+                controller.EnsureReferences(_propPlacer, this);
         }
 
 #if UNITY_EDITOR

@@ -11,19 +11,32 @@ namespace AlgorithmicGallery.Corruption
         [SerializeField] private SandboxManager _sandbox;
         [SerializeField] private string _playerTag = "Player";
         [SerializeField] private bool _onlyActiveAfterSessionComplete = true;
-        [SerializeField] private float _triggerDelay = 10f;
+        [Tooltip("Seconds after the player enters this trigger before fade-to-black starts.")]
+        [SerializeField] private float _triggerDelay = 5f;
+        [Tooltip("Fade-to-black duration immediately before reload.")]
         [SerializeField] private float _fadeDuration = 2f;
 
         private bool _active;
+        private bool _restartCommitted;
         private Coroutine _countdownRoutine;
         private CanvasGroup _fadeCanvasGroup;
+        private Collider _collider;
 
         void Awake()
         {
-            var col = GetComponent<Collider>();
-            col.isTrigger = true;
-            col.enabled = false;
-            enabled = false;
+            _collider = GetComponent<Collider>();
+            _collider.isTrigger = true;
+
+            if (_onlyActiveAfterSessionComplete)
+            {
+                _active = false;
+                _collider.enabled = false;
+                enabled = false;
+            }
+            else
+            {
+                _active = true;
+            }
         }
 
         void Start()
@@ -31,37 +44,39 @@ namespace AlgorithmicGallery.Corruption
             if (_sandbox == null)
                 _sandbox = FindFirstObjectByType<SandboxManager>();
 
-            _active = !_onlyActiveAfterSessionComplete;
-
             if (_onlyActiveAfterSessionComplete && _sandbox != null)
-                _sandbox.OnSessionComplete.AddListener(Enable);
+                _sandbox.OnSessionComplete.AddListener(Arm);
         }
 
         void OnDestroy()
         {
             if (_onlyActiveAfterSessionComplete && _sandbox != null)
-                _sandbox.OnSessionComplete.RemoveListener(Enable);
+                _sandbox.OnSessionComplete.RemoveListener(Arm);
         }
 
-        private void Enable()
+        /// <summary>Arms trigger collider and behaviour (called on session complete or when spawned late).</summary>
+        public void Arm()
         {
             _active = true;
+            enabled = true;
+            if (_collider != null)
+                _collider.enabled = true;
             GameplayEventDebugLog.Push("DioramaTrigger", "armed (session complete)");
         }
 
         void OnTriggerEnter(Collider other)
         {
-            if (!_active) return;
+            if (!_active || _restartCommitted) return;
             if (!IsPlayer(other)) return;
             if (_countdownRoutine != null) return;
-            GameplayEventDebugLog.Push("DioramaTrigger", "player entered → linger countdown");
+            GameplayEventDebugLog.Push("DioramaTrigger", "player entered → restart countdown");
             _countdownRoutine = StartCoroutine(CountdownThenFade());
         }
 
         void OnTriggerExit(Collider other)
         {
             if (!IsPlayer(other)) return;
-            if (_countdownRoutine == null) return;
+            if (_countdownRoutine == null || _restartCommitted) return;
             GameplayEventDebugLog.Push("DioramaTrigger", "player left → countdown cancelled");
             StopCoroutine(_countdownRoutine);
             _countdownRoutine = null;
@@ -76,9 +91,11 @@ namespace AlgorithmicGallery.Corruption
 
         private IEnumerator CountdownThenFade()
         {
+            float holdBeforeFade = Mathf.Max(0f, _triggerDelay);
+            float fadeDur = Mathf.Max(0.01f, _fadeDuration);
+
             float t = 0f;
-            float delay = Mathf.Max(0f, _triggerDelay);
-            while (t < delay)
+            while (t < holdBeforeFade)
             {
                 t += Time.deltaTime;
                 yield return null;
@@ -88,12 +105,13 @@ namespace AlgorithmicGallery.Corruption
             if (_fadeCanvasGroup == null)
                 yield break;
 
+            _restartCommitted = true;
+
             float ft = 0f;
-            float dur = Mathf.Max(0.01f, _fadeDuration);
-            while (ft < dur)
+            while (ft < fadeDur)
             {
                 ft += Time.deltaTime;
-                _fadeCanvasGroup.alpha = Mathf.Clamp01(ft / dur);
+                _fadeCanvasGroup.alpha = Mathf.Clamp01(ft / fadeDur);
                 yield return null;
             }
 
@@ -133,4 +151,3 @@ namespace AlgorithmicGallery.Corruption
         }
     }
 }
-

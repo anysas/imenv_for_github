@@ -18,7 +18,7 @@ namespace AlgorithmicGallery.Corruption
 
         private static readonly string[] FallbackCorporate =
         {
-            "engaging","sticky","discoverable","marketable","trend_aligned","conversion_ready","retention_friendly",
+            "engaging","discoverable","marketable","trend_aligned","conversion_ready","retention_friendly",
             "shareable","brand_safe","premium_feel","broad_appeal","niche_depth","monetizable","replayable",
             "recommendation_fit","campaign_ready"
         };

@@ -1,3 +1,4 @@
+using PSX;
 using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.Rendering.Universal;
@@ -52,7 +53,7 @@ namespace AlgorithmicGallery.Corruption
 
         public override void Create()
         {
-            _pass = new PSXPass(settings, psxPostShader);
+            _pass = new PSXPass(settings, PsxPostEffectShaders.ResolvePsxPost(psxPostShader));
             _pass.renderPassEvent = RenderPassEvent.BeforeRenderingPostProcessing;
             _instance = this;
             _baseGlitchIntensity = Mathf.Clamp01(settings.glitchIntensity);

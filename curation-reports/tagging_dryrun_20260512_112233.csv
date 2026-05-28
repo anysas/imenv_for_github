@@ -1,0 +1,6 @@
+id,display_name,kept_personal,added_personal,final_personal,kept_corporate,added_corporate,final_corporate,max_personal_score,max_corporate_score,review_reasons,pass_b_applied
+css_items_car_battery01,Car Battery01,mundane personal,,mundane personal,broad_appeal,,broad_appeal,0.0000,0.5500,low_confidence_personal,False
+css_props_building_details_courtyard_template001c_bars,Courtyard Template001C Bars,mundane personal,,mundane personal,broad_appeal,,broad_appeal,0.0000,0.5500,low_confidence_personal,False
+css_props_building_details_courtyard_template002c_bars,Courtyard Template002C Bars,mundane personal,,mundane personal,broad_appeal,,broad_appeal,0.0000,0.5500,low_confidence_personal,False
+css_props_canal_winch02,Winch,abandoned decayed melancholy,,abandoned decayed melancholy,niche_depth,,niche_depth,0.0000,0.5500,low_confidence_personal,False
+css_props_combine_breenbust,Breenbust,institutional threatening,,institutional threatening,trend_aligned,,trend_aligned,0.0000,0.5500,low_confidence_personal,False

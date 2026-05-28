@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 75e40ca88d1f66240aec7a034655fafa, type: 3}
+  m_Name: PsxPostEffectShaders
+  m_EditorClassIdentifier: 
+  dithering: {fileID: 4800000, guid: 0b3fbf35a693e2e42a255895e5be9dbd, type: 3}
+  pixelation: {fileID: 4800000, guid: 6cc37f589a3171847bd1dc6f9224ccf3, type: 3}
+  fog: {fileID: 4800000, guid: a64e8590867649e4aaad5c1e24175437, type: 3}
+  crt: {fileID: 4800000, guid: 00914bc33eaf6174eb8c82447a307c84, type: 3}
+  psxPost: {fileID: 4800000, guid: 2356c0ddfd75f4031a875f58e48b148e, type: 3}

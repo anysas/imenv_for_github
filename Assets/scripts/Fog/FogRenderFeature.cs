@@ -6,57 +6,120 @@ namespace PSX
 {
     public class FogRenderFeature : ScriptableRendererFeature
     {
-        [SerializeField] private Shader effectShader;
-        private FogPass _pass;
+        [SerializeField] private Shader fogShader;
+        FogPass fogPass;
 
-        public override void Create() => _pass = new FogPass(effectShader, RenderPassEvent.BeforeRenderingPostProcessing);
-
-        public override void AddRenderPasses(ScriptableRenderer renderer, ref RenderingData renderingData)
+        public override void Create()
         {
-            if (_pass == null || renderingData.cameraData.renderType == CameraRenderType.Overlay)
-                return;
-
-            renderer.EnqueuePass(_pass);
+            fogPass = new FogPass(
+                RenderPassEvent.BeforeRenderingPostProcessing,
+                PsxPostEffectShaders.ResolveFog(fogShader));
         }
 
+        //ScripstableRendererFeature is an abstract class, you need this method
+        public override void AddRenderPasses(ScriptableRenderer renderer, ref RenderingData renderingData)
+        {
+            renderer.EnqueuePass(fogPass);
+        }
+        
         public override void SetupRenderPasses(ScriptableRenderer renderer, in RenderingData renderingData)
         {
 #pragma warning disable CS0618
-            _pass?.SetSource(renderer.cameraColorTargetHandle);
+            fogPass.Setup(renderer.cameraColorTargetHandle);
 #pragma warning restore CS0618
         }
-
-        protected override void Dispose(bool disposing) => _pass?.Dispose();
+        
     }
-
-    public sealed class FogPass : PsxVolumeRenderPass<Fog>
+    
+    
+    public class FogPass : ScriptableRenderPass
     {
-        private static readonly int FogDensity = Shader.PropertyToID("_FogDensity");
-        private static readonly int FogDistance = Shader.PropertyToID("_FogDistance");
-        private static readonly int FogColor = Shader.PropertyToID("_FogColor");
-        private static readonly int AmbientColor = Shader.PropertyToID("_AmbientColor");
-        private static readonly int FogNear = Shader.PropertyToID("_FogNear");
-        private static readonly int FogFar = Shader.PropertyToID("_FogFar");
-        private static readonly int FogAltScale = Shader.PropertyToID("_FogAltScale");
-        private static readonly int FogThinning = Shader.PropertyToID("_FogThinning");
-        private static readonly int NoiseScale = Shader.PropertyToID("_NoiseScale");
-        private static readonly int NoiseStrength = Shader.PropertyToID("_NoiseStrength");
-
-        public FogPass(Shader shader, RenderPassEvent evt)
-            : base(shader, "PSX Fog", evt, requiresDepth: true) { }
-
-        protected override void ApplyMaterialProperties(Fog fog)
+        static readonly string k_RenderTag = "Render Fog Effects";
+        static readonly int MainTexId = Shader.PropertyToID("_MainTex");
+        static readonly int TempTargetId = Shader.PropertyToID("_TempTargetFog");
+        static readonly int FogDensity = Shader.PropertyToID("_FogDensity");
+        static readonly int FogDistance = Shader.PropertyToID("_FogDistance");
+        static readonly int FogColor = Shader.PropertyToID("_FogColor");
+        static readonly int AmbientColor = Shader.PropertyToID("_AmbientColor");
+        static readonly int FogNear = Shader.PropertyToID("_FogNear");
+        static readonly int FogFar = Shader.PropertyToID("_FogFar");
+        static readonly int FogAltScale = Shader.PropertyToID("_FogAltScale");
+        static readonly int FogThinning = Shader.PropertyToID("_FogThinning");
+        static readonly int NoiseScale = Shader.PropertyToID("_NoiseScale");
+        static readonly int NoiseStrength = Shader.PropertyToID("_NoiseStrength");
+        
+        Fog fog;
+        Material fogMaterial;
+        RenderTargetIdentifier currentTarget;
+    
+        public FogPass(RenderPassEvent evt, Shader shader)
         {
-            Material.SetFloat(FogDensity, fog.fogDensity.value);
-            Material.SetFloat(FogDistance, fog.fogDistance.value);
-            Material.SetColor(FogColor, fog.fogColor.value);
-            Material.SetColor(AmbientColor, fog.ambientColor.value);
-            Material.SetFloat(FogNear, fog.fogNear.value);
-            Material.SetFloat(FogFar, fog.fogFar.value);
-            Material.SetFloat(FogAltScale, fog.fogAltScale.value);
-            Material.SetFloat(FogThinning, fog.fogThinning.value);
-            Material.SetFloat(NoiseScale, fog.noiseScale.value);
-            Material.SetFloat(NoiseStrength, fog.noiseStrength.value);
+            renderPassEvent = evt;
+            if (shader == null)
+            {
+                Debug.LogError("[PSX] Fog shader is missing.");
+                return;
+            }
+
+            this.fogMaterial = CoreUtils.CreateEngineMaterial(shader);
+        }
+    
+        [System.Obsolete]
+        public override void Execute(ScriptableRenderContext context, ref RenderingData renderingData)
+        {
+            if (this.fogMaterial == null)
+            {
+                Debug.LogError("Material not created.");
+                return;
+            }
+    
+            if (!renderingData.cameraData.postProcessEnabled) return;
+    
+            var stack = VolumeManager.instance.stack;
+            
+            this.fog = stack.GetComponent<Fog>();
+            if (this.fog == null) { return; }
+            if (!this.fog.IsActive()) { return; }
+    
+            var cmd = CommandBufferPool.Get(k_RenderTag);
+            Render(cmd, ref renderingData);
+            context.ExecuteCommandBuffer(cmd);
+            CommandBufferPool.Release(cmd);
+        }
+    
+        public void Setup(in RenderTargetIdentifier currentTarget)
+        {
+            this.currentTarget = currentTarget;
+        }
+    
+        void Render(CommandBuffer cmd, ref RenderingData renderingData)
+        {
+            ref var cameraData = ref renderingData.cameraData;
+            var source = currentTarget;
+            int destination = TempTargetId;
+    
+            //getting camera width and height 
+            var w = cameraData.camera.scaledPixelWidth;
+            var h = cameraData.camera.scaledPixelHeight;
+            
+            //setting parameters here 
+            cameraData.camera.depthTextureMode = cameraData.camera.depthTextureMode | DepthTextureMode.Depth;
+            this.fogMaterial.SetFloat(FogDensity, this.fog.fogDensity.value);
+            this.fogMaterial.SetFloat(FogDistance, this.fog.fogDistance.value);
+            this.fogMaterial.SetColor(FogColor, this.fog.fogColor.value);
+            this.fogMaterial.SetColor(AmbientColor, this.fog.ambientColor.value);
+            this.fogMaterial.SetFloat(FogNear, this.fog.fogNear.value);
+            this.fogMaterial.SetFloat(FogFar, this.fog.fogFar.value);
+            this.fogMaterial.SetFloat(FogAltScale, this.fog.fogAltScale.value);
+            this.fogMaterial.SetFloat(FogThinning, this.fog.fogThinning.value);
+            this.fogMaterial.SetFloat(NoiseScale, this.fog.noiseScale.value);
+            this.fogMaterial.SetFloat(NoiseStrength, this.fog.noiseStrength.value);
+    
+            int shaderPass = 0;
+            cmd.SetGlobalTexture(MainTexId, source);
+            cmd.GetTemporaryRT(destination, w, h, 0, FilterMode.Point, RenderTextureFormat.Default);
+            cmd.Blit(source, destination);
+            cmd.Blit(destination, source, this.fogMaterial, shaderPass);
         }
     }
 }
